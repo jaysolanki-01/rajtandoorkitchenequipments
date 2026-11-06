@@ -3434,6 +3434,9 @@ body.is-checkout .sf { display: none !important; }
 .ab-hero__btn-primary  {
   min-width: 170px;
   display: inline-flex; align-items: center; gap: 0.5rem;
+  border-radius: 10px !important;
+  padding: 0.85rem 1.75rem !important;
+  font-size: 0.95rem !important;
 }
 .ab-hero__btn-primary svg { transition: transform 0.2s; }
 .ab-hero__btn-primary:hover svg { transform: translateX(4px); }
@@ -3453,7 +3456,12 @@ body.is-checkout .sf { display: none !important; }
 }
 .ab-hero__btn-glow:hover::before { transform: translateX(100%); }
 
-.ab-hero__btn-secondary { border-color: rgba(255,255,255,.3); color: #fff; }
+.ab-hero__btn-secondary {
+  border-color: rgba(255,255,255,.3); color: #fff;
+  border-radius: 10px !important;
+  padding: 0.85rem 1.75rem !important;
+  font-size: 0.95rem !important;
+}
 .ab-hero__btn-secondary:hover { border-color: var(--rt-gold); color: var(--rt-gold); background: rgba(195,162,104,.06); }
 
 /* Scroll indicator */
@@ -3648,50 +3656,184 @@ body.is-checkout .sf { display: none !important; }
 .ab-offer__card-link svg { transition: transform 0.2s; }
 
 /* ══════════════════════
-   4. WHY CHOOSE US
+   4. WHY CHOOSE US  (upgraded)
    ══════════════════════ */
 .ab-why {
-  padding: clamp(60px, 10vw, 100px) 0;
-  background: #0b1528;
+  padding: clamp(70px, 10vw, 110px) 0;
+  background: var(--rt-charcoal);
   color: #fff;
+  position: relative;
+  overflow: hidden;
 }
-.ab-why .ab-h2--center { margin-bottom: 3rem; }
+
+/* Background decorative pattern */
+.ab-why__bg-pattern {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(55,75,127,.35) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 50%, rgba(195,162,104,.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Header block */
+.ab-why__header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+.ab-label--gold { color: var(--rt-gold); }
+.ab-why__intro {
+  color: rgba(255,255,255,.5);
+  font-size: 0.95rem;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* Grid */
 .ab-why__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
+.ab-why__card-wrap { height: 100%; }
+
+/* Card base */
 .ab-why__card {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(195,162,104,.15);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem 1.5rem;
-  transition: background 0.25s, border-color 0.25s, transform 0.25s var(--ease);
+  position: relative;
+  height: 100%;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(195,162,104,.12);
+  border-radius: 16px;
+  padding: 2rem 1.6rem 1.75rem;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  cursor: default;
+  will-change: transform;
 }
-.ab-why__card:hover {
-  background: rgba(195,162,104,.07);
-  border-color: rgba(195,162,104,.4);
-  transform: translateY(-4px);
+/* Gradient corner on hover */
+.ab-why__card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 16px;
+  background: radial-gradient(ellipse 80% 80% at 50% 0%, rgba(195,162,104,.12) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
 }
-.ab-why__icon {
-  font-size: 2rem;
-  display: block;
-  margin-bottom: 1rem;
-  line-height: 1;
+.ab-why__card:hover::before { opacity: 1; }
+/* Glow border on hover */
+.ab-why__card::after {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, rgba(195,162,104,.5), transparent 40%, transparent 60%, rgba(195,162,104,.3));
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  z-index: -1;
 }
+.ab-why__card:hover::after { opacity: 1; }
+.ab-why__card:hover { border-color: rgba(195,162,104,.35); }
+
+/* Icon area */
+.ab-why__card-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+/* Rotating gradient ring icon */
+.ab-why__icon-ring {
+  position: relative;
+  width: 58px; height: 58px;
+  flex-shrink: 0;
+}
+.ab-why__icon-ring::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--rt-gold) 0deg,
+    rgba(195,162,104,.4) 90deg,
+    transparent 180deg,
+    var(--rt-gold) 360deg
+  );
+  animation: ab-ring-spin 4s linear infinite;
+}
+.ab-why__icon-ring::after {
+  content: '';
+  position: absolute; inset: 2.5px;
+  border-radius: 50%;
+  background: var(--rt-charcoal);
+}
+.ab-why__icon-inner {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1;
+  color: var(--rt-gold);
+}
+.ab-why__icon-inner svg {
+  width: 26px; height: 26px;
+}
+
+/* Tag pill */
+.ab-why__tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  background: rgba(195,162,104,.12);
+  border: 1px solid rgba(195,162,104,.25);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rt-gold);
+  line-height: 1.6;
+  align-self: flex-start;
+}
+
+/* Text */
 .ab-why__card-title {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--rt-gold);
-  margin: 0 0 0.5rem;
+  color: #fff;
+  margin: 0 0 0.6rem;
 }
 .ab-why__card-desc {
-  font-size: 0.88rem;
-  color: rgba(255,255,255,.65);
-  line-height: 1.65;
+  font-size: 0.875rem;
+  color: rgba(255,255,255,.55);
+  line-height: 1.7;
   margin: 0;
+  flex: 1;
 }
+
+/* Override reveal for why cards with 3D fold-in */
+.ab-why__card-wrap.ab-reveal {
+  opacity: 0;
+  transform: perspective(700px) translateY(50px) rotateX(20deg) scale(0.92);
+  filter: blur(3px);
+  transition:
+    opacity 0.6s var(--ease) var(--ab-delay, 0ms),
+    transform 0.6s var(--ease) var(--ab-delay, 0ms),
+    filter 0.6s var(--ease) var(--ab-delay, 0ms);
+}
+.ab-why__card-wrap.ab-reveal--in {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* Animated gold bar at card bottom */
+.ab-why__card-bar {
+  height: 2px;
+  background: linear-gradient(90deg, var(--rt-gold), rgba(195,162,104,.3));
+  border-radius: 2px;
+  margin-top: 1.25rem;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.5s var(--ease);
+}
+.ab-why__card:hover .ab-why__card-bar { transform: scaleX(1); }
 
 /* ══════════════════════
    5. OUR PROCESS
@@ -3952,6 +4094,19 @@ body.is-checkout .sf { display: none !important; }
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 0.75; transform: none; }
 }
+/* 3D card fold-in (overrides .ab-reveal for why cards) */
+@keyframes ab-card-fold-in {
+  from {
+    opacity: 0;
+    transform: perspective(700px) translateY(50px) rotateX(20deg) scale(0.92);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(700px) translateY(0) rotateX(0) scale(1);
+    filter: blur(0);
+  }
+}
 
 /* ── About page responsive ── */
 @media (max-width: 1023px) {
@@ -3968,6 +4123,7 @@ body.is-checkout .sf { display: none !important; }
 
   .ab-offer__grid  { grid-template-columns: 1fr; }
   .ab-why__grid    { grid-template-columns: 1fr; }
+  .ab-why__card    { padding: 1.5rem 1.25rem 1.4rem; }
 
   .ab-process__steps { grid-template-columns: 1fr; gap: 1.75rem; }
   .ab-process__steps::before { display: none; }

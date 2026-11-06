@@ -2,6 +2,23 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { seo, brand } from '../config/site';
 
+/* ── 3D tilt card ────────────────────────────────────────────────────────── */
+function TiltCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = ref.current; if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `perspective(700px) rotateX(${-y * 10}deg) rotateY(${x * 10}deg) translateZ(12px) scale(1.025)`;
+    el.style.transition = 'transform 0.08s linear';
+  };
+  const handleLeave = () => {
+    if (ref.current) { ref.current.style.transform = ''; ref.current.style.transition = 'transform 0.45s cubic-bezier(0.22,0.61,0.36,1)'; }
+  };
+  return <div ref={ref} className={className} onMouseMove={handleMove} onMouseLeave={handleLeave}>{children}</div>;
+}
+
 /* ── Rising ember / spark canvas ─────────────────────────────────────────── */
 function EmberCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -364,26 +381,70 @@ export function AboutPage() {
 
         {/* ── 4. WHY CHOOSE US ─────────────────────────────────────────── */}
         <section className="ab-why" aria-labelledby="why-h2">
+          <div className="ab-why__bg-pattern" aria-hidden="true" />
           <div className="container">
             <Reveal>
-              <span className="ab-label ab-label--light">Why Choose Us</span>
-              <h2 id="why-h2" className="ab-h2 ab-h2--center ab-h2--light">The Raj Tandoor Difference</h2>
+              <div className="ab-why__header">
+                <span className="ab-label ab-label--gold">Why Choose Us</span>
+                <h2 id="why-h2" className="ab-h2 ab-h2--center ab-h2--light">The Raj Tandoor Difference</h2>
+                <p className="ab-why__intro">
+                  Six reasons commercial kitchens across India trust us for their tandoor and equipment needs.
+                </p>
+              </div>
             </Reveal>
             <div className="ab-why__grid">
-              {[
-                { icon: '🏗️', title: 'Commercial-Grade Build', desc: 'Every product is engineered for the rigours of daily commercial kitchen use — not domestic adaptations.' },
-                { icon: '✨', title: 'Hygienic Stainless Steel', desc: 'Food-safe stainless-steel exteriors are easy to clean, corrosion-resistant, and built to health-code standards.' },
-                { icon: '🔥', title: 'Authentic Clay Chamber', desc: 'Traditional clay lining delivers the characteristic tandoor flavour and heat retention that chefs depend on.' },
-                { icon: '📐', title: 'Multiple Sizes', desc: 'From compact countertop models to large-capacity floor tandoors — choose the right fit for your kitchen volume.' },
-                { icon: '🚚', title: 'Pan-India Delivery', desc: 'We deliver across India. Contact us to discuss delivery timelines and logistics for your location.' },
-                { icon: '💬', title: 'Expert Consultation', desc: 'Our team works with you to understand your kitchen requirements and recommend the right equipment.' },
-              ].map((item, i) => (
-                <Reveal key={item.title} delay={i * 80}>
-                  <div className="ab-why__card">
-                    <span className="ab-why__icon" aria-hidden="true">{item.icon}</span>
+              {([
+                {
+                  svg: <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="28" width="36" height="14" rx="3"/><rect x="14" y="18" width="20" height="12" rx="2"/><rect x="20" y="10" width="8" height="10" rx="1.5"/><line x1="12" y1="42" x2="12" y2="38"/><line x1="36" y1="42" x2="36" y2="38"/></svg>,
+                  title: 'Commercial-Grade Build',
+                  desc: 'Every product is engineered for daily commercial kitchen use — not scaled-up domestic adaptations.',
+                  tag: 'Pro-grade',
+                },
+                {
+                  svg: <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M24 4l14 6v12c0 9-7 16-14 18C17 38 10 31 10 22V10l14-6z"/><polyline points="17 24 22 29 31 20"/></svg>,
+                  title: 'Hygienic Stainless Steel',
+                  desc: 'Food-safe stainless-steel exteriors are easy to clean, corrosion-resistant, and health-code compliant.',
+                  tag: 'Hygienic',
+                },
+                {
+                  svg: <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M24 6C18 16 14 20 14 28a10 10 0 0 0 20 0c0-5-2-10-10-22z"/><path d="M20 34c-1-3 1-6 4-9-2 5 0 8 2 9"/></svg>,
+                  title: 'Authentic Clay Chamber',
+                  desc: 'Traditional clay lining delivers genuine tandoor flavour and heat retention chefs depend on.',
+                  tag: 'Authentic',
+                },
+                {
+                  svg: <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="24" width="12" height="16" rx="2"/><rect x="18" y="16" width="12" height="24" rx="2"/><rect x="28" y="8" width="12" height="32" rx="2"/><line x1="6" y1="40" x2="42" y2="40"/></svg>,
+                  title: 'Multiple Size Options',
+                  desc: 'From countertop models to large floor tandoors — the right size for every kitchen and volume.',
+                  tag: 'Flexible',
+                },
+                {
+                  svg: <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="18" width="28" height="20" rx="3"/><path d="M30 24h8l6 8v6h-4"/><circle cx="10" cy="40" r="4"/><circle cx="36" cy="40" r="4"/><path d="M2 28h28"/></svg>,
+                  title: 'Pan-India Delivery',
+                  desc: 'We deliver across India. Contact us to discuss delivery timelines and logistics for your location.',
+                  tag: 'Nationwide',
+                },
+                {
+                  svg: <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="24" cy="16" r="8"/><path d="M8 44c0-8.8 7.2-16 16-16s16 7.2 16 16"/><path d="M32 10c3 1.5 5 4.5 5 8"/><path d="M11 10c-3 1.5-5 4.5-5 8"/></svg>,
+                  title: 'Expert Consultation',
+                  desc: 'Our team works with you on requirements, recommending the right configuration and specifications.',
+                  tag: 'Support',
+                },
+              ] as { svg: React.ReactNode; title: string; desc: string; tag: string }[]).map((item, i) => (
+                <Reveal key={item.title} delay={i * 90} className="ab-why__card-wrap">
+                  <TiltCard className="ab-why__card">
+                    <div className="ab-why__card-top">
+                      <div className="ab-why__icon-ring" aria-hidden="true">
+                        <div className="ab-why__icon-inner">
+                          {item.svg}
+                        </div>
+                      </div>
+                      <span className="ab-why__tag">{item.tag}</span>
+                    </div>
                     <h3 className="ab-why__card-title">{item.title}</h3>
                     <p className="ab-why__card-desc">{item.desc}</p>
-                  </div>
+                    <div className="ab-why__card-bar" />
+                  </TiltCard>
                 </Reveal>
               ))}
             </div>
