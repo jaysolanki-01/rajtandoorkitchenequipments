@@ -59,21 +59,33 @@ export const seo = {
 
 export const nav = [
   { label: 'Home', href: '/' },
-  { label: 'Shop', href: '/shop' },
-  { label: 'Tandoors', href: '/tandoors' },
-  { label: 'Kitchen Equipment', href: '/kitchen-equipment' },
   { label: 'About Us', href: '/about' },
   { label: 'Contact Us', href: '/contact' },
 ] as const;
 
 export const footerColumns = [
   {
-    heading: 'Shop',
+    heading: 'Cooking Equipment',
     links: [
-      { label: 'All Products', href: '/shop' },
-      { label: 'Tandoors', href: '/tandoors' },
-      { label: 'Kitchen Equipment', href: '/kitchen-equipment' },
-      { label: 'Featured Products', href: '/shop#featured' },
+      { label: 'Tandoor Equipment', href: '/shop?category=tandoor-equipment' },
+      { label: 'Burners & Gas Stoves', href: '/shop?category=burners-gas-stoves' },
+      { label: 'Commercial Cooking Ranges', href: '/shop?category=commercial-cooking-ranges' },
+      { label: 'Fryers & Griddles', href: '/shop?category=fryers-griddles' },
+      { label: 'Stainless Steel Fabrication', href: '/shop?category=stainless-steel-fabrication' },
+      { label: 'Food Preparation Machines', href: '/shop?category=food-preparation-machines' },
+      { label: 'Food Warming & Display', href: '/shop?category=food-warming-display' },
+    ],
+  },
+  {
+    heading: 'Kitchen Solutions',
+    links: [
+      { label: 'Refrigeration Equipment', href: '/shop?category=refrigeration-equipment' },
+      { label: 'Exhaust & Ventilation', href: '/shop?category=exhaust-ventilation' },
+      { label: 'Kitchen Accessories & Spare Parts', href: '/shop?category=kitchen-accessories-spare-parts' },
+      { label: 'Bakery & Pizza Equipment', href: '/shop?category=bakery-pizza-equipment' },
+      { label: 'Dishwashing & Cleaning', href: '/shop?category=dishwashing-cleaning' },
+      { label: 'Storage & Material Handling', href: '/shop?category=storage-material-handling' },
+      { label: 'Beverage Equipment', href: '/shop?category=beverage-equipment' },
     ],
   },
   {
@@ -82,17 +94,12 @@ export const footerColumns = [
       { label: 'Contact Us', href: '/contact' },
       { label: 'Frequently Asked Questions', href: '/#faq' },
       { label: 'Request a Quote', href: '/contact?type=quote' },
-      // Add these once the pages are approved by the business:
-      // { label: 'Shipping Information', href: '/shipping' },
-      // { label: 'Returns & Refunds', href: '/returns' },
     ],
   },
   {
     heading: 'Company',
     links: [
       { label: 'About Us', href: '/about' },
-      // { label: 'Privacy Policy', href: '/privacy' },
-      // { label: 'Terms of Use', href: '/terms' },
     ],
   },
 ] as const;

@@ -208,6 +208,15 @@ async function runMigrations() {
   try {
     await client.execute(`ALTER TABLE users ADD COLUMN is_active INTEGER DEFAULT 1`);
   } catch { /* column already exists */ }
+
+  // Migrate from old 3-category demo seed to full 14-category catalog
+  const newCat = await dbGet('SELECT id FROM categories WHERE slug = ?', ['tandoor-equipment']);
+  if (!newCat) {
+    await dbRun(`DELETE FROM categories WHERE slug IN ('tandoors','kitchen-equipment','accessories')`);
+    await dbRun(`DELETE FROM products WHERE is_demo = 1`);
+    await seedFullCatalog();
+    console.log('  Catalog migration complete: 14 categories and 126 products seeded.');
+  }
 }
 
 async function seedAdmin() {
@@ -226,43 +235,52 @@ async function seedAdmin() {
   console.log('  Admin user created: admin@rajtandoor.com / Admin@1234');
 }
 
+function toSlug(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim().replace(/\s+/g, '-');
+}
+
+const CATALOG: { slug: string; name: string; products: string[] }[] = [
+  { slug: 'tandoor-equipment', name: 'Tandoor Equipment', products: ['Clay Tandoor','Drum Tandoor','Stainless Steel Tandoor','Gas Tandoor','Electric Tandoor','Charcoal Tandoor','Commercial Tandoor','Portable Tandoor','Round Tandoor','Square Tandoor','Custom-Built Tandoor'] },
+  { slug: 'burners-gas-stoves', name: 'Burners & Gas Stoves', products: ['Single Burner Gas Stove','Double Burner Gas Stove','Three Burner Gas Stove','Four Burner Gas Stove','Heavy-Duty Gas Range','High-Pressure Burner','Chinese Wok Burner','Stock Pot Burner','Tabletop Gas Stove','LPG-Compatible Burner','Natural-Gas-Compatible Burner'] },
+  { slug: 'commercial-cooking-ranges', name: 'Commercial Cooking Ranges', products: ['Indian Cooking Range','Chinese Cooking Range','Multi-Burner Cooking Range','Stock Pot Range','Commercial Hot Plate','Commercial Griddle Range','Heavy-Duty Cooking Range','Gas Cooking Range','Electric Cooking Range'] },
+  { slug: 'fryers-griddles', name: 'Fryers & Griddles', products: ['Gas Deep Fryer','Electric Deep Fryer','Single-Tank Fryer','Double-Tank Fryer','Flat-Top Griddle','Commercial Hot Plate','Charbroiler','Commercial Grill','Sandwich Griller','Barbecue Grill'] },
+  { slug: 'stainless-steel-fabrication', name: 'Stainless Steel Fabrication', products: ['Stainless Steel Work Table','Food Preparation Table','Wall Shelf','Storage Rack','Storage Cabinet','Single-Bowl Sink','Double-Bowl Sink','Dish Landing Table','Drain Table','Exhaust Hood','Utility Trolley','Custom Stainless Steel Fabrication'] },
+  { slug: 'food-preparation-machines', name: 'Food Preparation Machines', products: ['Vegetable Cutting Machine','Potato Peeler','Dough Kneader','Planetary Mixer','Wet Grinder','Food Processor','Meat Mincer','Commercial Slicer','Juicer','Commercial Mixer Grinder'] },
+  { slug: 'food-warming-display', name: 'Food Warming & Display', products: ['Bain-Marie','Food Warmer','Hot Display Case','Buffet Counter','Soup Kettle','Chapati Warmer','Serving Counter','Heated Display Cabinet'] },
+  { slug: 'refrigeration-equipment', name: 'Refrigeration Equipment', products: ['Commercial Refrigerator','Deep Freezer','Undercounter Refrigerator','Display Chiller','Beverage Cooler','Cold Room','Refrigerated Prep Counter','Upright Freezer','Ice Maker'] },
+  { slug: 'exhaust-ventilation', name: 'Exhaust & Ventilation', products: ['Commercial Exhaust Hood','Kitchen Chimney','Exhaust Ducting','Fresh-Air System','Grease Filter','Ventilation Fan','Make-Up Air Unit','Ventilation Accessories'] },
+  { slug: 'kitchen-accessories-spare-parts', name: 'Kitchen Accessories & Spare Parts', products: ['Tandoor Seekh Skewer','Tandoor Cooking Tools','Commercial Cooking Pot','Commercial Frying Pan','Kitchen Utensil Set','Burner Replacement Part','Gas Connector Hose','Approved Gas Regulator','Tandoor Spare Parts','Replacement Filter','Other Compatible Spare Parts'] },
+  { slug: 'bakery-pizza-equipment', name: 'Bakery & Pizza Equipment', products: ['Commercial Pizza Oven','Deck Oven','Convection Oven','Dough Mixer','Dough Sheeter','Proofing Cabinet','Bakery Work Table','Baking Tray'] },
+  { slug: 'dishwashing-cleaning', name: 'Dishwashing & Cleaning', products: ['Commercial Dishwasher','Glass Washer','Pre-Rinse Spray Unit','Pot Washing Sink','Dish Rack','Hand Wash Sink','Cleaning Trolley'] },
+  { slug: 'storage-material-handling', name: 'Storage & Material Handling', products: ['Wall-Mounted Storage Shelf','Four-Tier Storage Rack','Ingredient Bin','Heavy-Duty Storage Rack','Platform Trolley','Service Trolley','LPG Cylinder Cage Storage'] },
+  { slug: 'beverage-equipment', name: 'Beverage Equipment', products: ['Commercial Tea Coffee Urn','Hot Water Dispenser','Commercial Coffee Machine','Juice Dispenser','Milkshake Mixer','Beverage Blender'] },
+];
+
+async function seedFullCatalog() {
+  for (let i = 0; i < CATALOG.length; i++) {
+    const cat = CATALOG[i];
+    await dbRun(
+      `INSERT OR IGNORE INTO categories (slug, name, description, is_demo, sort_order) VALUES (?,?,?,0,?)`,
+      [cat.slug, cat.name, `Commercial ${cat.name} for professional kitchens`, i + 1]
+    );
+    for (const pName of cat.products) {
+      const pSlug = toSlug(pName);
+      await dbRun(
+        `INSERT OR IGNORE INTO products (slug, name, tagline, description, category_slug, is_available, is_demo)
+         VALUES (?,?,?,?,?,1,0)`,
+        [pSlug, pName, `${pName} for commercial kitchens`,
+          'Contact us for pricing, specifications, and availability.', cat.slug]
+      );
+    }
+  }
+}
+
 async function seed() {
-  const countResult = await dbGet<{ c: number }>('SELECT COUNT(*) as c FROM categories');
-  if ((countResult?.c ?? 0) > 0) return;
+  const newCat = await dbGet('SELECT id FROM categories WHERE slug = ?', ['tandoor-equipment']);
+  if (newCat) return;
 
-  await dbRun('INSERT INTO categories (slug, name, description, image_url, is_demo, sort_order) VALUES (?, ?, ?, ?, ?, ?)',
-    ['tandoors', 'Tandoors', 'Commercial and restaurant-grade tandoor ovens', '/images/raj-tandoor-product.webp', 0, 1]);
-  await dbRun('INSERT INTO categories (slug, name, description, image_url, is_demo, sort_order) VALUES (?, ?, ?, ?, ?, ?)',
-    ['kitchen-equipment', 'Kitchen Equipment', 'Professional commercial kitchen equipment', null, 1, 2]);
-  await dbRun('INSERT INTO categories (slug, name, description, image_url, is_demo, sort_order) VALUES (?, ?, ?, ?, ?, ?)',
-    ['accessories', 'Accessories', 'Tandoor accessories and spare parts', null, 1, 3]);
+  await dbRun(`DELETE FROM categories WHERE slug IN ('tandoors','kitchen-equipment','accessories')`);
+  await dbRun(`DELETE FROM products WHERE is_demo = 1`);
 
-  await dbRun(
-    `INSERT INTO products (slug, name, tagline, description, long_description, category_slug, price_minor, is_available, is_demo, image_url, image_alt)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      'stainless-steel-tandoor',
-      'Stainless Steel Commercial Tandoor',
-      'Restaurant-grade tandoor with clay-lined chamber for authentic results',
-      'A fully stainless-steel commercial tandoor designed for the rigorous demands of professional kitchen environments. Clay-lined chamber delivers authentic results while the outer housing is built for durability and hygiene.',
-      'The Raj Tandoor Stainless Steel Commercial Tandoor combines traditional clay-lined cooking with commercial construction.',
-      'tandoors', 1850000, 1, 0,
-      '/images/raj-tandoor-product.webp',
-      'Raj Tandoor stainless-steel commercial tandoor',
-    ]
-  );
-
-  await dbRun(
-    `INSERT INTO products (slug, name, tagline, description, category_slug, price_minor, is_available, is_demo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    ['commercial-gas-tandoor', 'Commercial Gas Tandoor', 'High-output gas tandoor for commercial kitchens',
-      'Gas-fired commercial tandoor with precise temperature control. Contact us for specifications and pricing.',
-      'tandoors', null, 1, 1]
-  );
-
-  await dbRun(
-    `INSERT INTO products (slug, name, tagline, description, category_slug, price_minor, is_available, is_demo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    ['tandoor-accessories-set', 'Tandoor Accessories Set', 'Essential accessories for professional tandoor operation',
-      'Professional tandoor accessories including skewers and maintenance tools.',
-      'accessories', null, 1, 1]
-  );
+  await seedFullCatalog();
 }
