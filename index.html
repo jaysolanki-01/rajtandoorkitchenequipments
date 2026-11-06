@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary SEO (React overwrites these per-page via document head) -->
+    <title>Commercial Tandoors &amp; Kitchen Equipment | Raj Tandoor</title>
+    <meta name="description" content="Explore tandoors and professional kitchen equipment from Raj Tandoor. Discover products, review available specifications, and enquire about your kitchen requirements." />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Raj Tandoor" />
+    <meta property="og:title" content="Commercial Tandoors &amp; Kitchen Equipment | Raj Tandoor" />
+    <meta property="og:description" content="Explore tandoors and professional kitchen equipment from Raj Tandoor. Discover products, review available specifications, and enquire about your kitchen requirements." />
+    <meta property="og:image" content="/images/raj-tandoor-product.webp" />
+    <meta property="og:url" content="https://rajtandoor.com/" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Commercial Tandoors &amp; Kitchen Equipment | Raj Tandoor" />
+    <meta name="twitter:description" content="Explore tandoors and professional kitchen equipment from Raj Tandoor. Discover products, review available specifications, and enquire about your kitchen requirements." />
+    <meta name="twitter:image" content="/images/raj-tandoor-product.webp" />
+
+    <!-- Theme colour for mobile browser chrome -->
+    <meta name="theme-color" content="#141210" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Preload Mont fonts (self-hosted) -->
+    <link rel="preload" as="font" type="font/ttf" href="/fonts/Mont-Regular.ttf" crossorigin />
+    <link rel="preload" as="font" type="font/ttf" href="/fonts/Mont-Bold.ttf" crossorigin />
+    <link rel="preload" as="font" type="font/ttf" href="/fonts/Mont-Heavy.ttf" crossorigin />
+
+    <!-- Preload product image (used above-the-fold in hero) -->
+    <link rel="preload" as="image" href="/images/raj-tandoor-product.webp" fetchpriority="high" />
+
+    <!-- Critical inline CSS for no-JS static fallback -->
+    <style>
+      :root { font-family: 'Mont', 'Segoe UI', Arial, sans-serif; }
+      body { margin: 0; background: #fff; color: #202020; }
+      #root { min-height: 100vh; }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Static crawlable fallback shown before JS runs -->
+      <header style="background:#181715;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1rem;">
+        <span style="color:#B88A3B;font-weight:700;font-size:1.1rem;letter-spacing:.08em;">RAJ TANDOOR</span>
+      </header>
+      <main style="padding:4rem 1.5rem;max-width:900px;margin:0 auto;">
+        <h1 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:800;color:#181715;margin:0 0 1rem;">
+          Professional Tandoors Built for Commercial Kitchens
+        </h1>
+        <p style="font-size:1.1rem;color:#444;margin:0 0 2rem;max-width:640px;">
+          Explore stainless-steel tandoors and professional kitchen equipment designed for restaurants, hotels, catering businesses, and commercial kitchens.
+        </p>
+        <img
+          src="/images/raj-tandoor-product.webp"
+          alt="Raj Tandoor stainless-steel commercial tandoor with clay-lined opening, removable lid, side handles and front firebox"
+          style="max-width:440px;width:100%;"
+          width="441"
+          height="784"
+        />
+      </main>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
