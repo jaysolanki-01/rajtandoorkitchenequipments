@@ -167,4 +167,5 @@ low-end GPU performance, and screen readers.
 - The enquiry form needs `contact.email` (or a backend) before it can send anything.
 - Collection, kitchen equipment and about sections are short placeholders using only facts visible in the reference.
 #   r a j t a n d o o r k i t c h e n e q u i p m e n t s  
+ #   r a j t a n d o o r k i t c h e n e q u i p m e n t s  
  
