@@ -1,6 +1,104 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { seo, brand } from '../config/site';
+
+/* ── Rising ember / spark canvas ─────────────────────────────────────────── */
+function EmberCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    type Particle = { x: number; y: number; vx: number; vy: number; size: number; alpha: number; life: number; maxLife: number; hue: number };
+    const particles: Particle[] = [];
+
+    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+
+    const spawn = () => {
+      const maxLife = 80 + Math.random() * 100;
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height + 8,
+        vx: (Math.random() - 0.5) * 1.2,
+        vy: -(0.6 + Math.random() * 1.8),
+        size: 1 + Math.random() * 2.5,
+        alpha: 0,
+        life: 0,
+        maxLife,
+        hue: 35 + Math.random() * 25,
+      });
+    };
+
+    let frame = 0;
+    let raf: number;
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (frame % 2 === 0 && particles.length < 90) spawn();
+      frame++;
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx + Math.sin(p.life * 0.08) * 0.4;
+        p.y += p.vy;
+        p.vy *= 0.998;
+        p.life++;
+        const prog = p.life / p.maxLife;
+        p.alpha = prog < 0.15 ? prog / 0.15 : 1 - (prog - 0.15) / 0.85;
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha * 0.75;
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.5);
+        g.addColorStop(0, `hsl(${p.hue},100%,80%)`);
+        g.addColorStop(0.5, `hsl(${p.hue - 10},85%,55%)`);
+        g.addColorStop(1, `hsla(${p.hue},70%,40%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        if (p.life >= p.maxLife) particles.splice(i, 1);
+      }
+      raf = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); };
+  }, []);
+  return <canvas ref={canvasRef} className="ab-hero__canvas" aria-hidden="true" />;
+}
+
+/* ── Word-split animated headline ────────────────────────────────────────── */
+function HeroTitle() {
+  const line1 = ['Built', 'for', 'the'];
+  const line2 = ['Crafted', 'for', 'the'];
+  return (
+    <h1 className="ab-hero__title" aria-label="Built for the Heat, Crafted for the Kitchen.">
+      <span className="ab-hero__title-line">
+        {line1.map((w, i) => (
+          <span key={w} className="ab-hero__word" style={{ '--wi': i } as React.CSSProperties}>{w}</span>
+        ))}
+        <span className="ab-hero__word ab-hero__word--gold" style={{ '--wi': 3 } as React.CSSProperties}>
+          Heat
+          <svg className="ab-hero__flame" viewBox="0 0 24 24" aria-hidden="true" width="28" height="28">
+            <path d="M12 2C9 7 7 9 7 13a5 5 0 0 0 10 0c0-2.5-1-5-5-11zM9.5 15.5c-.5-1.5.5-3 2.5-4.5-1 2.5 0 4 1.5 4.5-2 1-3.5 1-4 0z" fill="currentColor"/>
+          </svg>
+        </span>
+        <span className="ab-hero__word" style={{ '--wi': 4 } as React.CSSProperties}>,</span>
+      </span>
+      <span className="ab-hero__title-line">
+        {line2.map((w, i) => (
+          <span key={w} className="ab-hero__word" style={{ '--wi': i + 5 } as React.CSSProperties}>{w}</span>
+        ))}
+        <span className="ab-hero__word ab-hero__word--gold" style={{ '--wi': 8 } as React.CSSProperties}>Kitchen</span>
+        <span className="ab-hero__word" style={{ '--wi': 9 } as React.CSSProperties}>.</span>
+      </span>
+    </h1>
+  );
+}
 
 /* ── Scroll-reveal hook ─────────────────────────────────────────────────── */
 function useInView(threshold = 0.15) {
@@ -50,6 +148,17 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
    PAGE
    ═══════════════════════════════════════════════════════════════════════════ */
 export function AboutPage() {
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const heroRef = useRef<HTMLElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMouse({
+      x: (e.clientX - rect.left) / rect.width - 0.5,
+      y: (e.clientY - rect.top) / rect.height - 0.5,
+    });
+  }, []);
+
   return (
     <>
       <title>{`About Us | ${seo.title}`}</title>
@@ -59,29 +168,52 @@ export function AboutPage() {
       <main id="main" tabIndex={-1} className="ab-page">
 
         {/* ── 1. HERO ─────────────────────────────────────────────────── */}
-        <section className="ab-hero" aria-label="About us hero">
+        <section ref={heroRef} className="ab-hero" aria-label="About us hero" onMouseMove={handleMouseMove}>
+          {/* Layers */}
+          <EmberCanvas />
           <div className="ab-hero__bg" aria-hidden="true">
-            <div className="ab-hero__bg-glow" />
-            <div className="ab-hero__bg-grid" />
+            <div
+              className="ab-hero__bg-glow"
+              style={{ transform: `translate(${mouse.x * -30}px, ${mouse.y * -20}px)` }}
+            />
+            <div
+              className="ab-hero__bg-grid"
+              style={{ transform: `translate(${mouse.x * -18}px, ${mouse.y * -12}px)` }}
+            />
           </div>
+
           <div className="ab-hero__inner container">
+            {/* Badge */}
             <div className="ab-hero__badge">
+              <span className="ab-hero__badge-ring" aria-hidden="true" />
               <span className="ab-hero__badge-dot" />
               Commercial Kitchen Specialists
             </div>
-            <h1 className="ab-hero__title">
-              Built for the{' '}
-              <span className="ab-hero__title-gold">Heat</span>,<br />
-              Crafted for the{' '}
-              <span className="ab-hero__title-gold">Kitchen</span>.
-            </h1>
+
+            {/* Animated title */}
+            <HeroTitle />
+
+            {/* Subtitle with reveal */}
             <p className="ab-hero__sub">
               {brand.fullName} supplies professional-grade tandoors and kitchen equipment
               trusted by restaurants, hotels, and catering businesses across India.
             </p>
+
+            {/* CTAs with glow */}
             <div className="ab-hero__actions">
-              <Link to="/shop" className="btn btn--gold btn--lg ab-hero__btn-primary">Explore Products</Link>
+              <Link to="/shop" className="btn btn--gold btn--lg ab-hero__btn-primary ab-hero__btn-glow">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Explore Products
+              </Link>
               <Link to="/contact" className="btn btn--outline ab-hero__btn-secondary">Get in Touch</Link>
+            </div>
+
+            {/* Scroll indicator */}
+            <div className="ab-hero__scroll" aria-hidden="true">
+              <span className="ab-hero__scroll-label">Scroll to explore</span>
+              <div className="ab-hero__scroll-track">
+                <div className="ab-hero__scroll-thumb" />
+              </div>
             </div>
           </div>
           {/* Stats bar */}
