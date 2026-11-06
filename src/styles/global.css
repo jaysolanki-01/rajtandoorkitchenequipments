@@ -3429,14 +3429,13 @@ body.is-checkout .sf { display: none !important; }
 /* Actions */
 .ab-hero__actions {
   display: flex; flex-wrap: wrap; gap: 0.85rem; justify-content: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
   animation: ab-fade-up 0.8s var(--ease) 1.3s both;
 }
 .ab-hero__btn-primary  {
   min-width: 170px;
   display: inline-flex; align-items: center; gap: 0.5rem;
-  border-radius: 10px !important;
-  padding: 0.85rem 1.75rem !important;
-  font-size: 0.95rem !important;
 }
 .ab-hero__btn-primary svg { transition: transform 0.2s; }
 .ab-hero__btn-primary:hover svg { transform: translateX(4px); }
@@ -3456,12 +3455,7 @@ body.is-checkout .sf { display: none !important; }
 }
 .ab-hero__btn-glow:hover::before { transform: translateX(100%); }
 
-.ab-hero__btn-secondary {
-  border-color: rgba(255,255,255,.3); color: #fff;
-  border-radius: 10px !important;
-  padding: 0.85rem 1.75rem !important;
-  font-size: 0.95rem !important;
-}
+.ab-hero__btn-secondary { border-color: rgba(255,255,255,.3); color: #fff; }
 .ab-hero__btn-secondary:hover { border-color: var(--rt-gold); color: var(--rt-gold); background: rgba(195,162,104,.06); }
 
 /* Scroll indicator */
