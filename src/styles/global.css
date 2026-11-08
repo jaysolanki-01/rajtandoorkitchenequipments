@@ -357,6 +357,18 @@ a { color: inherit; }
 }
 .ann-bar__close:hover { background: rgba(255,255,255,.12); color: #fff; }
 
+@media (max-width: 600px) {
+  /* Compact announcement bar on phones */
+  .ann-bar { padding: 0 2.5rem 0 1rem; justify-content: flex-start; }
+  /* flex item must have min-width: 0 for text-overflow: ellipsis to fire */
+  .ann-bar__content { overflow: hidden; min-width: 0; max-width: 100%; }
+  .ann-bar__text { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  /* Hide the pill CTA — save space, link already in nav */
+  .ann-bar__cta { display: none; }
+  /* Narrow shimmer */
+  .ann-bar__shimmer { width: 60%; }
+}
+
 /* ── Site Header ───────────────────────────────────────────────────────────── */
 .sh {
   position: fixed;
@@ -491,6 +503,17 @@ a { color: inherit; }
   .sh__nav { display: none; }
   .sh__burger { display: flex; }
   .sh__cat-bar { display: none; }
+  /* Sync inner height to the token (60px on tablet/mobile vs 72px desktop) */
+  .sh__inner { height: var(--header-h); gap: 1rem; }
+}
+
+@media (max-width: 480px) {
+  /* Tighten header actions so nothing overflows on 390 px phones */
+  .sh__inner { gap: 0.5rem; }
+  .sh__actions { gap: 0; }
+  .sh__icon-btn { width: 36px; height: 36px; }
+  /* Login button is already in the mobile menu — hide it in the header */
+  .sh__login-btn { display: none; }
 }
 
 /* ── Page layout ───────────────────────────────────────────────────────────── */
@@ -662,6 +685,13 @@ a { color: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   .trust-track--rtl, .trust-track--ltr { animation: none; }
+}
+
+@media (max-width: 640px) {
+  /* Narrow the edge fades — 140px each is too much on a 390 px phone */
+  .trust-section::before,
+  .trust-section::after { width: 60px; }
+  .trust-section { padding: 2rem 0; }
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -3220,6 +3250,23 @@ body.is-checkout .sf { display: none !important; }
   .sf__links { max-height: 0; overflow: hidden; transition: max-height 0.3s var(--ease); }
   .sf__links--open { max-height: 400px; }
   .sf__bottom-inner { flex-direction: column; gap: 0.5rem; text-align: center; }
+}
+
+/* ── Mobile section spacing ── */
+@media (max-width: 600px) {
+  .cat-section,
+  .featured-section,
+  .guide-section,
+  .faq-section,
+  .commercial-section,
+  .contact-section,
+  .section-pad { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+  /* Guide grid smaller gap */
+  .guide-grid { gap: 1rem; }
+  /* FAQ button font size */
+  .faq-item__btn { font-size: 0.925rem; padding: 1rem 1.25rem; }
+  /* Enquiry / collection section padding */
+  .section { padding-top: 3.5rem; padding-bottom: 3.5rem; }
 }
 
 /* ── Misc utilities ── */
