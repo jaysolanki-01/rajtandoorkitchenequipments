@@ -37,7 +37,7 @@ const features = [
 
 export function CommercialSection() {
   return (
-    <section className="commercial-section" aria-labelledby="commercial-heading">
+    <section className="commercial-section section-pad" aria-labelledby="commercial-heading">
       <div className="container">
         <div className="commercial-section__inner">
           <div className="commercial-section__copy">
@@ -45,6 +45,23 @@ export function CommercialSection() {
             <h2 id="commercial-heading" className="commercial-section__h2">
               Equipping a<br />Commercial Kitchen?
             </h2>
+
+            {/* Stats row */}
+            <div className="commercial-section__stats" aria-label="Key figures">
+              <div className="commercial-section__stat">
+                <span className="commercial-section__stat-num">500+</span>
+                <span className="commercial-section__stat-label">Businesses Equipped</span>
+              </div>
+              <div className="commercial-section__stat">
+                <span className="commercial-section__stat-num">1 Year</span>
+                <span className="commercial-section__stat-label">Warranty</span>
+              </div>
+              <div className="commercial-section__stat">
+                <span className="commercial-section__stat-num">Pan-India</span>
+                <span className="commercial-section__stat-label">Delivery</span>
+              </div>
+            </div>
+
             <p className="commercial-section__body">
               Whether you're outfitting a new restaurant, upgrading a hotel kitchen, or equipping a catering fleet — our team can help you select the right equipment and arrange bulk pricing.
             </p>
