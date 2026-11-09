@@ -24,7 +24,7 @@ export function SiteHeader() {
   const [loginOpen, setLoginOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileProdOpen, setMobileProdOpen] = useState(false);
-  const megaTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const megaTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const { itemCount } = useCart();
   const { count: wishlistCount } = useWishlist();
   const { open: openSearch } = useSearch();
@@ -134,7 +134,7 @@ export function SiteHeader() {
             </Link>
 
             {/* Cart */}
-            <button className="sh__icon-btn sh__icon-btn--badge" aria-label={`Shopping cart${itemCount ? `, ${itemCount} item${itemCount !== 1 ? 's' : ''}` : ''}`} onClick={() => setCartOpen(true)} type="button">
+            <button className="sh__icon-btn sh__icon-btn--badge sh__cart-btn" aria-label={`Shopping cart${itemCount ? `, ${itemCount} item${itemCount !== 1 ? 's' : ''}` : ''}`} onClick={() => setCartOpen(true)} type="button">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                 <line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />

@@ -30,10 +30,15 @@ export function ProductCollection() {
   return (
     <section id="tandoors" className="section collection" aria-labelledby="collection-title">
       <div className="container">
-        <p className="eyebrow">Our collection</p>
-        <h2 id="collection-title" className="section__title">
-          Professional Tandoors Built for Commercial Kitchens
-        </h2>
+        <div className="section-header-block">
+          <p className="eyebrow">Our collection</p>
+          <h2 id="collection-title" className="section__title">
+            Professional Tandoors<br />for Commercial Kitchens
+          </h2>
+          <p className="section__sub">
+            Crafted for restaurants, catering businesses, and hospitality operations that demand authentic performance.
+          </p>
+        </div>
         <div className="collection__grid">
           <article className="product-card">
             <div className="product-card__media">
@@ -47,8 +52,8 @@ export function ProductCollection() {
               />
             </div>
             <div className="product-card__body">
-              <h3>Stainless-Steel Tandoor</h3>
-              <p>A cylindrical stainless-steel tandoor with a refractory-clay cooking chamber, designed for professional kitchens.</p>
+              <h3>Stainless-Steel Commercial Tandoor</h3>
+              <p>A fully welded stainless-steel body with an authentic refractory-clay cooking chamber — built to perform in demanding professional kitchens day after day.</p>
               <ul className="tick-list">
                 {productFeatures.map((f) => (
                   <li key={f}>{f}</li>
@@ -56,7 +61,10 @@ export function ProductCollection() {
               </ul>
               <div className="cta-row">
                 <a className="btn btn--primary" href={links.requestQuote}>
-                  Request a Quote
+                  Get a Quote
+                </a>
+                <a className="btn btn--ghost" href={links.exploreTandoors}>
+                  View Details
                 </a>
               </div>
             </div>
@@ -64,10 +72,10 @@ export function ProductCollection() {
 
           <article id="kitchen-equipment" className="info-card">
             <p className="eyebrow">Kitchen equipment</p>
-            <h3>Equipment for professional kitchens</h3>
+            <h3>Everything your kitchen needs</h3>
             <p>
-              Alongside our tandoors, {brand.fullName} supplies professional kitchen equipment. Tell us about your kitchen,
-              restaurant, catering business or hospitality operation and we will help you find the right equipment.
+              Beyond tandoors, {brand.fullName} supplies a range of professional kitchen equipment.
+              Tell us about your operation and we'll help you find exactly the right fit.
             </p>
             <a className="btn btn--ghost" href={links.requestQuote}>
               Enquire about equipment
@@ -83,14 +91,28 @@ export function AboutSection() {
   return (
     <section id="about" className="section about" aria-labelledby="about-title">
       <div className="container about__inner">
-        <p className="eyebrow">About us</p>
-        <h2 id="about-title" className="section__title">
-          {brand.fullName}
-        </h2>
-        <p className="about__lead">
-          We specialise in commercial tandoors and professional kitchen equipment, bringing together traditional tandoor
-          cooking and modern stainless-steel construction.
-        </p>
+        <div>
+          <p className="eyebrow">About us</p>
+          <p className="about__statement">
+            Tandoor craft.
+            <em>Built for professionals.</em>
+          </p>
+        </div>
+        <div>
+          <h2 id="about-title" className="section__title--sm">{brand.fullName}</h2>
+          <p className="about__lead">
+            We specialise in commercial tandoors and professional kitchen equipment — combining traditional tandoor cooking
+            with modern stainless-steel construction built for the demands of real service.
+          </p>
+          <ul className="about__facts">
+            <li>Commercial tandoors for restaurants, caterers &amp; hospitality</li>
+            <li>Stainless-steel construction with refractory-clay cooking chambers</li>
+            <li>Professional kitchen equipment to complement every setup</li>
+          </ul>
+          <div className="cta-row">
+            <a className="btn btn--outline-dark" href={links.requestQuote}>Request a Quote</a>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -126,35 +148,35 @@ export function EnquirySection() {
         <div className="enquiry__intro">
           <p className="eyebrow">Request a quote</p>
           <h2 id="enquiry-title" className="section__title">
-            Tell us about your kitchen.
+            Let's find the right<br />equipment for you.
           </h2>
-          <p>Share a few details and our team will get back to you about the right tandoor or kitchen equipment.</p>
+          <p>Share a few details about your kitchen and we'll get back to you with the right tandoor or equipment recommendation.</p>
           {contact.phone && (
             <p>
-              Prefer to talk? <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
+              Prefer to call? <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
             </p>
           )}
         </div>
         <form className="enquiry__form" onSubmit={onSubmit} noValidate={false}>
           <label>
-            <span>Name</span>
-            <input name="name" autoComplete="name" required />
+            <span>Your name</span>
+            <input name="name" autoComplete="name" placeholder="e.g. Raj Kumar" required />
           </label>
           <label>
             <span>Business name</span>
-            <input name="business" autoComplete="organization" />
+            <input name="business" autoComplete="organization" placeholder="Restaurant or company" />
           </label>
-          <label>
+          <label className="enquiry__full">
             <span>Phone or email</span>
-            <input name="reply" required />
+            <input name="reply" placeholder="Best way to reach you" required />
           </label>
           <label className="enquiry__full">
             <span>What do you need?</span>
-            <textarea name="message" rows={4} required />
+            <textarea name="message" rows={4} placeholder="Tell us about your kitchen, the equipment you're looking for, or any questions you have." required />
           </label>
           <div className="enquiry__full enquiry__actions">
             <button type="submit" className="btn btn--primary btn--lg">
-              Request a Quote
+              Send Enquiry
             </button>
             <p className="enquiry__status" role="status" aria-live="polite">
               {status === 'sent' && 'Your email app should now open with your enquiry ready to send.'}
