@@ -14,12 +14,11 @@ export function PageTransitionOverlay() {
   const { isActive, targetPath, onComplete } = usePageTransition();
   const overlayRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
   const activeRef = useRef(false);
   const webgl = hasWebGL();
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Stable refs — prevents the effect from re-running when router gives a new navigate fn
+  // Stable refs — not in effect deps, so refs keep the latest without re-running the effect
   const navigateRef = useRef(navigate);
   navigateRef.current = navigate;
   const onCompleteRef = useRef(onComplete);
@@ -28,135 +27,72 @@ export function PageTransitionOverlay() {
   useEffect(() => {
     if (!isActive || !targetPath) return;
 
+    const overlay = overlayRef.current;
+    const text = textRef.current;
+    if (!overlay) return;
+
+    // Reset 3D positions and start render loop
     tAnim.posX = 5;
     tAnim.rotY = 0;
     tAnim.cameraZ = 4.5;
     activeRef.current = true;
 
-    tlRef.current?.kill();
-    const tl = gsap.timeline();
-    tlRef.current = tl;
+    // Animate the 3D model while overlay is showing
+    if (webgl && !reduced) {
+      gsap.to(tAnim, { posX: 0, duration: 0.35, ease: 'power3.out', delay: 0.15 });
+      gsap.to(tAnim, { rotY: Math.PI * 1.85, duration: 0.65, ease: 'power1.inOut', delay: 0.4 });
+      gsap.to(tAnim, { cameraZ: 3.9, duration: 0.45, ease: 'power1.inOut', delay: 0.45 });
+    }
 
-    const overlay = overlayRef.current;
-    const text = textRef.current;
+    // Show overlay using CSS class (bypasses React → no vDOM conflict)
+    overlay.classList.add('ptov--active');
+    if (text) text.classList.add('ptov__text--visible');
 
-    const resetOverlay = () => {
-      if (overlay) gsap.set(overlay, { opacity: 0, pointerEvents: 'none' });
-      activeRef.current = false;
-    };
-
-    const fallback = setTimeout(() => {
-      tl.kill();
-      resetOverlay();
+    // Navigate to new page under the overlay
+    const navTimer = window.setTimeout(() => {
       navigateRef.current(targetPath);
-      onCompleteRef.current();
-    }, 2500);
+    }, 900);
 
-    // Phase 1 (0–0.15s): dark background fades in
-    if (overlay) {
-      tl.set(overlay, { pointerEvents: 'all' }, 0);
-      tl.to(overlay, { opacity: 1, duration: 0.15, ease: 'power2.in' }, 0);
-    }
+    // Slide 3D model out, then hide overlay
+    const exitTimer = window.setTimeout(() => {
+      if (webgl && !reduced) {
+        gsap.to(tAnim, { posX: -5, duration: 0.25, ease: 'power3.in' });
+      }
+      if (text) text.classList.remove('ptov__text--visible');
+    }, 900);
 
-    // Phase 2 (0.15–0.45s): tandoor enters from right
-    if (webgl && !reduced) {
-      tl.to(tAnim, { posX: 0, duration: 0.3, ease: 'power3.out' }, 0.15);
-    }
-
-    // Phase 3 (0.45–1.0s): 360° showcase + text fade-in
-    if (webgl && !reduced) {
-      tl.to(tAnim, { rotY: Math.PI * 1.85, duration: 0.55, ease: 'power1.inOut' }, 0.45);
-      tl.to(tAnim, { cameraZ: 4.0, duration: 0.35, ease: 'power1.inOut' }, 0.5);
-    }
-    if (text) {
-      tl.to(text, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' }, 0.5);
-    }
-
-    // Navigate at T=1.0s
-    tl.call(() => navigateRef.current(targetPath), [], 1.0);
-
-    // Phase 4 (1.0–1.25s): exit
-    if (webgl && !reduced) {
-      tl.to(tAnim, { posX: -5, duration: 0.25, ease: 'power3.in' }, 1.0);
-    }
-    if (text) {
-      tl.to(text, { opacity: 0, duration: 0.15, ease: 'power2.in' }, 1.0);
-    }
-    if (overlay) {
-      tl.to(overlay, { opacity: 0, duration: 0.25, ease: 'power2.out' }, 1.02);
-      tl.set(overlay, { pointerEvents: 'none' }, 1.27);
-    }
-
-    tl.call(() => {
-      clearTimeout(fallback);
+    const doneTimer = window.setTimeout(() => {
+      overlay.classList.remove('ptov--active');
       activeRef.current = false;
       onCompleteRef.current();
-    }, [], 1.27);
+    }, 1300);
 
     return () => {
-      tl.kill();
-      clearTimeout(fallback);
-      // Always reset the overlay so it never blocks clicks after cleanup
-      resetOverlay();
+      window.clearTimeout(navTimer);
+      window.clearTimeout(exitTimer);
+      window.clearTimeout(doneTimer);
+      gsap.killTweensOf(tAnim);
+      overlay.classList.remove('ptov--active');
+      if (text) text.classList.remove('ptov__text--visible');
+      activeRef.current = false;
+      // Always reset inProgressRef even if transition is interrupted
+      onCompleteRef.current();
     };
-    // Only re-run when the transition state changes — not when navigate/onComplete refs update
   }, [isActive, targetPath, webgl, reduced]);
 
   return (
-    <div
-      ref={overlayRef}
-      aria-hidden="true"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        opacity: 0,
-        pointerEvents: 'none',
-        background: '#050302',
-        isolation: 'isolate',
-      }}
-    >
-      {/* Radial spotlight glow */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'radial-gradient(ellipse 55% 65% at 50% 52%, rgba(195,162,104,0.08) 0%, transparent 70%)',
-        pointerEvents: 'none',
-      }} />
+    <div ref={overlayRef} className="ptov" aria-hidden="true">
+        <div className="ptov__glow" />
 
-      {/* 3D Scene — lazy-loaded, only when WebGL is available and motion not reduced */}
-      {webgl && !reduced && (
-        <Suspense fallback={null}>
-          <TransitionScene activeRef={activeRef} />
-        </Suspense>
-      )}
+        {webgl && !reduced && (
+          <Suspense fallback={null}>
+            <TransitionScene activeRef={activeRef} />
+          </Suspense>
+        )}
 
-      {/* Tagline */}
-      <div
-        ref={textRef}
-        style={{
-          position: 'absolute',
-          bottom: 'clamp(2rem, 6vh, 4rem)',
-          left: 0,
-          right: 0,
-          textAlign: 'center',
-          opacity: 0,
-          transform: 'translateY(8px)',
-          pointerEvents: 'none',
-        }}
-      >
-        <p style={{
-          fontFamily: "'Mont', 'Segoe UI', Arial, sans-serif",
-          fontSize: 'clamp(0.6rem, 1.2vw, 0.78rem)',
-          fontWeight: 700,
-          letterSpacing: '0.32em',
-          textTransform: 'uppercase',
-          color: 'rgba(195,162,104,0.75)',
-          margin: 0,
-        }}>
-          Engineered for Excellence
-        </p>
+        <div ref={textRef} className="ptov__text">
+          <p className="ptov__tagline">Engineered for Excellence</p>
+        </div>
       </div>
-    </div>
   );
 }
