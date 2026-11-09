@@ -19,6 +19,12 @@ export function PageTransitionOverlay() {
   const webgl = hasWebGL();
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Stable refs — prevents the effect from re-running when router gives a new navigate fn
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
   useEffect(() => {
     if (!isActive || !targetPath) return;
 
@@ -34,12 +40,16 @@ export function PageTransitionOverlay() {
     const overlay = overlayRef.current;
     const text = textRef.current;
 
+    const resetOverlay = () => {
+      if (overlay) gsap.set(overlay, { opacity: 0, pointerEvents: 'none' });
+      activeRef.current = false;
+    };
+
     const fallback = setTimeout(() => {
       tl.kill();
-      activeRef.current = false;
-      if (overlay) gsap.set(overlay, { opacity: 0, pointerEvents: 'none' });
-      navigate(targetPath);
-      onComplete();
+      resetOverlay();
+      navigateRef.current(targetPath);
+      onCompleteRef.current();
     }, 2500);
 
     // Phase 1 (0–0.15s): dark background fades in
@@ -53,7 +63,7 @@ export function PageTransitionOverlay() {
       tl.to(tAnim, { posX: 0, duration: 0.3, ease: 'power3.out' }, 0.15);
     }
 
-    // Phase 3 (0.45–1.0s): 360° showcase + text fade-in + subtle camera pull
+    // Phase 3 (0.45–1.0s): 360° showcase + text fade-in
     if (webgl && !reduced) {
       tl.to(tAnim, { rotY: Math.PI * 1.85, duration: 0.55, ease: 'power1.inOut' }, 0.45);
       tl.to(tAnim, { cameraZ: 4.0, duration: 0.35, ease: 'power1.inOut' }, 0.5);
@@ -62,8 +72,8 @@ export function PageTransitionOverlay() {
       tl.to(text, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' }, 0.5);
     }
 
-    // Navigate at T=1.0s so the new page renders under the overlay
-    tl.call(() => navigate(targetPath), [], 1.0);
+    // Navigate at T=1.0s
+    tl.call(() => navigateRef.current(targetPath), [], 1.0);
 
     // Phase 4 (1.0–1.25s): exit
     if (webgl && !reduced) {
@@ -80,14 +90,17 @@ export function PageTransitionOverlay() {
     tl.call(() => {
       clearTimeout(fallback);
       activeRef.current = false;
-      onComplete();
+      onCompleteRef.current();
     }, [], 1.27);
 
     return () => {
       tl.kill();
       clearTimeout(fallback);
+      // Always reset the overlay so it never blocks clicks after cleanup
+      resetOverlay();
     };
-  }, [isActive, targetPath, navigate, onComplete, webgl, reduced]);
+    // Only re-run when the transition state changes — not when navigate/onComplete refs update
+  }, [isActive, targetPath, webgl, reduced]);
 
   return (
     <div
