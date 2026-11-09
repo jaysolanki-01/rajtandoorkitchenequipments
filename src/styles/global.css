@@ -374,15 +374,18 @@ a { color: inherit; }
   position: fixed;
   top: var(--ann-h);
   left: 0; right: 0; z-index: 100;
-  background: rgba(255,255,255,0.97);
-  border-bottom: 1.5px solid var(--rt-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  background: transparent;
+  border-bottom: 1.5px solid transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease;
 }
 .sh--scrolled {
-  border-bottom-color: transparent;
+  background: rgba(255,255,255,0.97);
+  border-bottom-color: var(--rt-border);
   box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 .sh__inner {
   height: 72px; display: flex; align-items: center; gap: 2rem;
@@ -390,6 +393,30 @@ a { color: inherit; }
   transition: height 0.3s ease;
 }
 .sh--scrolled .sh__inner { height: 58px; }
+
+/* Transparent state: flip all text/icon colours to white */
+.sh:not(.sh--scrolled) .sh__brand-name,
+.sh:not(.sh--scrolled) .sh__brand-sub { color: #fff; }
+.sh:not(.sh--scrolled) .sh__link {
+  color: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.35);
+}
+.sh:not(.sh--scrolled) .sh__link:hover {
+  color: #fff; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.6);
+}
+.sh:not(.sh--scrolled) .sh__link--active {
+  color: #fff; border-color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.15);
+}
+.sh:not(.sh--scrolled) .sh__link--mega { color: rgba(255,255,255,0.85); }
+.sh:not(.sh--scrolled) .sh__icon-btn { color: #fff; }
+.sh:not(.sh--scrolled) .sh__icon-btn:hover { background: rgba(255,255,255,0.12); }
+.sh:not(.sh--scrolled) .sh__cart-btn { background: rgba(255,255,255,0.15); color: #fff; }
+.sh:not(.sh--scrolled) .sh__cart-btn:hover { background: rgba(255,255,255,0.25); }
+.sh:not(.sh--scrolled) .sh__cart-btn .sh__badge { background: #fff; color: var(--rt-charcoal); }
+.sh:not(.sh--scrolled) .sh__burger { border-color: rgba(255,255,255,0.4); }
+.sh:not(.sh--scrolled) .sh__burger-bar { background: #fff; }
+.sh:not(.sh--scrolled) .sh__login-btn { border-color: rgba(255,255,255,0.4); color: #fff; }
+.sh:not(.sh--scrolled) .sh__login-btn:hover { border-color: #fff; }
 .sh__brand {
   display: flex; align-items: center; gap: 0.75rem;
   text-decoration: none; flex-shrink: 0;
