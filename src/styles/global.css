@@ -4834,20 +4834,25 @@ body.is-checkout .sf { display: none !important; }
 
 .raj-wrap {
   position: fixed;
-  right: 20px;
-  top: calc(100vh - 215px); /* overridden by GSAP on scroll */
+  left: calc(100vw - 114px); /* initial: bottom-right; overridden by GSAP */
+  top: calc(100vh - 215px);
+  right: auto;
   bottom: auto;
   z-index: 350;
   display: flex;
   flex-direction: column-reverse; /* bubble above char by default */
-  align-items: flex-end;
+  align-items: flex-end;          /* bubble right-aligns with char */
   gap: 6px;
   pointer-events: none;
-  will-change: top;
+  will-change: top, left;
 }
-/* When Raj is near the top, flip the bubble to appear below him */
-.raj-wrap.raj-bubble-below {
-  flex-direction: column; /* bubble below char */
+/* When Raj is on the left side of the screen, align bubble to left */
+.raj-wrap--left {
+  align-items: flex-start;
+}
+/* When Raj is near the top, put bubble below him */
+.raj-wrap--bub-below {
+  flex-direction: column;
 }
 .raj-wrap > * { pointer-events: auto; }
 
@@ -4881,14 +4886,22 @@ body.is-checkout .sf { display: none !important; }
   filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
 }
 /* When bubble is below Raj, flip tail to point upward */
-.raj-bubble--below .raj-bubble__tail {
+.raj-wrap--bub-below .raj-bubble__tail {
   border-top: none;
   border-bottom: 11px solid rgba(16,12,8,0.96);
   bottom: auto;
   top: -10px;
 }
-.raj-bubble--below .raj-bubble__inner {
+.raj-wrap--bub-below .raj-bubble__inner {
   border-radius: 18px 18px 18px 4px;
+}
+/* When on left side, tail points right */
+.raj-wrap--left .raj-bubble__inner {
+  border-radius: 18px 18px 18px 18px;
+}
+.raj-wrap--left .raj-bubble__tail {
+  right: auto;
+  left: 28px;
 }
 .raj-bubble__text {
   font-size: 0.84rem;

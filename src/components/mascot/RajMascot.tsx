@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
 
-// ── Section-aware tips (index matches scroll order) ────────────────────────────
+// ── Section tips ───────────────────────────────────────────────────────────────
 const PAGE_TIPS: Record<string, string[]> = {
   '/': [
     "🙏 Namaste! Welcome to India's #1 tandoor store!",
@@ -16,73 +16,84 @@ const PAGE_TIPS: Record<string, string[]> = {
     "❓ Have a question? Check our FAQ!",
     "📞 Ready to order? Let's connect!",
   ],
-  '/shop': [
-    "🛒 Browsing 50+ premium products!",
-    "🔍 Filter by category to find your match!",
-    "💰 Want bulk pricing? Request a Quote!",
-    "🚚 Free delivery on orders above ₹5,000!",
-  ],
-  '/tandoors': [
-    "🔥 Our signature hand-crafted tandoor ovens!",
-    "🏆 Perfect heat distribution — every time!",
-    "📏 Clay, steel & electric variants available!",
-    "🍞 Perfect for naan, kebabs, tikka & more!",
-  ],
-  '/kitchen-equipment': [
-    "🍳 Complete your commercial kitchen here!",
-    "✅ All products are commercial-grade quality!",
-    "🔧 Installation guidance available on request!",
-  ],
-  '/about': [
-    "📖 Crafting tandoors since the year 2000!",
-    "🏭 Traditional craftsmanship, modern precision!",
-    "🌟 500+ restaurants choose Raj Tandoor!",
-  ],
-  '/contact': [
-    "📞 Our experts are ready to help you!",
-    "⏰ We reply to all queries within 24 hours!",
-    "💬 WhatsApp us for the fastest response!",
-  ],
-  '/request-quote': [
-    "📋 Get a custom quote in just 2 hours!",
-    "🤝 Special rates for restaurants & bulk orders!",
-  ],
-  '/cart': [
-    "🛍️ Review your items before checkout!",
-    "💳 Multiple payment options available!",
-  ],
-  '/faq': [
-    "❓ Can't find your answer? Just contact us!",
-    "📋 Most common questions answered here!",
-  ],
+  '/shop': ["🛒 50+ premium products here!", "🔍 Filter by category!", "💰 Request bulk pricing!", "🚚 Free delivery above ₹5,000!"],
+  '/tandoors': ["🔥 Signature hand-crafted tandoors!", "🏆 Perfect heat distribution!", "📏 Clay, steel & electric variants!"],
+  '/kitchen-equipment': ["🍳 Complete commercial kitchen!", "✅ All commercial-grade products!", "🔧 Installation guidance available!"],
+  '/about': ["📖 Crafting tandoors since 2000!", "🏭 Traditional craftsmanship!", "🌟 500+ restaurants trust us!"],
+  '/contact': ["📞 Experts ready to help!", "⏰ Reply within 24 hours!", "💬 WhatsApp for fastest reply!"],
+  '/request-quote': ["📋 Custom quote in 2 hours!", "🤝 Special rates for bulk orders!"],
+  '/cart': ["🛍️ Review before checkout!", "💳 Multiple payment options!"],
+  '/faq': ["❓ Can't find it? Just contact us!", "📋 Most common questions here!"],
 };
 
 function getTips(pathname: string): string[] {
-  if (pathname.startsWith('/products/')) {
-    return ["🏷️ Check the full product specs below!", "🌟 Read customer reviews!", "📦 Add to cart or request a quote!"];
-  }
-  if (pathname.startsWith('/account')) return ["👤 Manage your orders & addresses here!", "📦 Track your deliveries in real-time!"];
+  if (pathname.startsWith('/products/')) return ["🏷️ Check the full product specs!", "🌟 Read customer reviews!", "📦 Add to cart or request a quote!"];
+  if (pathname.startsWith('/account')) return ["👤 Manage orders & addresses here!", "📦 Track deliveries in real-time!"];
   return PAGE_TIPS[pathname] ?? PAGE_TIPS['/'];
 }
 
-// Clamp helper
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
+// ── Viewport perimeter waypoints (scroll 0→1 visits all corners + sides) ─────
+interface WayPt { x: number; y: number; flipX: boolean; ptRot: number; ptArm: 'L' | 'R' }
+
+function buildWaypoints(vw: number, vh: number): WayPt[] {
+  const W = 96, H = 185; // character dimensions
+  const mx = 18;          // margin from edge
+  const top = 65, bot = vh - H - 10;
+  const midX = vw / 2 - W / 2;
+  const midY = vh / 2 - H / 2;
+  const right = vw - W - mx;
+  const left  = mx;
+
+  return [
+    // Right side (facing left, arm points left at content)
+    { x: right,  y: bot,          flipX: false, ptRot: -78,  ptArm: 'L' }, // 0 bottom-right
+    { x: right,  y: midY,         flipX: false, ptRot: -78,  ptArm: 'L' }, // 1 right-center
+    { x: right,  y: top,          flipX: false, ptRot: -78,  ptArm: 'L' }, // 2 top-right
+    // Top (centered, arm points down at content)
+    { x: midX,   y: top,          flipX: false, ptRot:  85,  ptArm: 'L' }, // 3 top-center
+    // Left side (flipped, arm now points right at content)
+    { x: left,   y: top,          flipX: true,  ptRot: -78,  ptArm: 'L' }, // 4 top-left
+    { x: left,   y: midY,         flipX: true,  ptRot: -78,  ptArm: 'L' }, // 5 left-center
+    { x: left,   y: bot,          flipX: true,  ptRot: -78,  ptArm: 'L' }, // 6 bottom-left
+    // Bottom (centered, arm points up at content above)
+    { x: midX,   y: bot,          flipX: false, ptRot: -145, ptArm: 'L' }, // 7 bottom-center
+    // Middle (surprise pop-in!)
+    { x: midX,   y: midY,         flipX: false, ptRot: -78,  ptArm: 'L' }, // 8 center
+  ];
+}
+
+function getWaypoint(pct: number, vw: number, vh: number): WayPt {
+  const pts = buildWaypoints(vw, vh);
+  const raw = pct * (pts.length - 1);
+  const lo  = Math.floor(raw);
+  const hi  = Math.min(pts.length - 1, lo + 1);
+  const t   = raw - lo;
+  const a   = pts[lo], b = pts[hi];
+  return {
+    x:      a.x + (b.x - a.x) * t,
+    y:      a.y + (b.y - a.y) * t,
+    flipX:  t > 0.5 ? b.flipX : a.flipX,
+    ptRot:  t > 0.5 ? b.ptRot : a.ptRot,
+    ptArm:  t > 0.5 ? b.ptArm : a.ptArm,
+  };
+}
 
 export function RajMascot() {
   const { pathname } = useLocation();
 
   // DOM refs
-  const wrapRef    = useRef<HTMLDivElement>(null);
-  const charRef    = useRef<HTMLDivElement>(null);
-  const armLRef    = useRef<SVGGElement>(null);   // pointing arm (left)
-  const armRRef    = useRef<SVGGElement>(null);   // waving arm (right)
-  const legLRef    = useRef<SVGGElement>(null);
-  const legRRef    = useRef<SVGGElement>(null);
-  const eyeLRef    = useRef<SVGGElement>(null);
-  const eyeRRef    = useRef<SVGGElement>(null);
-  const browLRef   = useRef<SVGPathElement>(null);
-  const browRRef   = useRef<SVGPathElement>(null);
-  const shadowRef  = useRef<SVGEllipseElement>(null);
+  const wrapRef   = useRef<HTMLDivElement>(null);
+  const charRef   = useRef<HTMLDivElement>(null);
+  const armLRef   = useRef<SVGGElement>(null);
+  const armRRef   = useRef<SVGGElement>(null);
+  const legLRef   = useRef<SVGGElement>(null);
+  const legRRef   = useRef<SVGGElement>(null);
+  const eyeLRef   = useRef<SVGGElement>(null);
+  const eyeRRef   = useRef<SVGGElement>(null);
+  const browLRef  = useRef<SVGPathElement>(null);
+  const browRRef  = useRef<SVGPathElement>(null);
 
   // Animation refs
   const floatTlRef   = useRef<gsap.core.Timeline | null>(null);
@@ -91,23 +102,24 @@ export function RajMascot() {
   const walkTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const posAnimRef   = useRef<gsap.core.Tween | null>(null);
   const isWalkingRef = useRef(false);
-  const prevTopRef   = useRef<number | null>(null);
+  const prevPtRef    = useRef<{ x: number; y: number } | null>(null);
+  const curFlipRef   = useRef(false);
 
   // State
-  const [tipIdx,     setTipIdx]      = useState(0);
-  const [mini,       setMini]        = useState(false);
-  const [hidden,     setHidden]      = useState(false);
-  const [bubbleBelow, setBubbleBelow] = useState(false);
+  const [tipIdx, setTipIdx]       = useState(0);
+  const [mini,   setMini]         = useState(false);
+  const [hidden, setHidden]       = useState(false);
+  const [onLeft, setOnLeft]       = useState(false);
+  const [bubBelow, setBubBelow]   = useState(false);
 
   const tips = getTips(pathname);
   const tip  = tips[tipIdx % tips.length];
 
-  // ── Float ────────────────────────────────────────────────────────────────
+  // ── Float ─────────────────────────────────────────────────────────────────
   useEffect(() => {
-    const el = charRef.current;
-    if (!el) return;
+    const el = charRef.current; if (!el) return;
     const tl = gsap.timeline({ repeat: -1, yoyo: true });
-    tl.to(el, { y: -9, duration: 1.7, ease: 'sine.inOut' });
+    tl.to(el, { y: -10, duration: 1.8, ease: 'sine.inOut' });
     floatTlRef.current = tl;
     return () => { tl.kill(); };
   }, []);
@@ -120,15 +132,14 @@ export function RajMascot() {
         .to(els, { scaleY: 0.08, duration: 0.07, transformOrigin: '50% 50%' })
         .to(els, { scaleY: 1,    duration: 0.1,  transformOrigin: '50% 50%' });
     };
-    const id = setInterval(blink, 3000 + Math.random() * 1800);
+    const id = setInterval(blink, 2800 + Math.random() * 1500);
     return () => clearInterval(id);
   }, []);
 
-  // ── Idle wave (right arm, periodic) ──────────────────────────────────────
+  // ── Idle wave ─────────────────────────────────────────────────────────────
   const doWave = useCallback(() => {
     if (isWalkingRef.current) return;
-    const arm = armRRef.current;
-    if (!arm) return;
+    const arm = armRRef.current; if (!arm) return;
     gsap.timeline()
       .to(arm, { rotation: -38, svgOrigin: '84 93', duration: 0.2, ease: 'power1.out' })
       .to(arm, { rotation:  18, svgOrigin: '84 93', duration: 0.2, ease: 'power1.inOut' })
@@ -146,87 +157,90 @@ export function RajMascot() {
   const startWalking = useCallback(() => {
     if (isWalkingRef.current) return;
     isWalkingRef.current = true;
-
     floatTlRef.current?.pause();
     gsap.set(charRef.current!, { y: 0 });
-
-    // Reset arms to neutral swing
-    gsap.to(armLRef.current!, { rotation: 0, svgOrigin: '16 93', duration: 0.15 });
-    gsap.to(armRRef.current!, { rotation: 0, svgOrigin: '84 93', duration: 0.15 });
+    gsap.to([armLRef.current!, armRRef.current!], { rotation: 0, duration: 0.15 });
 
     walkTlRef.current = gsap.timeline({ repeat: -1 })
-      // Step A — left leg forward
       .to(legLRef.current!, { rotation: -24, svgOrigin: '40 142', duration: 0.2, ease: 'sine.inOut' })
       .to(legRRef.current!, { rotation:  24, svgOrigin: '60 142', duration: 0.2, ease: 'sine.inOut' }, '<')
-      .to(armLRef.current!, { rotation:  20, svgOrigin: '16 93',  duration: 0.2, ease: 'sine.inOut' }, '<')
-      .to(armRRef.current!, { rotation: -20, svgOrigin: '84 93',  duration: 0.2, ease: 'sine.inOut' }, '<')
-      .to(charRef.current!, { y: -5, duration: 0.1, ease: 'sine.out' }, '<')
-      .to(charRef.current!, { y: 0,  duration: 0.1, ease: 'sine.in'  })
-      // Step B — right leg forward
+      .to(armLRef.current!, { rotation:  22, svgOrigin: '16 93',  duration: 0.2, ease: 'sine.inOut' }, '<')
+      .to(armRRef.current!, { rotation: -22, svgOrigin: '84 93',  duration: 0.2, ease: 'sine.inOut' }, '<')
+      .to(charRef.current!, { y: -6, duration: 0.1, ease: 'sine.out' }, '<')
+      .to(charRef.current!, { y:  0, duration: 0.1, ease: 'sine.in'  })
       .to(legLRef.current!, { rotation:  24, svgOrigin: '40 142', duration: 0.2, ease: 'sine.inOut' })
       .to(legRRef.current!, { rotation: -24, svgOrigin: '60 142', duration: 0.2, ease: 'sine.inOut' }, '<')
-      .to(armLRef.current!, { rotation: -20, svgOrigin: '16 93',  duration: 0.2, ease: 'sine.inOut' }, '<')
-      .to(armRRef.current!, { rotation:  20, svgOrigin: '84 93',  duration: 0.2, ease: 'sine.inOut' }, '<')
-      .to(charRef.current!, { y: -5, duration: 0.1, ease: 'sine.out' }, '<')
-      .to(charRef.current!, { y: 0,  duration: 0.1, ease: 'sine.in'  });
+      .to(armLRef.current!, { rotation: -22, svgOrigin: '16 93',  duration: 0.2, ease: 'sine.inOut' }, '<')
+      .to(armRRef.current!, { rotation:  22, svgOrigin: '84 93',  duration: 0.2, ease: 'sine.inOut' }, '<')
+      .to(charRef.current!, { y: -6, duration: 0.1, ease: 'sine.out' }, '<')
+      .to(charRef.current!, { y:  0, duration: 0.1, ease: 'sine.in'  });
   }, []);
 
-  const stopWalking = useCallback(() => {
+  const stopWalking = useCallback((ptRot: number) => {
     if (!isWalkingRef.current) return;
     isWalkingRef.current = false;
     walkTlRef.current?.kill();
 
-    // Land pose
+    // Land: straighten legs/arms
     gsap.to([legLRef.current!, legRRef.current!], { rotation: 0, svgOrigin: '50 142', duration: 0.3, ease: 'power2.out' });
     gsap.to(charRef.current!, { y: 0, duration: 0.2 });
     gsap.to([armLRef.current!, armRRef.current!], { rotation: 0, duration: 0.2 });
 
-    // Resume float
     setTimeout(() => { if (!isWalkingRef.current) floatTlRef.current?.play(); }, 500);
 
-    // Arrive: excited jump + point
+    // Arrive: jump + eyebrow raise + point
     setTimeout(() => {
       if (isWalkingRef.current) return;
-      // Jump
       gsap.timeline()
-        .to(charRef.current!, { y: -16, scale: 1.07, duration: 0.18, ease: 'power2.out' })
-        .to(charRef.current!, { y: 0,  scale: 1,    duration: 0.35, ease: 'bounce.out'   });
-      // Raise eyebrows
-      gsap.to([browLRef.current!, browRRef.current!], { y: -3.5, duration: 0.18 });
-      gsap.to([browLRef.current!, browRRef.current!], { y: 0, duration: 0.4, delay: 0.6 });
-      // Point left arm at content
-      gsap.to(armLRef.current!, { rotation: -78, svgOrigin: '16 93', duration: 0.45, ease: 'back.out(1.5)' });
-      gsap.to(armRRef.current!, { rotation:  12, svgOrigin: '84 93', duration: 0.3,  ease: 'power2.out'   });
-    }, 320);
+        .to(charRef.current!, { y: -18, scale: 1.09, duration: 0.18, ease: 'power2.out' })
+        .to(charRef.current!, { y: 0,  scale: 1,    duration: 0.38, ease: 'bounce.out'  });
+      gsap.to([browLRef.current!, browRRef.current!], { y: -4, duration: 0.18 });
+      gsap.to([browLRef.current!, browRRef.current!], { y: 0,  duration: 0.4,  delay: 0.7 });
+      gsap.to(armLRef.current!, { rotation: ptRot, svgOrigin: '16 93', duration: 0.5, ease: 'back.out(1.5)' });
+      gsap.to(armRRef.current!, { rotation: 14,    svgOrigin: '84 93', duration: 0.3, ease: 'power2.out'   });
+    }, 300);
   }, []);
 
-  // ── Scroll → position + walk ──────────────────────────────────────────────
+  // ── Scroll → perimeter position ───────────────────────────────────────────
+  const stopWalkingRef = useRef(stopWalking);
+  stopWalkingRef.current = stopWalking;
+
   useEffect(() => {
+    let lastPtRot = -78;
+
     const handleScroll = () => {
-      const wrap = wrapRef.current;
-      if (!wrap) return;
+      const wrap = wrapRef.current; if (!wrap) return;
+      const scrollY = window.scrollY;
+      const scrollH = document.documentElement.scrollHeight;
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
+      const pct = clamp(scrollY / Math.max(1, scrollH - vh), 0, 1);
 
-      const scrollY  = window.scrollY;
-      const scrollH  = document.documentElement.scrollHeight;
-      const vh       = window.innerHeight;
-      const pct      = clamp(scrollY / Math.max(1, scrollH - vh), 0, 1);
+      const wp = getWaypoint(pct, vw, vh);
+      lastPtRot = wp.ptRot;
 
-      const minTop = 70;
-      const maxTop = vh - 215;
-      const targetTop = Math.round(minTop + pct * (maxTop - minTop));
+      const prev = prevPtRef.current;
+      const moved = !prev || Math.abs(wp.x - prev.x) > 4 || Math.abs(wp.y - prev.y) > 4;
 
-      setBubbleBelow(targetTop < vh * 0.38);
+      if (moved) {
+        prevPtRef.current = { x: wp.x, y: wp.y };
 
-      // Only walk if the position changed meaningfully
-      if (prevTopRef.current === null || Math.abs(targetTop - prevTopRef.current) > 6) {
-        prevTopRef.current = targetTop;
+        // Flip character for left-side positions
+        if (wp.flipX !== curFlipRef.current) {
+          curFlipRef.current = wp.flipX;
+          gsap.to(charRef.current!, { scaleX: wp.flipX ? -1 : 1, duration: 0.28, ease: 'power2.inOut' });
+        }
+
+        setOnLeft(wp.flipX);
+        setBubBelow(wp.y < vh * 0.35);
+
         startWalking();
         posAnimRef.current?.kill();
-        posAnimRef.current = gsap.to(wrap, { top: targetTop, duration: 0.38, ease: 'power2.out' });
+        posAnimRef.current = gsap.to(wrap, { left: wp.x, top: wp.y, duration: 0.5, ease: 'power2.inOut' });
       }
 
       clearTimeout(walkTimerRef.current);
-      walkTimerRef.current = setTimeout(stopWalking, 650);
+      walkTimerRef.current = setTimeout(() => stopWalkingRef.current(lastPtRot), 650);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -234,17 +248,13 @@ export function RajMascot() {
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(walkTimerRef.current);
     };
-  }, [pathname, startWalking, stopWalking]);
+  }, [pathname, startWalking]);
 
-  // ── IntersectionObserver: section-aware tips ──────────────────────────────
+  // ── IntersectionObserver for section tips ─────────────────────────────────
   useEffect(() => {
-    const selectors = [
-      '#raj-s0', '#raj-s1', '#raj-s2', '#raj-s3', '#raj-s4',
-      '#raj-s5', '#raj-s6', '#raj-s7', '#raj-s8', '#raj-s9',
-    ];
+    const selectors = Array.from({ length: 10 }, (_, i) => `#raj-s${i}`);
     const els = selectors.map(s => document.querySelector(s)).filter(Boolean) as Element[];
     if (!els.length) return;
-
     const io = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
@@ -254,46 +264,47 @@ export function RajMascot() {
         }
       }
     }, { threshold: 0.4, rootMargin: '-10% 0px -50% 0px' });
-
     els.forEach(el => io.observe(el));
     return () => io.disconnect();
   }, [pathname, tips.length]);
 
   // ── Page change ───────────────────────────────────────────────────────────
   useEffect(() => {
-    setTipIdx(0);
-    setMini(false);
+    setTipIdx(0); setMini(false); setOnLeft(false); setBubBelow(false);
     isWalkingRef.current = false;
     walkTlRef.current?.kill();
-    prevTopRef.current = null;
+    prevPtRef.current = null;
+    curFlipRef.current = false;
 
     const wrap = wrapRef.current;
-    const vh = window.innerHeight;
     if (wrap) {
-      gsap.set(wrap, { top: vh - 215 });
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
+      const startX = vw - 96 - 18;
+      const startY = vh - 185 - 10;
+      gsap.set(wrap, { left: startX, top: startY });
+      gsap.set(charRef.current!, { scaleX: 1 });
       gsap.fromTo(wrap,
-        { x: 115, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.55, ease: 'back.out(1.4)' }
+        { x: 120, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: 'back.out(1.4)' }
       );
     }
-    // Initial point
     gsap.set(armLRef.current!, { rotation: 0 });
     setTimeout(() => {
       if (!isWalkingRef.current) {
-        gsap.to(armLRef.current!, { rotation: -78, svgOrigin: '16 93', duration: 0.5, ease: 'back.out(1.4)' });
+        gsap.to(armLRef.current!, { rotation: -78, svgOrigin: '16 93', duration: 0.55, ease: 'back.out(1.4)' });
       }
-    }, 700);
+    }, 750);
   }, [pathname]);
 
   // ── Next-tip bounce ───────────────────────────────────────────────────────
   const nextTip = () => {
     gsap.timeline()
-      .to(charRef.current!, { scale: 1.13, duration: 0.1, ease: 'power2.out' })
-      .to(charRef.current!, { scale: 1,    duration: 0.4, ease: 'elastic.out(1.2, 0.5)' });
+      .to(charRef.current!, { scale: 1.14, duration: 0.1, ease: 'power2.out' })
+      .to(charRef.current!, { scale: 1,    duration: 0.42, ease: 'elastic.out(1.2, 0.5)' });
     setTipIdx(i => (i + 1) % tips.length);
   };
 
-  // ── Hidden state ──────────────────────────────────────────────────────────
   if (hidden) {
     return (
       <button className="raj-revive" onClick={() => setHidden(false)} aria-label="Open Raj guide">
@@ -306,12 +317,16 @@ export function RajMascot() {
   }
 
   return (
-    <div ref={wrapRef} className={`raj-wrap${bubbleBelow ? ' raj-bubble-below' : ''}`} role="complementary" aria-label="Raj guide"
-      style={{ top: 'calc(100vh - 215px)', right: 20, bottom: 'auto' }}>
-
-      {/* ── Speech bubble ── */}
+    <div
+      ref={wrapRef}
+      className={`raj-wrap${onLeft ? ' raj-wrap--left' : ''}${bubBelow ? ' raj-wrap--bub-below' : ''}`}
+      role="complementary"
+      aria-label="Raj guide"
+      style={{ left: 'calc(100vw - 114px)', top: 'calc(100vh - 215px)' }}
+    >
+      {/* Speech bubble */}
       {!mini && (
-        <div className={`raj-bubble${bubbleBelow ? ' raj-bubble--below' : ''}`} aria-live="polite">
+        <div className="raj-bubble" aria-live="polite">
           <div className="raj-bubble__inner">
             <p className="raj-bubble__text">{tip}</p>
             <div className="raj-bubble__footer">
@@ -324,7 +339,7 @@ export function RajMascot() {
         </div>
       )}
 
-      {/* ── Character ── */}
+      {/* Character */}
       <div
         ref={charRef}
         className={`raj-char${mini ? ' raj-char--mini' : ''}`}
@@ -334,13 +349,7 @@ export function RajMascot() {
         tabIndex={mini ? 0 : -1}
         onKeyDown={mini ? (e) => { if (e.key === 'Enter' || e.key === ' ') setMini(false); } : undefined}
       >
-        <svg
-          viewBox="0 0 100 192"
-          width={mini ? 60 : 92}
-          height={mini ? 92 : 182}
-          overflow="visible"
-          aria-hidden="true"
-        >
+        <svg viewBox="0 0 100 192" width={mini ? 60 : 96} height={mini ? 90 : 185} overflow="visible" aria-hidden="true">
           <defs>
             <radialGradient id="raj-skin" cx="38%" cy="30%" r="66%">
               <stop offset="0%"   stopColor="#FECDA6" />
@@ -370,43 +379,36 @@ export function RajMascot() {
             </filter>
           </defs>
 
-          {/* Ground shadow */}
-          <ellipse ref={shadowRef} cx="50" cy="190" rx="40" ry="7" fill="#000" opacity="0.12" />
+          {/* Shadow */}
+          <ellipse cx="50" cy="190" rx="40" ry="7" fill="#000" opacity="0.12" />
 
-          {/* == LEGS (drawn first = behind body) == */}
-          {/* Left leg — hip pivot at (40, 142) */}
+          {/* Legs */}
           <g ref={legLRef}>
             <ellipse cx="40" cy="158" rx="10" ry="20" fill="url(#raj-clay)" />
-            {/* Foot */}
-            <ellipse cx="36" cy="177" rx="13" ry="6" fill="url(#raj-clay)" />
+            <ellipse cx="36" cy="177" rx="13" ry="6"  fill="url(#raj-clay)" />
           </g>
-          {/* Right leg — hip pivot at (60, 142) */}
           <g ref={legRRef}>
             <ellipse cx="60" cy="158" rx="10" ry="20" fill="url(#raj-clay)" />
-            <ellipse cx="64" cy="177" rx="13" ry="6" fill="url(#raj-clay)" />
+            <ellipse cx="64" cy="177" rx="13" ry="6"  fill="url(#raj-clay)" />
           </g>
 
-          {/* == LEFT ARM (pointing, shoulder at ~16,93) == */}
+          {/* Left arm (pointing) */}
           <g ref={armLRef}>
             <ellipse cx="16" cy="108" rx="10" ry="20" fill="url(#raj-clay)" />
-            {/* Hand */}
-            <circle cx="11" cy="126" r="8.5" fill="url(#raj-skin)" />
-            {/* Index finger (pointing) */}
-            <ellipse cx="2" cy="121" rx="4" ry="7.5" fill="url(#raj-skin)" transform="rotate(-20 11 126)" />
+            <circle  cx="11" cy="126" r="8.5" fill="url(#raj-skin)" />
+            <ellipse cx="2"  cy="121" rx="4"  ry="7.5" fill="url(#raj-skin)" transform="rotate(-20 11 126)" />
           </g>
 
-          {/* == BODY (tandoor pot) == */}
+          {/* Body */}
           <ellipse cx="50" cy="112" rx="37" ry="34" fill="url(#raj-clay)" filter="url(#raj-drop)" />
           <ellipse cx="38" cy="96"  rx="9"  ry="13" fill="rgba(255,255,255,0.13)" />
-
-          {/* Badge */}
           <ellipse cx="50" cy="114" rx="20" ry="13" fill="url(#raj-gold)" opacity="0.93" />
           <text x="50" y="118" textAnchor="middle" fontFamily="'Mont','Georgia',serif" fontSize="10" fontWeight="700" fill="#4A2200" letterSpacing="1">RAJ</text>
 
-          {/* == NECK == */}
+          {/* Neck */}
           <ellipse cx="50" cy="82" rx="20" ry="8" fill="#C4621A" />
 
-          {/* == FLAMES == */}
+          {/* Flames */}
           <g className="raj-flames">
             <path d="M43 84 Q41 74 46 66 Q48 76 51 72 Q51 81 46 86 Z" fill="#FF6B1A" />
             <path d="M50 84 Q48 72 52 65 Q54 74 56 71 Q56 81 52 86 Z" fill="#FFB347" />
@@ -414,9 +416,9 @@ export function RajMascot() {
             <path d="M47 85 Q46 77 50 71 Q51 78 53 75 Q53 83 49 87 Z" fill="#FFE135" />
           </g>
 
-          {/* == HEAD == */}
+          {/* Head */}
           <ellipse cx="50" cy="56" rx="32" ry="34" fill="url(#raj-skin)" filter="url(#raj-drop)" />
-          <ellipse cx="38" cy="43" rx="9" ry="12" fill="rgba(255,255,255,0.18)" />
+          <ellipse cx="38" cy="43" rx="9"  ry="12" fill="rgba(255,255,255,0.18)" />
 
           {/* Cheeks */}
           <circle cx="29" cy="64" r="7" fill="#FF9B72" opacity="0.32" />
@@ -455,13 +457,13 @@ export function RajMascot() {
           <path d="M38 77 Q50 88 62 77" stroke="#8B2500" strokeWidth="2.5" fill="none" strokeLinecap="round" />
           <path d="M42 77 Q50 85 58 77 Q50 83 42 77" fill="rgba(255,255,255,0.72)" />
 
-          {/* == RIGHT ARM (wave, shoulder at ~84,93) == */}
+          {/* Right arm (wave) */}
           <g ref={armRRef}>
             <ellipse cx="84" cy="108" rx="10" ry="20" fill="url(#raj-clay)" />
             <circle  cx="89" cy="126" r="8.5" fill="url(#raj-skin)" />
           </g>
 
-          {/* == CHEF HAT (top layer) == */}
+          {/* Chef hat */}
           <ellipse cx="50" cy="25" rx="36" ry="7.5" fill="url(#raj-hat)" />
           <rect x="22" y="1" width="56" height="26" rx="6" fill="url(#raj-hat)" />
           <ellipse cx="50" cy="2" rx="28" ry="5" fill="#FAFAFA" />
@@ -471,7 +473,7 @@ export function RajMascot() {
         </svg>
       </div>
 
-      {/* ── Hide button ── */}
+      {/* Hide button */}
       {!mini && (
         <button className="raj-hide-btn" onClick={() => setHidden(true)} aria-label="Hide Raj guide">×</button>
       )}
