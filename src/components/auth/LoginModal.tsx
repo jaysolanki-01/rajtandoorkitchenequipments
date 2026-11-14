@@ -2,8 +2,6 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { useAuth } from '../../store/AuthContext';
 import { ApiError } from '../../api/client';
 
-const SESSION_KEY = 'rt-login-shown';
-
 type Mode = 'login' | 'register' | 'forgot';
 
 interface Props {
@@ -32,15 +30,6 @@ export function LoginModal({ forceOpen, onClose }: Props) {
   const pwId = useId();
   const nameId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
-
-  // Auto-show once per session after 2 s (only after auth state is resolved)
-  useEffect(() => {
-    if (isLoading || isLoggedIn) return;
-    const shown = sessionStorage.getItem(SESSION_KEY);
-    if (shown) return;
-    const t = setTimeout(() => setOpen(true), 2000);
-    return () => clearTimeout(t);
-  }, [isLoggedIn, isLoading]);
 
   // External trigger (clicking Login in header)
   useEffect(() => {
