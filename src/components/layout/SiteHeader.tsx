@@ -76,7 +76,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link to="/" className="sh__logo" aria-label={brand.fullName}>
-            <BrandMark size="sm" theme="auto" />
+            <BrandMark size="sm" theme="light" />
           </Link>
 
           {/* Desktop nav */}
@@ -248,13 +248,29 @@ export function SiteHeader() {
           </div>
         </div>
 
-        {/* Mobile nav */}
+        {/* Mobile overlay backdrop */}
+        <div className="sh__overlay" onClick={() => setMobileOpen(false)} aria-hidden="true" />
+
+        {/* Mobile nav — right slide-in drawer */}
         <div
           id="sh-mobile-nav"
           ref={mobileNavRef}
-          className={`sh__mobile ${mobileOpen ? 'sh__mobile--open' : ''}`}
+          className="sh__mobile"
           aria-hidden={!mobileOpen}
         >
+          {/* Drawer header */}
+          <div className="sh__mobile-head">
+            <BrandMark size="sm" theme="light" />
+            <button
+              type="button"
+              className="sh__mobile-close"
+              aria-label="Close menu"
+              onClick={() => setMobileOpen(false)}
+            >
+              ✕
+            </button>
+          </div>
+
           <nav aria-label="Mobile navigation">
             <ul role="list">
               {/* Products accordion */}
@@ -329,13 +345,15 @@ export function SiteHeader() {
                   </button>
                 </li>
               )}
-              <li className="sh__mobile-cta">
-                <Link to="/contact?type=quote" className="btn btn--gold btn--block" tabIndex={mobileOpen ? 0 : -1}>
-                  Request a Quote
-                </Link>
-              </li>
             </ul>
           </nav>
+
+          {/* CTA at drawer bottom */}
+          <div className="sh__mobile-cta">
+            <Link to="/contact?type=quote" className="sh__quote-btn" style={{ width: '100%', justifyContent: 'center' }} tabIndex={mobileOpen ? 0 : -1}>
+              Request a Quote
+            </Link>
+          </div>
         </div>
       </header>
 
