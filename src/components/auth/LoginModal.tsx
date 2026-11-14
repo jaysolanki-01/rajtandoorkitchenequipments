@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function LoginModal({ forceOpen, onClose }: Props) {
-  const { login, register, isLoggedIn, isLoading } = useAuth();
+  const { login, register, isLoggedIn } = useAuth();
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>('login');
 
@@ -51,7 +51,6 @@ export function LoginModal({ forceOpen, onClose }: Props) {
   }, [open]);
 
   function handleClose() {
-    try { sessionStorage.setItem(SESSION_KEY, '1'); } catch {}
     setOpen(false);
     setError('');
     setSuccess('');

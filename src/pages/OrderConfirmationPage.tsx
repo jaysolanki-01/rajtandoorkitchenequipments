@@ -40,8 +40,9 @@ export function OrderConfirmationPage() {
     items, subtotal, shippingCharge, couponDiscount, finalTotal, payMethod,
   } = state;
 
-  const waHref = contact.whatsapp
-    ? `https://wa.me/${contact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi Raj Tandoor! I placed an order. Reference: ${orderRef}`)}`
+  const waNum = contact.whatsapp as string;
+  const waHref = waNum
+    ? `https://wa.me/${waNum.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi Raj Tandoor! I placed an order. Reference: ${orderRef}`)}`
     : '/contact';
   const waIsExternal = !!contact.whatsapp;
 

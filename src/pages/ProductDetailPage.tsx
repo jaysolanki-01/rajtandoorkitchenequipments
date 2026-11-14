@@ -101,8 +101,9 @@ export function ProductDetailPage() {
   const faqItems = product.faq?.length ? product.faq : GENERAL_FAQ;
 
   const waMessage = encodeURIComponent(`Hi Raj Tandoor! I'm interested in the ${product.name}. Please share more details.`);
-  const waHref = contact.whatsapp
-    ? `https://wa.me/${contact.whatsapp.replace(/\D/g, '')}?text=${waMessage}`
+  const waNum = contact.whatsapp as string;
+  const waHref = waNum
+    ? `https://wa.me/${waNum.replace(/\D/g, '')}?text=${waMessage}`
     : `/contact?ref=whatsapp`;
   const waIsExternal = !!contact.whatsapp;
 
