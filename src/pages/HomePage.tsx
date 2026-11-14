@@ -49,36 +49,16 @@ export function HomePage() {
       <script type="application/ld+json">{JSON.stringify(websiteLD)}</script>
 
       <main id="main" tabIndex={-1}>
-        {/* 1. Scroll-driven 3D product story */}
-        <TandoorHero />
-        {reduced && <StoryStatic />}
-
-        {/* 3. Trust / value props */}
-        <TrustSection />
-
-        {/* 4. Category grid */}
-        <CategoryGrid />
-
-        {/* 5. Featured products */}
-        <FeaturedProducts />
-
-        {/* 5b. Best sellers */}
-        <BestSellersSection />
-
-        {/* 6. Commercial buyers */}
-        <CommercialSection />
-
-        {/* 6b. Shop by business type */}
-        <BusinessTypeSection />
-
-        {/* 7. Buying guide */}
-        <ChooseTandoorGuide />
-
-        {/* 7. FAQ */}
-        <FAQAccordion />
-
-        {/* 8. Contact */}
-        <ContactSection />
+        <div id="raj-s0"><TandoorHero />{reduced && <StoryStatic />}</div>
+        <div id="raj-s1"><TrustSection /></div>
+        <div id="raj-s2"><CategoryGrid /></div>
+        <div id="raj-s3"><FeaturedProducts /></div>
+        <div id="raj-s4"><BestSellersSection /></div>
+        <div id="raj-s5"><CommercialSection /></div>
+        <div id="raj-s6"><BusinessTypeSection /></div>
+        <div id="raj-s7"><ChooseTandoorGuide /></div>
+        <div id="raj-s8"><FAQAccordion /></div>
+        <div id="raj-s9"><ContactSection /></div>
       </main>
     </>
   );

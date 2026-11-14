@@ -4835,13 +4835,19 @@ body.is-checkout .sf { display: none !important; }
 .raj-wrap {
   position: fixed;
   right: 20px;
-  bottom: 24px;
+  top: calc(100vh - 215px); /* overridden by GSAP on scroll */
+  bottom: auto;
   z-index: 350;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse; /* bubble above char by default */
   align-items: flex-end;
   gap: 6px;
   pointer-events: none;
+  will-change: top;
+}
+/* When Raj is near the top, flip the bubble to appear below him */
+.raj-wrap.raj-bubble-below {
+  flex-direction: column; /* bubble below char */
 }
 .raj-wrap > * { pointer-events: auto; }
 
@@ -4873,6 +4879,16 @@ body.is-checkout .sf { display: none !important; }
   bottom: -10px;
   right: 28px;
   filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+}
+/* When bubble is below Raj, flip tail to point upward */
+.raj-bubble--below .raj-bubble__tail {
+  border-top: none;
+  border-bottom: 11px solid rgba(16,12,8,0.96);
+  bottom: auto;
+  top: -10px;
+}
+.raj-bubble--below .raj-bubble__inner {
+  border-radius: 18px 18px 18px 4px;
 }
 .raj-bubble__text {
   font-size: 0.84rem;
@@ -5007,11 +5023,10 @@ body.is-checkout .sf { display: none !important; }
 @media (max-width: 600px) {
   .raj-wrap {
     right: 10px;
-    bottom: 72px; /* clear mobile nav */
   }
   .raj-bubble__inner { width: 194px; }
   .raj-bubble__text  { font-size: 0.8rem; }
-  .raj-revive { right: 10px; bottom: 72px; }
+  .raj-revive { right: 10px; bottom: 20px; }
 }
 
 /* ── Reduced motion ── */
