@@ -8,7 +8,7 @@ import { SiteHeader } from './components/layout/SiteHeader';
 import { SiteFooter } from './components/layout/SiteFooter';
 import { SearchOverlay } from './components/search/SearchOverlay';
 import { PageTransitionOverlay } from './components/transitions/PageTransitionOverlay';
-import { RajMascot } from './components/mascot/RajMascot';
+// import { RajMascot } from './components/mascot/RajMascot';
 import { HomePage } from './pages/HomePage';
 import { ShopPage } from './pages/ShopPage';
 import { TandoorsPage } from './pages/TandoorsPage';
