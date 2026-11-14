@@ -43,8 +43,9 @@ export function PageTransitionOverlay() {
       gsap.to(tAnim, { cameraZ: 3.9, duration: 0.45, ease: 'power1.inOut', delay: 0.3 });
     }
 
-    // Show overlay
-    overlay.classList.add('ptov--active');
+    // Show overlay — drive pointer-events via inline style (beats CSS specificity issues)
+    overlay.style.opacity = '1';
+    overlay.style.pointerEvents = 'all';
     if (text) text.classList.add('ptov__text--visible');
 
     // Start exit after a brief hold
@@ -55,7 +56,8 @@ export function PageTransitionOverlay() {
       if (text) text.classList.remove('ptov__text--visible');
 
       setTimeout(() => {
-        overlay.classList.remove('ptov--active');
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
         activeRef.current = false;
       }, 300);
     }, 600);
@@ -63,8 +65,8 @@ export function PageTransitionOverlay() {
   }, [location.pathname, webgl, reduced]);
 
   return (
-    <div ref={overlayRef} className="ptov" aria-hidden="true">
-      <div className="ptov__glow" />
+    <div ref={overlayRef} className="ptov" aria-hidden="true" style={{ opacity: 0, pointerEvents: 'none' }}>
+      <div className="ptov__glow" style={{ pointerEvents: 'none' }} />
 
       {webgl && !reduced && (
         <Suspense fallback={null}>
