@@ -79,7 +79,7 @@ export default function App() {
             </Routes>
             <SiteFooter />
             <PageTransitionOverlay />
-            <RajMascot />
+            {/* <RajMascot /> */}
           </SearchProvider>
         </WishlistProvider>
       </CartProvider>
