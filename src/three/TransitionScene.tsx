@@ -77,7 +77,7 @@ export function TransitionScene({ activeRef }: TransitionSceneProps) {
         toneMapping: THREE.ACESFilmicToneMapping,
         toneMappingExposure: 1.1,
       }}
-      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
     >
       <TransitionEnvironment />
       <ambientLight intensity={0.1} color="#ffe8cc" />
