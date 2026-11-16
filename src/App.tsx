@@ -37,6 +37,7 @@ import { TermsPage } from './pages/TermsPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { B2BPage } from './pages/B2BPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { WhatsAppFAB } from './components/WhatsAppFAB';
 
 export default function App() {
   return (
@@ -80,6 +81,7 @@ export default function App() {
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
             <SiteFooter />
+            <WhatsAppFAB />
             <PageTransitionOverlay />
             {/* <RajMascot /> */}
           </SearchProvider>

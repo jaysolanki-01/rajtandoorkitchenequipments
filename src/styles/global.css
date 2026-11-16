@@ -5768,3 +5768,48 @@ body { overflow-x: hidden; }
 img { max-width: 100%; }
 table { max-width: 100%; }
 .policy-page table { overflow-x: auto; display: block; }
+
+/* ── WhatsApp Floating Action Button ───────────────────────────── */
+.wa-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.1rem 0.75rem 0.9rem;
+  background: #25d366;
+  color: #fff;
+  border-radius: 50px;
+  box-shadow: 0 4px 16px rgba(37,211,102,.45), 0 2px 6px rgba(0,0,0,.18);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  animation: wa-bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  animation-delay: 1.2s;
+  opacity: 0;
+}
+.wa-fab:hover,
+.wa-fab:focus-visible {
+  background: #20b858;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(37,211,102,.55), 0 3px 8px rgba(0,0,0,.2);
+  color: #fff;
+  outline: none;
+}
+.wa-fab:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.wa-fab svg { flex-shrink: 0; }
+
+@keyframes wa-bounce-in {
+  from { opacity: 0; transform: scale(0.6) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .wa-fab { bottom: 1rem; right: 1rem; padding: 0.75rem; border-radius: 50%; }
+  .wa-fab__label { display: none; }
+}
