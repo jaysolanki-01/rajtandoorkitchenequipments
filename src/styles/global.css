@@ -5895,3 +5895,12 @@ table { max-width: 100%; }
 @media (max-width: 480px) {
   .map-section__embed { height: 280px; }
 }
+
+/* ── Header logo — mobile size cap ─────────────────────────────── */
+@media (max-width: 768px) {
+  .sh__logo .bm img,
+  .sh__mobile-head .bm img {
+    height: 36px !important;
+    max-width: 150px !important;
+  }
+}
