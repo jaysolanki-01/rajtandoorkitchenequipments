@@ -5658,4 +5658,111 @@ body.is-checkout .sf { display: none !important; }
   .b2b-gallery__row--4 { grid-template-columns: 1fr 1fr; }
   .b2b-gallery__row--2 { grid-template-columns: 1fr; }
   .b2b-stats__inner { flex-direction: column; align-items: center; }
+  .b2b-stats__item { padding: 0.6rem 1rem; border-left: none !important; border-top: 1px solid rgba(10,8,6,0.1); }
+  .b2b-stats__item:first-child { border-top: none; }
+  .b2b-who__grid { grid-template-columns: 1fr; }
+  .b2b-why__grid { grid-template-columns: 1fr; }
+  .b2b-hero__h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+  .b2b-hero__ctas { flex-direction: column; align-items: stretch; }
+  .b2b-hero__cta-primary,
+  .b2b-hero__cta-secondary { width: 100%; justify-content: center; text-align: center; }
+  .b2b-cta__btn { width: 100%; justify-content: center; }
+  .b2b-cta__actions { width: 100%; flex-direction: column; }
+  .b2b-process__circle { width: 56px; height: 56px; font-size: 1.25rem; }
+  .b2b-includes__list { columns: 1; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   GLOBAL MOBILE — catch-all fixes for all pages
+   ═══════════════════════════════════════════════════════════ */
+
+/* Prevent any element from causing horizontal scroll */
+body { overflow-x: hidden; }
+.page-main { overflow-x: hidden; }
+
+/* ── PDP (product detail) extra-small tweaks ── */
+@media (max-width: 480px) {
+  .pdp3__trust-bar { grid-template-columns: 1fr; }
+  .pdp3__sticky-bar-title { max-width: 140px; }
+  .pdp3__tab-btn { padding: 0.7rem 0.75rem; font-size: 0.78rem; }
+  .pdp3__specs-table th,
+  .pdp3__specs-table td { padding: 0.6rem 0.65rem; font-size: 0.82rem; }
+}
+
+/* ── Contact page extra-small ── */
+@media (max-width: 480px) {
+  .contact-page__form { padding: 1.25rem; }
+  .contact-page { padding-bottom: 2.5rem; }
+}
+
+/* ── About page extra-small ── */
+@media (max-width: 480px) {
+  .ab-serve__grid { grid-template-columns: 1fr 1fr; }
+  .ab-offer__grid { grid-template-columns: 1fr; }
+  .ab-why__grid { grid-template-columns: 1fr; }
+}
+
+/* ── Commercial section extra-small ── */
+@media (max-width: 480px) {
+  .commercial-section__features { grid-template-columns: 1fr; }
+}
+
+/* ── Shop / filter tabs overflow scroll on mobile ── */
+@media (max-width: 480px) {
+  .filter-tabs { -webkit-overflow-scrolling: touch; }
+  .shop-count { font-size: 0.82rem; }
+}
+
+/* ── Breadcrumb long-text wrap ── */
+@media (max-width: 480px) {
+  .breadcrumb ol { flex-wrap: wrap; row-gap: 0.3rem; }
+  .breadcrumb li:not(:last-child)::after { margin-right: 0.25rem; }
+}
+
+/* ── Homepage hero on very small screens ── */
+@media (max-width: 400px) {
+  .hero__actions { flex-direction: column; align-items: center; width: 100%; }
+  .hero__actions .btn { width: 100%; max-width: 280px; justify-content: center; }
+  .trust-bar__items { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
+
+/* ── Category cards on mobile: image height cap ── */
+@media (max-width: 480px) {
+  .cat-card__img-wrap { height: 180px; }
+  .cat-card { border-radius: 12px; }
+}
+
+/* ── Page hero inner padding on small screens ── */
+@media (max-width: 480px) {
+  .page-hero__inner { padding: 2.5rem 0 2rem; }
+  .page-h1 { font-size: clamp(1.3rem, 7.5vw, 1.9rem); }
+  .page-intro { font-size: 0.9rem; }
+}
+
+/* ── Section titles on mobile ── */
+@media (max-width: 480px) {
+  .section-title { font-size: clamp(1.4rem, 6vw, 2rem); }
+  .section-subtitle { font-size: 0.9rem; }
+}
+
+/* ── Announcement bar on very small screens ── */
+@media (max-width: 360px) {
+  .ab { font-size: 0.65rem; }
+}
+
+/* ── Cart/checkout on very small ── */
+@media (max-width: 360px) {
+  .cp { padding: 1rem 0 3rem; }
+  .cp-item { padding: 1rem; }
+  .co-panel { padding: 1.25rem 1rem; }
+}
+
+/* ── Account pages on very small ── */
+@media (max-width: 360px) {
+  .account-nav a { font-size: 0.78rem; padding: 0.35rem 0.55rem; }
+}
+
+/* ── Misc: ensure images never overflow ── */
+img { max-width: 100%; }
+table { max-width: 100%; }
+.policy-page table { overflow-x: auto; display: block; }
