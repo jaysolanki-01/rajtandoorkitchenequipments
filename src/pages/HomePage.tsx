@@ -9,6 +9,7 @@ import { BusinessTypeSection } from '../components/home/BusinessTypeSection';
 import { ChooseTandoorGuide } from '../components/home/ChooseTandoorGuide';
 import { FAQAccordion } from '../components/home/FAQAccordion';
 import { ContactSection } from '../components/home/ContactSection';
+import { MapSection } from '../components/home/MapSection';
 import { TandoorHero } from '../components/TandoorHero';
 import { useReducedMotion } from '../hooks/useEnvironment';
 import { StoryStatic } from '../components/PageSections';
@@ -61,6 +62,7 @@ export function HomePage() {
         <div id="raj-s7"><ChooseTandoorGuide /></div>
         <div id="raj-s8"><FAQAccordion /></div>
         <div id="raj-s9"><ContactSection /></div>
+        <div id="raj-s10"><MapSection /></div>
       </main>
     </>
   );
