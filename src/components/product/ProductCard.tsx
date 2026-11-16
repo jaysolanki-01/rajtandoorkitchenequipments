@@ -47,7 +47,10 @@ export function ProductCard({ product }: ProductCardProps) {
           height={400}
         />
         <div className="pc__img-overlay" aria-hidden="true">
-          <span className="pc__img-overlay-label">View Details</span>
+          <span className="pc__img-overlay-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            Quick View
+          </span>
         </div>
       </Link>
 
