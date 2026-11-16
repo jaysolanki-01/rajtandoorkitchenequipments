@@ -1750,17 +1750,44 @@ a { color: inherit; }
 .page-h1-count { font-weight: 400; font-size: 0.65em; color: var(--rt-text2); }
 .page-intro { margin-top: 0.75rem; font-size: 1.05rem; color: var(--rt-text2); max-width: 64ch; line-height: 1.7; }
 
-.breadcrumb { padding: 1rem 0; }
+.breadcrumb { padding: 1.25rem 0 0.25rem; }
 .breadcrumb ol {
   list-style: none; padding: 0; margin: 0;
-  display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;
-  font-size: 0.8rem; color: var(--rt-text2);
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem;
+  font-size: 0.75rem; letter-spacing: 0.01em;
 }
-.breadcrumb li { display: flex; align-items: center; gap: 0.5rem; }
-.breadcrumb li:not(:last-child)::after { content: '/'; color: var(--rt-border); }
-.breadcrumb a { color: var(--rt-text2); text-decoration: none; }
-.breadcrumb a:hover { color: var(--rt-gold); }
-.breadcrumb [aria-current] { color: var(--rt-charcoal); font-weight: 500; }
+.breadcrumb li { display: flex; align-items: center; }
+/* Chevron separator */
+.breadcrumb li:not(:last-child)::after {
+  content: '';
+  display: inline-block; width: 14px; height: 14px; margin: 0 1px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23c3a268' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 18 15 12 9 6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: center;
+  opacity: 0.45; flex-shrink: 0;
+}
+.breadcrumb a {
+  display: inline-flex; align-items: center;
+  padding: 0.3rem 0.7rem; border-radius: 999px;
+  background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.07);
+  color: var(--rt-text2); text-decoration: none; font-weight: 500;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+.breadcrumb a:hover {
+  background: rgba(195,162,104,0.1); border-color: rgba(195,162,104,0.3);
+  color: var(--rt-gold); transform: translateY(-1px);
+}
+.breadcrumb li:first-child a::before {
+  content: '';
+  display: inline-block; width: 11px; height: 11px; margin-right: 5px; flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/%3E%3Cpolyline points='9 22 9 12 15 12 15 22'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: center; opacity: 0.75;
+}
+.breadcrumb [aria-current] {
+  display: inline-flex; align-items: center;
+  padding: 0.3rem 0.7rem; border-radius: 999px;
+  background: rgba(195,162,104,0.1); border: 1px solid rgba(195,162,104,0.28);
+  color: var(--rt-charcoal); font-weight: 700;
+}
 
 /* Shop header */
 .shop-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
@@ -2971,11 +2998,7 @@ a { color: inherit; }
 .empty-state { padding: 3rem 1rem; text-align: center; color: var(--rt-text2); }
 .empty-state p { margin-bottom: 1.25rem; }
 
-/* Breadcrumb */
-.breadcrumb ol { display: flex; gap: 0.5rem; list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: var(--rt-text2); }
-.breadcrumb li + li::before { content: '/'; margin-right: 0.5rem; opacity: 0.4; }
-.breadcrumb li a { color: var(--rt-gold); text-decoration: none; }
-.breadcrumb li[aria-current] { color: var(--rt-text); }
+/* Breadcrumb — duplicate block removed; styles defined above */
 
 /* Policy pages */
 .policy-page { max-width: 760px; padding-top: 2.5rem; padding-bottom: 4rem; }

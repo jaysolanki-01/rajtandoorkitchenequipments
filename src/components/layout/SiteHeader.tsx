@@ -32,6 +32,7 @@ export function SiteHeader() {
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const isHome = location.pathname === '/';
   const mobileNavRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,7 +72,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className={`sh ${scrolled ? 'sh--scrolled' : ''} ${mobileOpen ? 'sh--open' : ''}`} role="banner">
+      <header className={`sh ${(scrolled || !isHome) ? 'sh--scrolled' : ''} ${mobileOpen ? 'sh--open' : ''}`} role="banner">
         <div className="sh__inner container">
 
           {/* Logo */}
