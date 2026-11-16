@@ -5813,3 +5813,48 @@ table { max-width: 100%; }
   .wa-fab { bottom: 1rem; right: 1rem; padding: 0.75rem; border-radius: 50%; }
   .wa-fab__label { display: none; }
 }
+
+/* ── Contact page — Google Maps embed ──────────────────────────── */
+.contact-map {
+  width: 100%;
+  background: #0d0d0d;
+}
+.contact-map__inner {
+  position: relative;
+  width: 100%;
+  height: 420px;
+}
+.contact-map__iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  filter: grayscale(20%) contrast(1.05);
+}
+.contact-map__link {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  background: rgba(10,8,6,.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 20px;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,.12);
+  transition: background 0.2s ease;
+}
+.contact-map__link:hover { background: rgba(196,136,42,.85); color: #fff; }
+
+@media (max-width: 640px) {
+  .contact-map__inner { height: 300px; }
+}
+@media (max-width: 400px) {
+  .contact-map__inner { height: 240px; }
+}

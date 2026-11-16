@@ -56,6 +56,35 @@ export function ContactPage() {
           </ol>
         </nav>
 
+        {/* Map section */}
+        {contact.mapEmbedUrl && (
+          <div className="contact-map">
+            <div className="contact-map__inner">
+              <iframe
+                src={contact.mapEmbedUrl}
+                title="Raj Tandoor & Kitchen Equipment location"
+                className="contact-map__iframe"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+              {'mapShareUrl' in contact && contact.mapShareUrl && (
+                <a
+                  href={(contact as { mapShareUrl: string }).mapShareUrl}
+                  className="contact-map__link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  View larger map
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="container">
           <div className="contact-page">
             {/* Intro */}

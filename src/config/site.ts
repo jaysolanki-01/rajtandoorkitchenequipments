@@ -37,7 +37,9 @@ export const contact = {
   /** GST Identification Number. */
   gstin: '',
   /** Google Maps embed URL or '' to hide the map. */
-  mapEmbedUrl: '',
+  mapEmbedUrl: 'https://maps.google.com/maps?q=Raj+Tandoor+%26+Kitchen+Equipment&output=embed&z=15',
+  /** Direct link to the Maps listing (share link, place URL, etc.) */
+  mapShareUrl: 'https://share.google/h6MyxC9CQ92BomKRL',
 } as const;
 
 export const social = {
