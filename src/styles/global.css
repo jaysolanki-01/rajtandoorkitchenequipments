@@ -1203,8 +1203,9 @@ a { color: inherit; }
   .pc__name { font-size: 0.8rem; -webkit-line-clamp: 2; }
   .pc__price-val { font-size: 1rem; }
   .pc__price-orig { font-size: 0.7rem; }
-  .pc__actions { gap: 0.4rem; padding: 0 0.75rem 0.75rem; }
-  .pc__add-btn { font-size: 0.72rem; padding: 0.5rem 0.5rem; }
+  .pc__actions { gap: 0.4rem; padding: 0 0.75rem 0.75rem; display: flex; flex-direction: column; }
+  .pc__actions .btn--sm { font-size: 0.72rem; padding: 0.45rem 0.6rem; white-space: nowrap; justify-content: center; width: 100%; }
+  .pc__actions .btn--gold.btn--sm svg { display: none; }
   .pc__wishlist { top: 0.5rem; right: 0.5rem; }
   .wishlist-btn { width: 30px; height: 30px; }
   .pc__discount-badge { font-size: 0.58rem; padding: 0.2rem 0.4rem; }
@@ -2459,9 +2460,10 @@ a { color: inherit; }
 .hero[data-layout='stacked'] .stage__vignette {
   background:
     linear-gradient(180deg,rgba(11,21,40,.94) 0%,rgba(11,21,40,.72) 34%,rgba(11,21,40,0) 50%),
-    radial-gradient(ellipse 140% 90% at 50% 60%,rgba(0,0,0,0) 55%,rgba(5,12,28,.58) 100%);
+    radial-gradient(ellipse 140% 90% at 50% 60%,rgba(0,0,0,0) 55%,rgba(5,12,28,.58) 100%),
+    linear-gradient(0deg,rgba(11,21,40,.92) 0%,rgba(11,21,40,.0) 28%);
 }
-.hero[data-layout='stacked'] .product-photo { top:44%; bottom:2%; left:0; right:0; }
+.hero[data-layout='stacked'] .product-photo { top:38%; bottom:0; left:0; right:0; }
 .hero[data-layout='stacked'] .chapter-nav { right:10px; top:auto; bottom:22px; transform:none; }
 .hero[data-layout='stacked'] .chapter-nav__label { display:none; }
 .hero[data-layout='stacked'] .chapter-nav ol { gap:2px; }
