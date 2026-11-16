@@ -68,13 +68,25 @@ alter table public.products enable row level security;
 alter table public.quotes enable row level security;
 alter table public.orders enable row level security;
 
+-- Drop existing policies before recreating (safe re-run)
+drop policy if exists "products_select" on public.products;
+drop policy if exists "products_insert" on public.products;
+drop policy if exists "products_update" on public.products;
+drop policy if exists "products_delete" on public.products;
+drop policy if exists "quotes_insert" on public.quotes;
+drop policy if exists "quotes_select_admin" on public.quotes;
+drop policy if exists "quotes_update_admin" on public.quotes;
+drop policy if exists "orders_insert" on public.orders;
+drop policy if exists "orders_select" on public.orders;
+drop policy if exists "orders_update_admin" on public.orders;
+
 -- Products: anyone can read, only service_role can write
 create policy "products_select" on public.products for select using (true);
 create policy "products_insert" on public.products for insert with check (auth.role() = 'service_role');
 create policy "products_update" on public.products for update using (auth.role() = 'service_role');
 create policy "products_delete" on public.products for delete using (auth.role() = 'service_role');
 
--- Quotes: anyone can insert, authenticated users can read all (admin), owner can read their own
+-- Quotes: anyone can insert, authenticated users can read all (admin)
 create policy "quotes_insert" on public.quotes for insert with check (true);
 create policy "quotes_select_admin" on public.quotes for select using (auth.role() = 'authenticated');
 create policy "quotes_update_admin" on public.quotes for update using (auth.role() = 'authenticated');
@@ -91,6 +103,9 @@ create or replace function public.set_updated_at()
 returns trigger language plpgsql as $$
 begin new.updated_at = now(); return new; end;
 $$;
+drop trigger if exists products_updated_at on public.products;
+drop trigger if exists quotes_updated_at on public.quotes;
+drop trigger if exists orders_updated_at on public.orders;
 create trigger products_updated_at before update on public.products for each row execute procedure public.set_updated_at();
 create trigger quotes_updated_at before update on public.quotes for each row execute procedure public.set_updated_at();
 create trigger orders_updated_at before update on public.orders for each row execute procedure public.set_updated_at();
