@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { seo } from '../config/site';
-import { api, ApiError } from '../api/client';
+import { insertQuote } from '../lib/supabase/db';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -31,11 +31,21 @@ export function RequestQuotePage() {
     }
     setStatus('submitting');
     try {
-      const result = await api.post<{ reference: string }>('/quotes', form);
+      const result = await insertQuote({
+        customer_name: form.name,
+        email: form.email,
+        phone: form.phone,
+        business_name: form.businessName,
+        product_interest: form.productInterest,
+        quantity: form.quantity,
+        requirements: form.requirements,
+        delivery_location: form.deliveryLocation,
+        source: 'quote-form',
+      });
       setReference(result.reference);
       setStatus('success');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Submission failed. Please try again.');
+      setError(err instanceof Error ? err.message : 'Submission failed. Please try again.');
       setStatus('error');
     }
   }

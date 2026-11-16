@@ -3,8 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { seo, contact } from '../config/site';
-
-const ENDPOINT = '/api/contact';
+import { insertQuote } from '../lib/supabase/db';
 
 const ENQUIRY_TYPES = [
   'Product enquiry',
@@ -29,14 +28,15 @@ export function ContactPage() {
     const raw = Object.fromEntries(new FormData(e.currentTarget));
     const data = { name: raw.name, email: raw.email, phone: raw.phone, businessName: raw.business, enquiryType: raw.enquiryType, productInterest: raw.product, message: raw.message };
     try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+      await insertQuote({
+        customer_name: String(data.name),
+        email: String(data.email),
+        phone: data.phone ? String(data.phone) : undefined,
+        business_name: data.businessName ? String(data.businessName) : undefined,
+        product_interest: data.productInterest ? String(data.productInterest) : undefined,
+        requirements: [data.enquiryType, data.message].filter(Boolean).join(': '),
+        source: 'contact',
       });
-      const json = await res.json();
-      if (!res.ok || !json.success) throw new Error(json.error || `Error ${res.status}`);
       setStatus('success');
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Unknown error');

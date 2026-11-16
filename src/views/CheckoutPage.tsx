@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useCart, type CartItem } from '../store/CartContext';
 import { useAuth } from '../store/AuthContext';
-import { api, ApiError } from '../api/client';
+import { insertQuote, insertOrder } from '../lib/supabase/db';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -460,13 +460,7 @@ export function CheckoutPage() {
 
   async function checkPin() {
     if (!isValidPIN(addr.pinCode)) return;
-    setPinStatus('checking');
-    try {
-      await api.get(`/delivery/pin-check/${addr.pinCode.trim()}`);
-      setPinStatus('ok');
-    } catch {
-      setPinStatus('ok'); // Optimistic when backend not yet configured
-    }
+    setPinStatus('ok'); // Delivery availability confirmed at order time
   }
 
   // ── Coupon ───────────────────────────────────────────────────────────────────
@@ -538,20 +532,36 @@ export function CheckoutPage() {
 
       let orderRef: string;
       if (isLoggedIn) {
-        const result = await api.post<{ orderNumber: string }>('/orders', payload);
+        const result = await insertOrder({
+          customer_name: info.name,
+          email: info.email.trim().toLowerCase(),
+          phone: info.phone.trim(),
+          address: payload.deliveryAddress as Record<string, unknown>,
+          items: items.map(i => ({
+            id: i.product.id,
+            name: i.product.name,
+            qty: i.quantity,
+            price: i.product.price,
+          })),
+          subtotal: subtotal ?? 0,
+          shipping: shippingCharge,
+          total: finalTotal ?? 0,
+          payment_method: payMethod,
+          user_id: user?.id,
+          notes: deliveryNotes || undefined,
+        });
         orderRef = result.orderNumber;
       } else {
-        // Generate local reference first so confirmation always works, even if the API is unreachable
+        // Guest checkout — store as a quote enquiry
         orderRef = `REF-${Date.now().toString(36).toUpperCase()}`;
         const enquiryItems = items.map(i => `${i.quantity}× ${i.product.name}`).join(', ');
-        api.post('/quotes', {
-          name: info.name,
+        insertQuote({
+          customer_name: info.name,
           email: info.email.trim().toLowerCase(),
           phone: info.phone.trim(),
           requirements: `Checkout enquiry: ${enquiryItems}.${deliveryNotes ? ' Notes: ' + deliveryNotes : ''}`,
-          deliveryAddress: payload.deliveryAddress,
-          ...(coupon.appliedCode ? { couponCode: coupon.appliedCode } : {}),
-        }).catch(() => { /* fire-and-forget – local ref is the source of truth for guests */ });
+          source: 'checkout',
+        }).catch(() => { /* fire-and-forget */ });
       }
 
       submitted.current = true;
@@ -579,7 +589,7 @@ export function CheckoutPage() {
       clearCart();
     } catch (err) {
       setGlobalError(
-        err instanceof ApiError
+        err instanceof Error
           ? err.message
           : 'Order submission failed. Please try again or contact us directly.',
       );
