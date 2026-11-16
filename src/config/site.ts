@@ -22,15 +22,15 @@ export const brand = {
 
 export const contact = {
   /** Business email – used in the contact form and footer. */
-  email: '',
+  email: 'rajtandoorequipment@gmail.com',
   /** Phone number with country code. Example: '+91 98765 43210' */
-  phone: '',
+  phone: '+91 9687861313',
   /** WhatsApp number with country code (may differ from phone). */
-  whatsapp: '',
+  whatsapp: '+91 9687860303',
   /** Full postal address. */
-  address: '',
-  city: '',
-  state: '',
+  address: '07, Lucky Estate, Opp. Sagar Auto Hub, Nr. Gujarat Weightbridge, Gulab Nagar, Piplaj, Pirana Road',
+  city: 'Ahmedabad',
+  state: 'Gujarat',
   country: 'India',
   /** Visible business hours. Example: 'Mon–Sat 9 am – 6 pm IST' */
   businessHours: '',
