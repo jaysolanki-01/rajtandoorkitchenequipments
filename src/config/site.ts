@@ -17,7 +17,7 @@ export const brand = {
    * Example: '/images/logo.png'
    * Currently only the product photo is available; the SVG emblem is used instead.
    */
-  logoImageUrl: '',
+  logoImageUrl: '/images/raj-tandoor-logo.webp',
 } as const;
 
 export const contact = {
