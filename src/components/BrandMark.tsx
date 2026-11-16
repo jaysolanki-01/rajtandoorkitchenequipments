@@ -23,7 +23,7 @@ export function BrandMark({ size = 'sm' }: BrandMarkProps) {
         style={{
           height,
           width: 'auto',
-          maxWidth: size === 'lg' ? 230 : size === 'md' ? 190 : 155,
+          maxWidth: size === 'lg' ? 260 : size === 'md' ? 220 : 170,
           objectFit: 'contain',
           display: 'block',
           borderRadius: 4,

@@ -77,7 +77,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link to="/" className="sh__logo" aria-label={brand.fullName}>
-            <BrandMark size="sm" theme="light" />
+            <BrandMark size="md" theme="light" />
           </Link>
 
           {/* Desktop nav */}
@@ -261,7 +261,7 @@ export function SiteHeader() {
         >
           {/* Drawer header */}
           <div className="sh__mobile-head">
-            <BrandMark size="sm" theme="light" />
+            <BrandMark size="md" theme="light" />
             <button
               type="button"
               className="sh__mobile-close"
