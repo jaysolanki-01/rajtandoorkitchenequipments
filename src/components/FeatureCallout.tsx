@@ -1,3 +1,4 @@
+'use client';
 import { useCallback } from 'react';
 import type { CalloutConfig } from '../animation/storyConfig';
 import { storyBus } from '../animation/storyStore';

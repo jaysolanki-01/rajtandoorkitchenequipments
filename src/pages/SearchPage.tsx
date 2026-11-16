@@ -1,5 +1,7 @@
+'use client';
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { seo } from '../config/site';
 import { products as localProducts } from '../config/products';
 
@@ -55,16 +57,16 @@ export function SearchPage() {
             <div className="product-grid" style={{ marginTop: '2rem' }}>
               {results.map(p => (
                 <article key={p.id} className="pc">
-                  <Link to={`/products/${p.id}`} className="pc__link" tabIndex={-1} aria-hidden="true">
+                  <Link href={`/products/${p.id}`} className="pc__link" tabIndex={-1} aria-hidden="true">
                     <div className="pc__img-wrap">
                       {p.images?.[0] ? <img src={p.images[0]} alt={p.name} className="pc__img" /> : <div className="pc__img-placeholder" />}
                     </div>
                   </Link>
                   <div className="pc__body">
-                    <h2 className="pc__name"><Link to={`/products/${p.id}`}>{p.name}</Link></h2>
+                    <h2 className="pc__name"><Link href={`/products/${p.id}`}>{p.name}</Link></h2>
                     <p className="pc__desc">{p.description}</p>
                     <p className="pc__price">{p.price != null ? `₹${p.price.toLocaleString('en-IN')}` : 'Price on request'}</p>
-                    <Link to={`/products/${p.id}`} className="btn btn--gold btn--sm">View Product</Link>
+                    <Link href={`/products/${p.id}`} className="btn btn--gold btn--sm">View Product</Link>
                   </div>
                 </article>
               ))}
@@ -73,7 +75,7 @@ export function SearchPage() {
 
           {trimmed.length >= 2 && results.length === 0 && (
             <div className="empty-state">
-              <p>No products matched your search. Try different keywords, or <Link to="/shop">browse all products</Link>.</p>
+              <p>No products matched your search. Try different keywords, or <Link href="/shop">browse all products</Link>.</p>
             </div>
           )}
         </div>

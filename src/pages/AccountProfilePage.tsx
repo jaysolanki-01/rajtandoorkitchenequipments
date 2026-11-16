@@ -1,11 +1,13 @@
+'use client';
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
 import { api, ApiError } from '../api/client';
 
 export function AccountProfilePage() {
+  const router = useRouter();
   const { isLoggedIn, isLoading, user } = useAuth();
   const [name, setName] = useState(user?.name ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
@@ -33,7 +35,7 @@ export function AccountProfilePage() {
     }
   }
 
-  if (!isLoading && !isLoggedIn) return <Navigate to="/" replace />;
+  if (!isLoading && !isLoggedIn) router.push('/'); return null;
 
   return (
     <>

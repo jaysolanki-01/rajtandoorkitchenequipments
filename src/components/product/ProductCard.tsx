@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import type { Product } from '../../config/products';
 import { useCart } from '../../store/CartContext';
 import { WishlistButton } from './WishlistButton';
@@ -10,7 +11,6 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
 
-  // Show a modest 10% "was" price to communicate value — matches PDP logic
   const originalPrice = product.price != null
     ? Math.round((product.price * 1.1) / 100) * 100
     : null;
@@ -26,6 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
           Coming Soon
         </div>
       )}
+
       {/* Discount badge */}
       {!product.isDemo && discountPct != null && (
         <div className="pc__discount-badge" aria-label={`${discountPct}% off`}>
@@ -36,8 +37,8 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Wishlist */}
       <WishlistButton productId={product.id} productName={product.name} className="pc__wishlist" />
 
-      {/* Image */}
-      <Link to={`/products/${product.slug}`} className="pc__img-wrap" aria-label={`View ${product.name}`}>
+      {/* Image + hover overlay */}
+      <Link href={`/products/${product.slug}`} className="pc__img-wrap" aria-label={`View ${product.name}`}>
         <img
           src={product.image}
           alt={product.name}
@@ -46,13 +47,19 @@ export function ProductCard({ product }: ProductCardProps) {
           width={400}
           height={400}
         />
+        <div className="pc__img-overlay" aria-hidden="true">
+          <span className="pc__img-overlay-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            Quick View
+          </span>
+        </div>
       </Link>
 
       {/* Info */}
       <div className="pc__body">
         <span className="pc__cat">{product.categoryLabel}</span>
         <h3 className="pc__name">
-          <Link to={`/products/${product.slug}`}>{product.name}</Link>
+          <Link href={`/products/${product.slug}`}>{product.name}</Link>
         </h3>
 
         <div className="pc__price">
@@ -68,25 +75,33 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
+        {/* Actions: primary CTA + compact View link */}
         <div className="pc__actions">
-          <Link to={`/products/${product.slug}`} className="btn btn--outline btn--sm">
-            View Product
-          </Link>
-          {!product.isDemo && (
+          {!product.isDemo ? (
             product.price !== null ? (
               <button
                 type="button"
                 className="btn btn--gold btn--sm"
                 onClick={() => addItem(product)}
               >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
                 Add to Cart
               </button>
             ) : (
-              <Link to="/contact?type=quote" className="btn btn--gold btn--sm">
+              <Link href="/contact?type=quote" className="btn btn--gold btn--sm">
                 Request a Quote
               </Link>
             )
+          ) : (
+            <Link href={`/products/${product.slug}`} className="btn btn--gold btn--sm">
+              Learn More
+            </Link>
           )}
+          <Link href={`/products/${product.slug}`} className="btn btn--outline btn--sm" aria-label={`View ${product.name} details`}>
+            View →
+          </Link>
         </div>
       </div>
     </article>

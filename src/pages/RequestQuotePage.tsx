@@ -1,12 +1,14 @@
+'use client';
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { seo } from '../config/site';
 import { api, ApiError } from '../api/client';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 export function RequestQuotePage() {
-  const [params] = useSearchParams();
+  const params = useSearchParams();
   const prefillProduct = params.get('product') ?? '';
 
   const [status, setStatus] = useState<Status>('idle');
@@ -47,7 +49,7 @@ export function RequestQuotePage() {
       <main id="main" tabIndex={-1} className="page-main">
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
+            <li><Link href="/">Home</Link></li>
             <li aria-current="page">Request a Quote</li>
           </ol>
         </nav>
@@ -63,7 +65,7 @@ export function RequestQuotePage() {
               <strong>Quote request received.</strong>
               {reference && <p>Your reference number is <strong>{reference}</strong>. Keep this for your records.</p>}
               <p>The Raj Tandoor team will respond to your enquiry shortly.</p>
-              <Link to="/shop" className="btn btn--gold" style={{ marginTop: '1.25rem' }}>Continue Browsing</Link>
+              <Link href="/shop" className="btn btn--gold" style={{ marginTop: '1.25rem' }}>Continue Browsing</Link>
             </div>
           ) : (
             <form className="contact-form" onSubmit={handleSubmit} noValidate aria-label="Quote request form">

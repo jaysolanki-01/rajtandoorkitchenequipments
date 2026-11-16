@@ -1,5 +1,7 @@
+'use client';
 import { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
@@ -8,6 +10,7 @@ import { api } from '../api/client';
 interface Order { order_number: string; status: string; placed_at: string; total_minor: number }
 
 export function AccountPage() {
+  const router = useRouter();
   const { isLoggedIn, isLoading, user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
 
@@ -16,7 +19,7 @@ export function AccountPage() {
     api.get<Order[]>('/orders').then(setOrders).catch(() => {});
   }, [isLoggedIn]);
 
-  if (!isLoading && !isLoggedIn) return <Navigate to="/" replace />;
+  if (!isLoading && !isLoggedIn) router.push('/'); return null;
   if (isLoading) return <main className="page-main"><div className="container"><p style={{ padding: '4rem 0' }}>Loading…</p></div></main>;
 
   return (
@@ -33,19 +36,19 @@ export function AccountPage() {
               <p className="account-welcome">Welcome back, <strong>{user?.name}</strong>.</p>
 
               <div className="account-grid">
-                <Link to="/account/orders" className="account-card">
+                <Link href="/account/orders" className="account-card">
                   <h2>My Orders</h2>
                   <p>{orders.length} order{orders.length !== 1 ? 's' : ''} placed</p>
                 </Link>
-                <Link to="/wishlist" className="account-card">
+                <Link href="/wishlist" className="account-card">
                   <h2>Wishlist</h2>
                   <p>View saved products</p>
                 </Link>
-                <Link to="/account/addresses" className="account-card">
+                <Link href="/account/addresses" className="account-card">
                   <h2>Addresses</h2>
                   <p>Manage delivery addresses</p>
                 </Link>
-                <Link to="/account/profile" className="account-card">
+                <Link href="/account/profile" className="account-card">
                   <h2>Profile</h2>
                   <p>Edit your details</p>
                 </Link>
@@ -59,14 +62,14 @@ export function AccountPage() {
                     <tbody>
                       {orders.slice(0, 5).map(o => (
                         <tr key={o.order_number}>
-                          <td><Link to={`/account/orders/${o.order_number}`}>{o.order_number}</Link></td>
+                          <td><Link href={`/account/orders/${o.order_number}`}>{o.order_number}</Link></td>
                           <td>{new Date(o.placed_at).toLocaleDateString('en-IN')}</td>
                           <td><span className={`order-status order-status--${o.status}`}>{o.status}</span></td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  {orders.length > 5 && <Link to="/account/orders" style={{ fontSize: '0.9rem', marginTop: '0.5rem', display: 'inline-block' }}>View all orders →</Link>}
+                  {orders.length > 5 && <Link href="/account/orders" style={{ fontSize: '0.9rem', marginTop: '0.5rem', display: 'inline-block' }}>View all orders →</Link>}
                 </div>
               )}
             </div>

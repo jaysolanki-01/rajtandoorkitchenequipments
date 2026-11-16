@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import { seo } from '../config/site';
 import { getProductsByCategory } from '../config/products';
 import { ProductCard } from '../components/product/ProductCard';
@@ -15,7 +16,7 @@ export function TandoorsPage() {
       <main id="main" tabIndex={-1} className="page-main">
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
+            <li><Link href="/">Home</Link></li>
             <li aria-current="page">Tandoors</li>
           </ol>
         </nav>
@@ -29,7 +30,7 @@ export function TandoorsPage() {
           {tandoors.length === 0 ? (
             <div className="empty-state">
               <p>No tandoor products are currently listed. Please contact us for product information.</p>
-              <Link to="/contact" className="btn btn--gold">Contact Us</Link>
+              <Link href="/contact" className="btn btn--gold">Contact Us</Link>
             </div>
           ) : (
             <ul className="product-grid" role="list">

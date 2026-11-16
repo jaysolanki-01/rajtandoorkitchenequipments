@@ -1,5 +1,7 @@
+'use client';
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { seo, contact } from '../config/site';
 
 const ENDPOINT = '/api/contact';
@@ -16,7 +18,7 @@ const ENQUIRY_TYPES = [
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 export function ContactPage() {
-  const [params] = useSearchParams();
+  const params = useSearchParams();
   const defaultType = params.get('type') === 'quote' ? 'Request a quote' : '';
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -51,10 +53,39 @@ export function ContactPage() {
       <main id="main" tabIndex={-1} className="page-main">
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
+            <li><Link href="/">Home</Link></li>
             <li aria-current="page">Contact Us</li>
           </ol>
         </nav>
+
+        {/* Map section */}
+        {contact.mapEmbedUrl && (
+          <div className="contact-map">
+            <div className="contact-map__inner">
+              <iframe
+                src={contact.mapEmbedUrl}
+                title="Raj Tandoor & Kitchen Equipment location"
+                className="contact-map__iframe"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+              {'mapShareUrl' in contact && contact.mapShareUrl && (
+                <a
+                  href={(contact as { mapShareUrl: string }).mapShareUrl}
+                  className="contact-map__link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  View larger map
+                </a>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="container">
           <div className="contact-page">
@@ -67,39 +98,19 @@ export function ContactPage() {
               {(contact.email || contact.phone || contact.address) && (
                 <ul className="contact-details" aria-label="Contact details">
                   {contact.phone && (
-                    <li>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.64 3.4 2 2 0 0 1 3.61 1.23h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.73a16 16 0 0 0 6.29 6.29l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-                      </svg>
-                      <a href={`tel:${contact.phone}`}>{contact.phone}</a>
-                    </li>
+                    <li><a href={`tel:${contact.phone}`}>{contact.phone}</a></li>
                   )}
                   {contact.email && (
-                    <li>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
-                      </svg>
-                      <a href={`mailto:${contact.email}`}>{contact.email}</a>
-                    </li>
+                    <li><a href={`mailto:${contact.email}`}>{contact.email}</a></li>
                   )}
                   {contact.address && (
                     <li>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
-                      </svg>
                       <address style={{ fontStyle: 'normal' }}>
                         {contact.address}{contact.city && `, ${contact.city}`}{contact.state && `, ${contact.state}`}
                       </address>
                     </li>
                   )}
-                  {contact.businessHours && (
-                    <li>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-                      </svg>
-                      {contact.businessHours}
-                    </li>
-                  )}
+                  {contact.businessHours && <li>{contact.businessHours}</li>}
                 </ul>
               )}
             </div>

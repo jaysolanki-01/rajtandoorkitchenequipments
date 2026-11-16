@@ -1,3 +1,4 @@
+'use client';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { api } from '../api/client';
 

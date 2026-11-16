@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import { seo } from '../config/site';
 import { getProductsByCategory } from '../config/products';
 import { ProductCard } from '../components/product/ProductCard';
@@ -15,7 +16,7 @@ export function KitchenEquipmentPage() {
       <main id="main" tabIndex={-1} className="page-main">
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
+            <li><Link href="/">Home</Link></li>
             <li aria-current="page">Kitchen Equipment</li>
           </ol>
         </nav>
@@ -29,7 +30,7 @@ export function KitchenEquipmentPage() {
           {items.length === 0 ? (
             <div className="empty-state">
               <p>Kitchen equipment products are coming soon. Contact us to discuss your requirements.</p>
-              <Link to="/contact?type=quote" className="btn btn--gold">Request Information</Link>
+              <Link href="/contact?type=quote" className="btn btn--gold">Request Information</Link>
             </div>
           ) : (
             <ul className="product-grid" role="list">

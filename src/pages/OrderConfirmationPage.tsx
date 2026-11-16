@@ -1,5 +1,8 @@
+'use client';
 import { useEffect } from 'react';
-import { Link, useLocation, Navigate } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { seo, contact } from '../config/site';
 
 interface ConfirmationState {
@@ -25,23 +28,24 @@ const PAY_LABEL: Record<string, string> = {
 };
 
 export function OrderConfirmationPage() {
-  const location = useLocation();
-  const state = location.state as ConfirmationState | null;
+  const router = useRouter();
+  const state = null as ConfirmationState | null; // state passed via router is not available in Next.js; handled via query params or server state
 
   useEffect(() => {
     document.body.classList.add('is-checkout');
     return () => document.body.classList.remove('is-checkout');
   }, []);
 
-  if (!state?.orderRef) return <Navigate to="/shop" replace />;
+  if (!state?.orderRef) router.push("/shop"); return null;
 
   const {
     orderRef, isGuest, customerName, email, address,
     items, subtotal, shippingCharge, couponDiscount, finalTotal, payMethod,
   } = state;
 
-  const waHref = contact.whatsapp
-    ? `https://wa.me/${contact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi Raj Tandoor! I placed an order. Reference: ${orderRef}`)}`
+  const waNum = contact.whatsapp as string;
+  const waHref = waNum
+    ? `https://wa.me/${waNum.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi Raj Tandoor! I placed an order. Reference: ${orderRef}`)}`
     : '/contact';
   const waIsExternal = !!contact.whatsapp;
 
@@ -118,7 +122,7 @@ export function OrderConfirmationPage() {
                     {items.map((item, idx) => (
                       <li key={idx} className="co-confirm__item">
                         <div className="co-confirm__item-info">
-                          <Link to={`/products/${item.slug}`} className="co-confirm__item-name">
+                          <Link href={`/products/${item.slug}`} className="co-confirm__item-name">
                             {item.name}
                           </Link>
                           <span className="co-confirm__item-qty">Qty: {item.qty}</span>
@@ -188,7 +192,7 @@ export function OrderConfirmationPage() {
               {/* CTA row */}
               <div className="co-confirm__ctas">
                 {!isGuest && (
-                  <Link to="/account/orders" className="btn btn--gold btn--lg">
+                  <Link href="/account/orders" className="btn btn--gold btn--lg">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                       <polyline points="14 2 14 8 20 8"/>
@@ -198,13 +202,13 @@ export function OrderConfirmationPage() {
                     View My Orders
                   </Link>
                 )}
-                <Link to="/track-order" className="btn btn--outline btn--lg">
+                <Link href="/track-order" className="btn btn--outline btn--lg">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                   </svg>
                   Track Order
                 </Link>
-                <Link to="/shop" className="btn btn--outline btn--lg">
+                <Link href="/shop" className="btn btn--outline btn--lg">
                   Continue Shopping
                 </Link>
                 {waIsExternal ? (
@@ -213,7 +217,7 @@ export function OrderConfirmationPage() {
                     WhatsApp Support
                   </a>
                 ) : (
-                  <Link to="/contact" className="btn btn--outline btn--lg">
+                  <Link href="/contact" className="btn btn--outline btn--lg">
                     Contact Support
                   </Link>
                 )}

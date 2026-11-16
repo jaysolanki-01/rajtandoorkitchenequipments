@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useSearch } from '../../store/SearchContext';
 
 const RECENT_KEY = 'rt-recent-searches';
@@ -166,7 +167,7 @@ export function SearchOverlay() {
                 </div>
                 <div className="so__categories">
                   {CATEGORIES.map((cat) => (
-                    <Link key={cat.slug} to={`/shop?category=${cat.slug}`} className="so__cat-card" onClick={close}>
+                    <Link key={cat.slug} href={`/shop?category=${cat.slug}`} className="so__cat-card" onClick={close}>
                       <span className="so__cat-icon">{cat.icon}</span>
                       <span className="so__cat-label">{cat.label}</span>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -192,7 +193,7 @@ export function SearchOverlay() {
                 {results.slice(0, 8).map((p, i) => (
                   <li key={p.id} role="option" aria-selected={focused === i}>
                     <Link
-                      to={`/products/${p.slug}`}
+                      href={`/products/${p.slug}`}
                       className={`so__result${focused === i ? ' so__result--focused' : ''}`}
                       onClick={() => handleResultClick(p.name)}
                     >
@@ -242,7 +243,7 @@ export function SearchOverlay() {
 
         {/* ── Footer — always visible ── */}
         <div className="so__footer">
-          <Link to="/shop" className="so__browse-all" onClick={close}>
+          <Link href="/shop" className="so__browse-all" onClick={close}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
             </svg>

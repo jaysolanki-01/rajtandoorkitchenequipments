@@ -1,5 +1,6 @@
+'use client';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { brand, contact, footerColumns, social } from '../../config/site';
 import type { JSX } from 'react';
 import { BrandMark } from '../BrandMark';
@@ -33,19 +34,53 @@ function SocialIcon({ name }: { name: string }) {
 export function SiteFooter() {
   const [openCol, setOpenCol] = useState<number | null>(null);
   const year = new Date().getFullYear();
+  const hasContact = contact.phone || contact.email || contact.address;
 
   return (
     <footer className="sf" role="contentinfo">
+
+      {/* ── Contact strip ── */}
+      {hasContact && (
+        <div className="sf__strip">
+          <div className="container sf__strip-inner">
+            {contact.phone && (
+              <a href={`tel:${contact.phone}`} className="sf__strip-item">
+                <span className="sf__strip-label">Phone</span>
+                <span className="sf__strip-value">{contact.phone}</span>
+              </a>
+            )}
+            {contact.email && (
+              <a href={`mailto:${contact.email}`} className="sf__strip-item">
+                <span className="sf__strip-label">Email</span>
+                <span className="sf__strip-value">{contact.email}</span>
+              </a>
+            )}
+            {contact.address && (
+              <div className="sf__strip-item sf__strip-item--addr">
+                <span className="sf__strip-label">Address</span>
+                <address className="sf__strip-value">
+                  {contact.address}{contact.city && `, ${contact.city}`}{contact.state && `, ${contact.state}`}
+                </address>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Main grid ── */}
       <div className="sf__main container">
+
         {/* Brand column */}
         <div className="sf__brand">
-          <Link to="/" aria-label={brand.fullName} className="sf__logo">
-            <BrandMark size="sm" theme="light" />
+          <Link href="/" aria-label={brand.fullName} className="sf__logo">
+            <BrandMark size="md" theme="light" />
           </Link>
           <p className="sf__desc">
             Professional tandoors and kitchen equipment for restaurants, hotels, catering businesses, and commercial kitchens.
           </p>
-          {/* Social links — shown only when configured */}
+          <Link href="/contact?type=quote" className="btn btn--gold btn--sm sf__cta">
+            Request a Quote
+          </Link>
           {Object.entries(social).some(([, v]) => v) && (
             <ul className="sf__social" role="list" aria-label="Social media links">
               {Object.entries(social).map(([key, url]) =>
@@ -80,75 +115,28 @@ export function SiteFooter() {
             <ul id={`sf-col-${i}`} className={`sf__links ${openCol === i ? 'sf__links--open' : ''}`} role="list">
               {col.links.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href}>{link.label}</Link>
+                  <Link href={link.href}>{link.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
         ))}
 
-        {/* Contact column */}
-        <div className="sf__col">
-          <button
-            className="sf__col-toggle"
-            type="button"
-            aria-expanded={openCol === footerColumns.length}
-            onClick={() => setOpenCol((v) => (v === footerColumns.length ? null : footerColumns.length))}
-            aria-controls="sf-col-contact"
-          >
-            Contact
-            <svg className={`sf__chevron ${openCol === footerColumns.length ? 'sf__chevron--open' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-          <h3 className="sf__col-heading">Contact</h3>
-          <ul id="sf-col-contact" className={`sf__links sf__links--contact ${openCol === footerColumns.length ? 'sf__links--open' : ''}`} role="list">
-            {contact.phone && (
-              <li>
-                <a href={`tel:${contact.phone}`}>{contact.phone}</a>
-              </li>
-            )}
-            {contact.email && (
-              <li>
-                <a href={`mailto:${contact.email}`}>{contact.email}</a>
-              </li>
-            )}
-            {contact.address && (
-              <li>
-                <address style={{ fontStyle: 'normal' }}>
-                  {contact.address}
-                  {contact.city && `, ${contact.city}`}
-                  {contact.state && `, ${contact.state}`}
-                </address>
-              </li>
-            )}
-            {contact.businessHours && <li>{contact.businessHours}</li>}
-            {!contact.phone && !contact.email && !contact.address && (
-              <li className="sf__placeholder">
-                Available for enquiries — use the form below or visit our contact page.
-              </li>
-            )}
-            <li style={{ marginTop: '0.5rem' }}>
-              <Link to="/contact?type=quote" className="btn btn--gold btn--sm">
-                Request a Quote
-              </Link>
-            </li>
-          </ul>
-        </div>
       </div>
 
-      {/* Bottom bar */}
+      {/* ── Bottom bar ── */}
       <div className="sf__bottom">
         <div className="container sf__bottom-inner">
           <p className="sf__copy">© {year} {brand.fullName}. All rights reserved.</p>
           <ul className="sf__legal" role="list">
-            <li><Link to="/privacy-policy">Privacy Policy</Link></li>
-            <li><Link to="/terms">Terms &amp; Conditions</Link></li>
-            <li><Link to="/shipping-policy">Shipping Policy</Link></li>
-            <li><Link to="/return-policy">Returns</Link></li>
+            <li><Link href="/privacy-policy">Privacy Policy</Link></li>
+            <li><Link href="/terms">Terms &amp; Conditions</Link></li>
+            <li><Link href="/shipping-policy">Shipping Policy</Link></li>
+            <li><Link href="/return-policy">Returns</Link></li>
           </ul>
         </div>
       </div>
+
     </footer>
   );
 }

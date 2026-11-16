@@ -1,5 +1,7 @@
+'use client';
 import { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
@@ -8,6 +10,7 @@ import { api } from '../api/client';
 interface Order { order_number: string; status: string; placed_at: string; total_minor: number; payment_status: string }
 
 export function AccountOrdersPage() {
+  const router = useRouter();
   const { isLoggedIn, isLoading } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +20,7 @@ export function AccountOrdersPage() {
     api.get<Order[]>('/orders').then(setOrders).catch(() => {}).finally(() => setLoading(false));
   }, [isLoggedIn]);
 
-  if (!isLoading && !isLoggedIn) return <Navigate to="/" replace />;
+  if (!isLoading && !isLoggedIn) router.push('/'); return null;
 
   return (
     <>
@@ -34,7 +37,7 @@ export function AccountOrdersPage() {
               {loading ? <p>Loading orders…</p> : orders.length === 0 ? (
                 <div className="empty-state">
                   <p>No orders yet.</p>
-                  <Link to="/shop" className="btn btn--gold">Start Shopping</Link>
+                  <Link href="/shop" className="btn btn--gold">Start Shopping</Link>
                 </div>
               ) : (
                 <table className="orders-table orders-table--full">
@@ -54,7 +57,7 @@ export function AccountOrdersPage() {
                         <td>{new Date(o.placed_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
                         <td><span className={`order-status order-status--${o.status}`}>{o.status.replace(/_/g, ' ')}</span></td>
                         <td>{o.payment_status}</td>
-                        <td><Link to={`/account/orders/${o.order_number}`} className="btn btn--outline btn--sm">View</Link></td>
+                        <td><Link href={`/account/orders/${o.order_number}`} className="btn btn--outline btn--sm">View</Link></td>
                       </tr>
                     ))}
                   </tbody>

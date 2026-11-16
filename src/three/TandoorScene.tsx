@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ContactShadows, Environment, Lightformer, MeshReflectorMaterial } from '@react-three/drei';

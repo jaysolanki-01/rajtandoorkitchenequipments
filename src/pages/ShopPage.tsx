@@ -1,5 +1,7 @@
+'use client';
 import { useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { seo } from '../config/site';
 import { categories, products } from '../config/products';
 import { ProductCard } from '../components/product/ProductCard';
@@ -14,7 +16,7 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
 ];
 
 export function ShopPage() {
-  const [params] = useSearchParams();
+  const params = useSearchParams();
   const catFilter = params.get('category') ?? '';
   const [sort, setSort] = useState<SortKey>('default');
 
@@ -54,10 +56,10 @@ export function ShopPage() {
         {/* Breadcrumb */}
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
+            <li><Link href="/">Home</Link></li>
             {catFilter ? (
               <>
-                <li><Link to="/shop">Shop</Link></li>
+                <li><Link href="/shop">Shop</Link></li>
                 <li aria-current="page">{activeCategory?.label ?? catFilter}</li>
               </>
             ) : (
@@ -83,13 +85,13 @@ export function ShopPage() {
           <div className="shop-toolbar">
             {/* Category filter tabs */}
             <div className="filter-tabs" role="group" aria-label="Filter by category">
-              <Link to="/shop" className={`filter-tab ${!catFilter ? 'filter-tab--active' : ''}`}>
+              <Link href="/shop" className={`filter-tab ${!catFilter ? 'filter-tab--active' : ''}`}>
                 All
               </Link>
               {categories.map((c) => (
                 <Link
                   key={c.slug}
-                  to={`/shop?category=${c.slug}`}
+                  href={`/shop?category=${c.slug}`}
                   className={`filter-tab ${catFilter === c.slug ? 'filter-tab--active' : ''}`}
                 >
                   {c.label}
@@ -121,8 +123,8 @@ export function ShopPage() {
               <h2>No products found</h2>
               <p>No products in this category yet.</p>
               <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <Link to="/shop" className="btn btn--outline">Browse all products</Link>
-                <Link to="/contact?type=quote" className="btn btn--gold">Request a Quote</Link>
+                <Link href="/shop" className="btn btn--outline">Browse all products</Link>
+                <Link href="/contact?type=quote" className="btn btn--gold">Request a Quote</Link>
               </div>
             </div>
           ) : (

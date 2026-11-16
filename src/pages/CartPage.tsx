@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import { seo } from '../config/site';
 import { useCart } from '../store/CartContext';
 import { useAuth } from '../store/AuthContext';
@@ -15,7 +16,7 @@ export function CartPage() {
       <main id="main" tabIndex={-1} className="page-main">
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
+            <li><Link href="/">Home</Link></li>
             <li aria-current="page">Cart</li>
           </ol>
         </nav>
@@ -31,7 +32,7 @@ export function CartPage() {
               </svg>
               <h2>Your cart is empty</h2>
               <p>Add products from the shop to get started.</p>
-              <Link to="/shop" className="btn btn--gold">Browse Products</Link>
+              <Link href="/shop" className="btn btn--gold">Browse Products</Link>
             </div>
           ) : (
             <div className="cp">
@@ -46,7 +47,7 @@ export function CartPage() {
                       )}
                     </div>
                     <div className="cp-item__info">
-                      <Link to={`/products/${item.product.slug}`} className="cp-item__name">{item.product.name}</Link>
+                      <Link href={`/products/${item.product.slug}`} className="cp-item__name">{item.product.name}</Link>
                       <p className="cp-item__cat">{item.product.categoryLabel}</p>
                       <p className="cp-item__price">
                         {item.product.price != null
@@ -72,7 +73,7 @@ export function CartPage() {
 
                 <div className="cp__clear-row">
                   <button type="button" className="cp__clear" onClick={clearCart}>Clear cart</button>
-                  <Link to="/shop" className="btn btn--outline btn--sm">Continue Shopping</Link>
+                  <Link href="/shop" className="btn btn--outline btn--sm">Continue Shopping</Link>
                 </div>
               </div>
 
@@ -95,7 +96,7 @@ export function CartPage() {
                   )}
                 </dl>
                 <div className="cp__cta">
-                  <Link to="/checkout" className="btn btn--gold btn--block btn--lg">
+                  <Link href="/checkout" className="btn btn--gold btn--block btn--lg">
                     {isLoggedIn ? 'Proceed to Checkout' : 'Checkout'}
                   </Link>
                   {!isLoggedIn && (

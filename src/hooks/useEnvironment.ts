@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import type { LayoutMode } from '../animation/storyConfig';
 
 function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
+  const [matches, setMatches] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia(query).matches;
+  });
   useEffect(() => {
     const mq = window.matchMedia(query);
     const onChange = () => setMatches(mq.matches);
@@ -13,7 +16,6 @@ function useMediaQuery(query: string) {
   return matches;
 }
 
-/** Media queries shared by CSS (via data-layout on the hero) and the animation timeline. */
 export const LAYOUT_QUERIES = {
   desktop: '(min-width: 1200px) and (min-aspect-ratio: 1/1)',
   tablet: '(min-width: 820px) and (min-aspect-ratio: 1/1)',
@@ -27,15 +29,15 @@ export function useLayoutMode(): LayoutMode {
   return 'stacked';
 }
 
-/** Honours the OS setting. Append ?reduced-motion to the URL to preview this mode. */
 export function useReducedMotion() {
   const prefers = useMediaQuery('(prefers-reduced-motion: reduce)');
+  if (typeof window === 'undefined') return prefers;
   return prefers || new URLSearchParams(window.location.search).has('reduced-motion');
 }
 
 let webglCache: boolean | null = null;
-/** True when WebGL is available. Append ?static to the URL to force the image fallback. */
 export function hasWebGL(): boolean {
+  if (typeof window === 'undefined') return false;
   if (webglCache !== null) return webglCache;
   if (new URLSearchParams(window.location.search).has('static')) return (webglCache = false);
   try {

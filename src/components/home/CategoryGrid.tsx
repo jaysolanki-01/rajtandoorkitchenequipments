@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import { categories } from '../../config/products';
 
 export function CategoryGrid() {
@@ -14,7 +15,7 @@ export function CategoryGrid() {
           {categories.map((cat) => (
             <li key={cat.slug}>
               <Link
-                to={cat.href}
+                href={cat.href}
                 className={`cat-card ${cat.isDemo ? 'cat-card--demo' : ''}`}
                 aria-label={cat.isDemo ? `${cat.label} — ${cat.demoNote ?? 'coming soon'}` : cat.label}
               >

@@ -17,27 +17,29 @@ export const brand = {
    * Example: '/images/logo.png'
    * Currently only the product photo is available; the SVG emblem is used instead.
    */
-  logoImageUrl: '',
+  logoImageUrl: '/images/raj-tandoor-logo.webp',
 } as const;
 
 export const contact = {
   /** Business email – used in the contact form and footer. */
-  email: '',
+  email: 'rajtandoorequipment@gmail.com',
   /** Phone number with country code. Example: '+91 98765 43210' */
-  phone: '',
+  phone: '+91 9687861313',
   /** WhatsApp number with country code (may differ from phone). */
-  whatsapp: '',
+  whatsapp: '+91 9687860303',
   /** Full postal address. */
-  address: '',
-  city: '',
-  state: '',
+  address: '07, Lucky Estate, Opp. Sagar Auto Hub, Nr. Gujarat Weightbridge, Gulab Nagar, Piplaj, Pirana Road',
+  city: 'Ahmedabad',
+  state: 'Gujarat',
   country: 'India',
   /** Visible business hours. Example: 'Mon–Sat 9 am – 6 pm IST' */
   businessHours: '',
   /** GST Identification Number. */
   gstin: '',
   /** Google Maps embed URL or '' to hide the map. */
-  mapEmbedUrl: '',
+  mapEmbedUrl: 'https://maps.google.com/maps?q=Raj+Tandoor+%26+Kitchen+Equipment&output=embed&z=15',
+  /** Direct link to the Maps listing (share link, place URL, etc.) */
+  mapShareUrl: 'https://share.google/h6MyxC9CQ92BomKRL',
 } as const;
 
 export const social = {
@@ -59,6 +61,7 @@ export const seo = {
 
 export const nav = [
   { label: 'Home', href: '/' },
+  { label: 'B2B', href: '/b2b' },
   { label: 'About Us', href: '/about' },
   { label: 'Contact Us', href: '/contact' },
 ] as const;
