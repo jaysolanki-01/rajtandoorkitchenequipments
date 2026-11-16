@@ -35,6 +35,7 @@ import { ReturnPolicyPage } from './pages/ReturnPolicyPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsPage } from './pages/TermsPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { B2BPage } from './pages/B2BPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 export default function App() {
@@ -56,6 +57,7 @@ export default function App() {
               <Route path="/products/:slug" element={<ProductDetailPage />} />
               <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/search" element={<SearchPage />} />
+              <Route path="/b2b" element={<B2BPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/faq" element={<FAQPage />} />
