@@ -1194,7 +1194,21 @@ a { color: inherit; }
 .pc__actions .btn--outline { padding-left: 0.9rem; padding-right: 0.9rem; white-space: nowrap; }
 
 @media (max-width: 768px) { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
-@media (max-width: 480px)  { .product-grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px)  {
+  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.65rem; }
+  .pc { border-radius: 12px; }
+  .pc__img-wrap { height: 150px; }
+  .pc__body { padding: 0.65rem 0.75rem 0.75rem; }
+  .pc__cat { font-size: 0.6rem; margin-bottom: 0.3rem; }
+  .pc__name { font-size: 0.8rem; -webkit-line-clamp: 2; }
+  .pc__price-val { font-size: 1rem; }
+  .pc__price-orig { font-size: 0.7rem; }
+  .pc__actions { gap: 0.4rem; padding: 0 0.75rem 0.75rem; }
+  .pc__add-btn { font-size: 0.72rem; padding: 0.5rem 0.5rem; }
+  .pc__wishlist { top: 0.5rem; right: 0.5rem; }
+  .wishlist-btn { width: 30px; height: 30px; }
+  .pc__discount-badge { font-size: 0.58rem; padding: 0.2rem 0.4rem; }
+}
 
 /* Wishlist button */
 .wishlist-btn {
