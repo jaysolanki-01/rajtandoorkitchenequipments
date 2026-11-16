@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useAuth } from '../../store/AuthContext';
 import { ApiError } from '../../api/client';

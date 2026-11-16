@@ -1,3 +1,4 @@
+'use client';
 import { seo } from '../config/site';
 import { TrustSection } from '../components/home/TrustSection';
 import { CategoryGrid } from '../components/home/CategoryGrid';
@@ -10,7 +11,11 @@ import { ChooseTandoorGuide } from '../components/home/ChooseTandoorGuide';
 import { FAQAccordion } from '../components/home/FAQAccordion';
 import { ContactSection } from '../components/home/ContactSection';
 import { MapSection } from '../components/home/MapSection';
-import { TandoorHero } from '../components/TandoorHero';
+import dynamic from 'next/dynamic';
+const TandoorHero = dynamic(
+  () => import('../components/TandoorHero').then(m => ({ default: m.TandoorHero })),
+  { ssr: false }
+);
 import { useReducedMotion } from '../hooks/useEnvironment';
 import { StoryStatic } from '../components/PageSections';
 

@@ -1,5 +1,8 @@
+'use client';
 import { useRef, useState } from 'react';
-import { Link, useParams, Navigate, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { contact, seo } from '../config/site';
 import { getProductBySlug, products } from '../config/products';
 import { useCart } from '../store/CartContext';
@@ -73,7 +76,7 @@ function productLD(p: ReturnType<typeof getProductBySlug>) {
 
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
+  const router = useRouter();
   const product = getProductBySlug(slug ?? '');
   const { addItem } = useCart();
   const { has, toggle } = useWishlist();
@@ -89,7 +92,7 @@ export function ProductDetailPage() {
 
   const relatedRef = useRef<HTMLUListElement>(null);
 
-  if (!product) return <Navigate to="/shop" replace />;
+  if (!product) router.push("/shop"); return null;
 
   const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 6);
   const sizeVariants = product.sizeGroup
@@ -130,7 +133,7 @@ export function ProductDetailPage() {
 
   const handleBuyNow = () => {
     addItem(product, qty);
-    navigate('/checkout');
+    router.push('/checkout');
   };
 
   const handleBulkSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -177,9 +180,9 @@ export function ProductDetailPage() {
         {/* Breadcrumb */}
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/shop">Shop</Link></li>
-            <li><Link to={`/${product.category}`}>{product.categoryLabel}</Link></li>
+            <li><Link href="/">Home</Link></li>
+            <li><Link href="/shop">Shop</Link></li>
+            <li><Link href={`/${product.category}`}>{product.categoryLabel}</Link></li>
             <li aria-current="page">{product.name}</li>
           </ol>
         </nav>
@@ -312,7 +315,7 @@ export function ProductDetailPage() {
                     {sizeVariants.map((v) => (
                       <Link
                         key={v.id}
-                        to={`/products/${v.slug}`}
+                        href={`/products/${v.slug}`}
                         className={`pdp3__size-chip${v.id === product.id ? ' pdp3__size-chip--active' : ''}`}
                         aria-current={v.id === product.id ? 'page' : undefined}
                       >
@@ -381,7 +384,7 @@ export function ProductDetailPage() {
                           {inWishlist ? 'Saved' : 'Wishlist'}
                         </button>
 
-                        <Link to="/contact?type=quote" className="pdp3__action-btn">
+                        <Link href="/contact?type=quote" className="pdp3__action-btn">
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                           Get Quote
                         </Link>
@@ -391,7 +394,7 @@ export function ProductDetailPage() {
                             <WaIcon /> WhatsApp
                           </a>
                         ) : (
-                          <Link to={waHref} className="pdp3__action-btn pdp3__action-btn--wa">
+                          <Link href={waHref} className="pdp3__action-btn pdp3__action-btn--wa">
                             <WaIcon /> WhatsApp
                           </Link>
                         )}
@@ -399,7 +402,7 @@ export function ProductDetailPage() {
                     </>
                   ) : (
                     <>
-                      <Link to="/contact?type=quote" className="pdp3__buy-btn" style={{ textAlign: 'center', textDecoration: 'none', display: 'flex' }}>
+                      <Link href="/contact?type=quote" className="pdp3__buy-btn" style={{ textAlign: 'center', textDecoration: 'none', display: 'flex' }}>
                         Request a Quote
                       </Link>
                       <div className="pdp3__actions-row">
@@ -414,7 +417,7 @@ export function ProductDetailPage() {
                           </svg>
                           {inWishlist ? 'Saved' : 'Wishlist'}
                         </button>
-                        <Link to="/contact" className="pdp3__action-btn">
+                        <Link href="/contact" className="pdp3__action-btn">
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                           Ask a Question
                         </Link>
@@ -524,7 +527,7 @@ export function ProductDetailPage() {
                       </tbody>
                     </table>
                   ) : (
-                    <p className="pdp3__empty">Specifications available on request. <Link to="/contact">Contact us</Link> for full technical details.</p>
+                    <p className="pdp3__empty">Specifications available on request. <Link href="/contact">Contact us</Link> for full technical details.</p>
                   )}
                 </div>
               )}
@@ -548,7 +551,7 @@ export function ProductDetailPage() {
                         </tbody>
                       </table>
                     ) : (
-                      <p className="pdp3__empty">Dimension details available on request. <Link to="/contact">Contact us</Link> for precise measurements.</p>
+                      <p className="pdp3__empty">Dimension details available on request. <Link href="/contact">Contact us</Link> for precise measurements.</p>
                     );
                   })()}
                 </div>
@@ -567,7 +570,7 @@ export function ProductDetailPage() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="pdp3__empty">Box contents are confirmed at order placement. <Link to="/contact">Contact us</Link> for complete package details.</p>
+                    <p className="pdp3__empty">Box contents are confirmed at order placement. <Link href="/contact">Contact us</Link> for complete package details.</p>
                   )}
                 </div>
               )}
@@ -579,7 +582,7 @@ export function ProductDetailPage() {
                     <div className="pdp3__delivery-card">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                       <h3>Delivery</h3>
-                      <p>We dispatch orders within 3–5 business days after order confirmation. Delivery timelines to your location are confirmed at the time of order. <Link to="/contact">Contact us</Link> for shipping estimates to your area.</p>
+                      <p>We dispatch orders within 3–5 business days after order confirmation. Delivery timelines to your location are confirmed at the time of order. <Link href="/contact">Contact us</Link> for shipping estimates to your area.</p>
                     </div>
                     <div className="pdp3__delivery-card">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -589,7 +592,7 @@ export function ProductDetailPage() {
                     <div className="pdp3__delivery-card">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.76"/></svg>
                       <h3>Returns</h3>
-                      <p>Please review our <Link to="/return-policy">Returns Policy</Link> before purchase. Contact us within the return window if you experience any issue with your product.</p>
+                      <p>Please review our <Link href="/return-policy">Returns Policy</Link> before purchase. Contact us within the return window if you experience any issue with your product.</p>
                     </div>
                   </div>
                 </div>
@@ -630,7 +633,7 @@ export function ProductDetailPage() {
                     </svg>
                     <h3>No reviews yet</h3>
                     <p>Be the first to share your experience with this product. Contact us to submit a review.</p>
-                    <Link to="/contact" className="btn btn--outline">Share Your Feedback</Link>
+                    <Link href="/contact" className="btn btn--outline">Share Your Feedback</Link>
                   </div>
                 </div>
               )}
@@ -654,7 +657,7 @@ export function ProductDetailPage() {
                 <form className="pdp3__bulk-form" onSubmit={handleBulkSubmit} noValidate>
                   {bulkStatus === 'error' && (
                     <div className="form-status form-status--error" role="alert">
-                      Submission failed. Please try again or <Link to="/contact">contact us directly</Link>.
+                      Submission failed. Please try again or <Link href="/contact">contact us directly</Link>.
                     </div>
                   )}
                   <div className="form-row">
@@ -733,7 +736,7 @@ export function ProductDetailPage() {
                   {added ? 'Added ✓' : 'Add to Cart'}
                 </button>
               ) : (
-                <Link to="/contact?type=quote" className="btn btn--gold">
+                <Link href="/contact?type=quote" className="btn btn--gold">
                   Get Quote
                 </Link>
               )}

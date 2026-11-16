@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useRef, lazy, Suspense } from 'react';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
 import { tAnim } from '../../three/tAnim';
 import { hasWebGL } from '../../hooks/useEnvironment';
@@ -9,19 +10,19 @@ const TransitionScene = lazy(() =>
 );
 
 export function PageTransitionOverlay() {
-  const location = useLocation();
+  const pathname = usePathname();
   const overlayRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(false);
-  const prevPathRef = useRef(location.pathname);
+  const prevPathRef = useRef(pathname);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const webgl = hasWebGL();
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   useEffect(() => {
     // Fire on every route change (but not on initial mount)
-    if (location.pathname === prevPathRef.current) return;
-    prevPathRef.current = location.pathname;
+    if (pathname === prevPathRef.current) return;
+    prevPathRef.current = pathname;
 
     const overlay = overlayRef.current;
     const text = textRef.current;
@@ -62,7 +63,7 @@ export function PageTransitionOverlay() {
       }, 300);
     }, 600);
 
-  }, [location.pathname, webgl, reduced]);
+  }, [pathname, webgl, reduced]);
 
   return (
     <div ref={overlayRef} className="ptov" aria-hidden="true" style={{ opacity: 0, pointerEvents: 'none' }}>

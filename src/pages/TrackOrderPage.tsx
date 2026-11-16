@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { seo } from '../config/site';
 import { api, ApiError } from '../api/client';

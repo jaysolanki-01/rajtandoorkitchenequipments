@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import { seo } from '../config/site';
 
 export function NotFoundPage() {
@@ -14,8 +15,8 @@ export function NotFoundPage() {
             <h1 className="not-found__heading">Page Not Found</h1>
             <p className="not-found__body">The page you were looking for doesn't exist or has been moved.</p>
             <div className="not-found__actions">
-              <Link to="/" className="btn btn--gold">Back to Home</Link>
-              <Link to="/shop" className="btn btn--outline">Browse Products</Link>
+              <Link href="/" className="btn btn--gold">Back to Home</Link>
+              <Link href="/shop" className="btn btn--outline">Browse Products</Link>
             </div>
           </div>
         </div>

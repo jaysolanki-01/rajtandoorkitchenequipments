@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import type { Product } from '../../config/products';
 import { useCart } from '../../store/CartContext';
 import { WishlistButton } from './WishlistButton';
@@ -37,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <WishlistButton productId={product.id} productName={product.name} className="pc__wishlist" />
 
       {/* Image + hover overlay */}
-      <Link to={`/products/${product.slug}`} className="pc__img-wrap" aria-label={`View ${product.name}`}>
+      <Link href={`/products/${product.slug}`} className="pc__img-wrap" aria-label={`View ${product.name}`}>
         <img
           src={product.image}
           alt={product.name}
@@ -58,7 +59,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="pc__body">
         <span className="pc__cat">{product.categoryLabel}</span>
         <h3 className="pc__name">
-          <Link to={`/products/${product.slug}`}>{product.name}</Link>
+          <Link href={`/products/${product.slug}`}>{product.name}</Link>
         </h3>
 
         <div className="pc__price">
@@ -89,16 +90,16 @@ export function ProductCard({ product }: ProductCardProps) {
                 Add to Cart
               </button>
             ) : (
-              <Link to="/contact?type=quote" className="btn btn--gold btn--sm">
+              <Link href="/contact?type=quote" className="btn btn--gold btn--sm">
                 Request a Quote
               </Link>
             )
           ) : (
-            <Link to={`/products/${product.slug}`} className="btn btn--gold btn--sm">
+            <Link href={`/products/${product.slug}`} className="btn btn--gold btn--sm">
               Learn More
             </Link>
           )}
-          <Link to={`/products/${product.slug}`} className="btn btn--outline btn--sm" aria-label={`View ${product.name} details`}>
+          <Link href={`/products/${product.slug}`} className="btn btn--outline btn--sm" aria-label={`View ${product.name} details`}>
             View →
           </Link>
         </div>

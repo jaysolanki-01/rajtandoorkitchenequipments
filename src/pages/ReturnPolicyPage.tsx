@@ -1,3 +1,4 @@
+'use client';
 import { seo } from '../config/site';
 
 export function ReturnPolicyPage() {

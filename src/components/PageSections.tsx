@@ -1,3 +1,4 @@
+'use client';
 import { useState, type FormEvent } from 'react';
 import { brand, chapters, contact, links, productFeatures, productImage } from '../config/content';
 import { BrandLockup } from './BrandMark';

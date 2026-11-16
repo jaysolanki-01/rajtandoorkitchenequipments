@@ -1,12 +1,15 @@
+'use client';
 import { useState } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { api } from '../api/client';
 import { seo } from '../config/site';
 
 export function ResetPasswordPage() {
-  const [params] = useSearchParams();
+  const params = useSearchParams();
   const token = params.get('token') ?? '';
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -21,7 +24,7 @@ export function ResetPasswordPage() {
           <div className="rp-box">
             <h1 className="rp-title">Invalid Link</h1>
             <p className="rp-desc">This password reset link is invalid or has expired.</p>
-            <Link to="/" className="btn btn--gold btn--md">Go to Home</Link>
+            <Link href="/" className="btn btn--gold btn--md">Go to Home</Link>
           </div>
         </div>
       </div>
@@ -37,7 +40,7 @@ export function ResetPasswordPage() {
     try {
       await api.post('/auth/reset-password', { token, password });
       setDone(true);
-      setTimeout(() => navigate('/'), 3000);
+      setTimeout(() => router.push('/'), 3000);
     } catch (err: unknown) {
       const e = err as { message?: string };
       setError(e?.message ?? 'Failed to reset password. The link may have expired.');

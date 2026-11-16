@@ -1,5 +1,8 @@
+'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { NavLink } from '../NavLink';
 import { brand, nav } from '../../config/site';
 import { CATEGORIES } from '../../config/categories';
 import { useCart } from '../../store/CartContext';
@@ -31,8 +34,8 @@ export function SiteHeader() {
   const { isLoggedIn, user, logout } = useAuth();
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
-  const location = useLocation();
-  const isHome = location.pathname === '/';
+  const pathname = usePathname();
+  const isHome = pathname === '/';
   const mobileNavRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,7 +49,7 @@ export function SiteHeader() {
     setMobileOpen(false);
     setAccountOpen(false);
     setMegaOpen(false);
-  }, [location.pathname]);
+  }, [pathname]);
 
   useEffect(() => {
     if (!accountOpen) return;
@@ -76,7 +79,7 @@ export function SiteHeader() {
         <div className="sh__inner container">
 
           {/* Logo */}
-          <Link to="/" className="sh__logo" aria-label={brand.fullName}>
+          <Link href="/" className="sh__logo" aria-label={brand.fullName}>
             <BrandMark size="lg" theme="light" />
           </Link>
 
@@ -106,7 +109,7 @@ export function SiteHeader() {
               {nav.map((item) => (
                 <li key={item.href}>
                   <NavLink
-                    to={item.href}
+                    href={item.href}
                     className={({ isActive }) => isActive ? 'sh__link sh__link--active' : 'sh__link'}
                     end={item.href === '/'}
                   >
@@ -127,7 +130,7 @@ export function SiteHeader() {
             </button>
 
             {/* Wishlist */}
-            <Link to="/wishlist" className="sh__icon-btn sh__icon-btn--badge sh__wishlist" aria-label={`Wishlist${wishlistCount ? `, ${wishlistCount} item${wishlistCount !== 1 ? 's' : ''}` : ''}`}>
+            <Link href="/wishlist" className="sh__icon-btn sh__icon-btn--badge sh__wishlist" aria-label={`Wishlist${wishlistCount ? `, ${wishlistCount} item${wishlistCount !== 1 ? 's' : ''}` : ''}`}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
@@ -159,10 +162,10 @@ export function SiteHeader() {
                 {accountOpen && (
                   <div className="sh__account-menu" role="menu">
                     <p className="sh__account-name">{user?.name}</p>
-                    <Link to="/account" role="menuitem" className="sh__account-item">My Account</Link>
-                    <Link to="/account/orders" role="menuitem" className="sh__account-item">My Orders</Link>
-                    <Link to="/wishlist" role="menuitem" className="sh__account-item">My Wishlist</Link>
-                    <Link to="/account/addresses" role="menuitem" className="sh__account-item">Addresses</Link>
+                    <Link href="/account" role="menuitem" className="sh__account-item">My Account</Link>
+                    <Link href="/account/orders" role="menuitem" className="sh__account-item">My Orders</Link>
+                    <Link href="/wishlist" role="menuitem" className="sh__account-item">My Wishlist</Link>
+                    <Link href="/account/addresses" role="menuitem" className="sh__account-item">Addresses</Link>
                     <div className="sh__account-divider" />
                     <button type="button" role="menuitem" className="sh__account-item sh__account-item--danger" onClick={() => { logout(); setAccountOpen(false); }}>Sign out</button>
                   </div>
@@ -179,7 +182,7 @@ export function SiteHeader() {
             )}
 
             {/* Quote CTA — desktop only */}
-            <Link to="/contact?type=quote" className="btn btn--gold sh__quote-btn">
+            <Link href="/contact?type=quote" className="btn btn--gold sh__quote-btn">
               Request a Quote
             </Link>
 
@@ -212,7 +215,7 @@ export function SiteHeader() {
                   {col.map(cat => (
                     <div key={cat.slug} className="sh-mega__section">
                       <Link
-                        to={`/shop?category=${cat.slug}`}
+                        href={`/shop?category=${cat.slug}`}
                         className="sh-mega__title"
                         onClick={() => setMegaOpen(false)}
                       >
@@ -223,7 +226,7 @@ export function SiteHeader() {
                         {cat.products.slice(0, 4).map(p => (
                           <li key={p.slug}>
                             <Link
-                              to={`/products/${p.slug}`}
+                              href={`/products/${p.slug}`}
                               className="sh-mega__item"
                               onClick={() => setMegaOpen(false)}
                             >
@@ -234,7 +237,7 @@ export function SiteHeader() {
                       </ul>
                       {cat.products.length > 4 && (
                         <Link
-                          to={`/shop?category=${cat.slug}`}
+                          href={`/shop?category=${cat.slug}`}
                           className="sh-mega__more"
                           onClick={() => setMegaOpen(false)}
                         >
@@ -296,7 +299,7 @@ export function SiteHeader() {
                   {CATEGORIES.map(cat => (
                     <Link
                       key={cat.slug}
-                      to={`/shop?category=${cat.slug}`}
+                      href={`/shop?category=${cat.slug}`}
                       className="sh__mobile-cat-link"
                       tabIndex={mobileOpen && mobileProdOpen ? 0 : -1}
                       onClick={() => setMobileOpen(false)}
@@ -309,7 +312,7 @@ export function SiteHeader() {
               {nav.map((item) => (
                 <li key={item.href}>
                   <NavLink
-                    to={item.href}
+                    href={item.href}
                     className={({ isActive }) => isActive ? 'sh__mobile-link sh__mobile-link--active' : 'sh__mobile-link'}
                     end={item.href === '/'}
                     tabIndex={mobileOpen ? 0 : -1}
@@ -320,14 +323,14 @@ export function SiteHeader() {
               ))}
               <li className="sh__mobile-divider" />
               <li>
-                <Link to="/wishlist" className="sh__mobile-link" tabIndex={mobileOpen ? 0 : -1}>
+                <Link href="/wishlist" className="sh__mobile-link" tabIndex={mobileOpen ? 0 : -1}>
                   Wishlist {wishlistCount > 0 && <span className="sh__mobile-badge">{wishlistCount}</span>}
                 </Link>
               </li>
               {isLoggedIn ? (
                 <>
-                  <li><Link to="/account" className="sh__mobile-link" tabIndex={mobileOpen ? 0 : -1}>My Account ({user?.name})</Link></li>
-                  <li><Link to="/account/orders" className="sh__mobile-link" tabIndex={mobileOpen ? 0 : -1}>My Orders</Link></li>
+                  <li><Link href="/account" className="sh__mobile-link" tabIndex={mobileOpen ? 0 : -1}>My Account ({user?.name})</Link></li>
+                  <li><Link href="/account/orders" className="sh__mobile-link" tabIndex={mobileOpen ? 0 : -1}>My Orders</Link></li>
                   <li>
                     <button type="button" className="sh__mobile-link sh__mobile-link--btn" tabIndex={mobileOpen ? 0 : -1} onClick={() => { logout(); setMobileOpen(false); }}>
                       Sign out
@@ -351,7 +354,7 @@ export function SiteHeader() {
 
           {/* CTA at drawer bottom */}
           <div className="sh__mobile-cta">
-            <Link to="/contact?type=quote" className="sh__quote-btn" style={{ width: '100%', justifyContent: 'center' }} tabIndex={mobileOpen ? 0 : -1}>
+            <Link href="/contact?type=quote" className="sh__quote-btn" style={{ width: '100%', justifyContent: 'center' }} tabIndex={mobileOpen ? 0 : -1}>
               Request a Quote
             </Link>
           </div>

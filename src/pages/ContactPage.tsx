@@ -1,5 +1,7 @@
+'use client';
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { seo, contact } from '../config/site';
 
 const ENDPOINT = '/api/contact';
@@ -16,7 +18,7 @@ const ENQUIRY_TYPES = [
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 export function ContactPage() {
-  const [params] = useSearchParams();
+  const params = useSearchParams();
   const defaultType = params.get('type') === 'quote' ? 'Request a quote' : '';
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -51,7 +53,7 @@ export function ContactPage() {
       <main id="main" tabIndex={-1} className="page-main">
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
+            <li><Link href="/">Home</Link></li>
             <li aria-current="page">Contact Us</li>
           </ol>
         </nav>

@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 
 const businessTypes = [
   {
@@ -77,7 +78,7 @@ export function BusinessTypeSection() {
         <ul className="biz-grid" role="list">
           {businessTypes.map((biz) => (
             <li key={biz.label}>
-              <Link to={biz.href} className="biz-card">
+              <Link href={biz.href} className="biz-card">
                 <div className="biz-card__icon" aria-hidden="true">{biz.icon}</div>
                 <h3 className="biz-card__label">{biz.label}</h3>
                 <p className="biz-card__desc">{biz.description}</p>

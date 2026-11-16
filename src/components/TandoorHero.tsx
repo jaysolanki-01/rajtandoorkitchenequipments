@@ -1,3 +1,4 @@
+'use client';
 import { Component, lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { chapters, links } from '../config/content';
 import { callouts, chapterAnchors } from '../animation/storyConfig';

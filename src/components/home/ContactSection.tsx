@@ -1,5 +1,6 @@
+'use client';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { contact } from '../../config/site';
 
 const ENDPOINT = '/api/contact';
@@ -83,7 +84,7 @@ export function ContactSection() {
               )}
             </div>
 
-            <Link to="/contact" className="btn btn--outline contact-section__link">
+            <Link href="/contact" className="btn btn--outline contact-section__link">
               View full contact page →
             </Link>
           </div>

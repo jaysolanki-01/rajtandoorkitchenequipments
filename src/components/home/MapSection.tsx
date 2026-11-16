@@ -1,3 +1,4 @@
+'use client';
 import { contact } from '../../config/site';
 
 export function MapSection() {

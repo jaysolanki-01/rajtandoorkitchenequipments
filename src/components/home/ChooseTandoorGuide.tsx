@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 
 const considerations = [
   {
@@ -57,7 +58,7 @@ export function ChooseTandoorGuide() {
 
           <div className="guide-section__cta">
             <p>Always verify specifications against current product details before ordering.</p>
-            <Link to="/contact" className="btn btn--gold btn--lg">
+            <Link href="/contact" className="btn btn--gold btn--lg">
               Need Help Choosing? Contact Our Team
             </Link>
           </div>

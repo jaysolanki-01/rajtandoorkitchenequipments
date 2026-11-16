@@ -1,3 +1,4 @@
+'use client';
 import { brand } from '../config/content';
 
 const LOGO_SRC = '/images/raj-tandoor-logo.webp';

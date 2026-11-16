@@ -1,3 +1,4 @@
+'use client';
 const row1 = [
   {
     icon: (

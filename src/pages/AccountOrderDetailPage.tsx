@@ -1,5 +1,7 @@
+'use client';
 import { useEffect, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
@@ -10,6 +12,7 @@ interface OrderDetail { order_number: string; status: string; placed_at: string;
 
 export function AccountOrderDetailPage() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
+  const router = useRouter();
   const { isLoggedIn, isLoading } = useAuth();
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,7 +26,7 @@ export function AccountOrderDetailPage() {
       .finally(() => setLoading(false));
   }, [isLoggedIn, orderNumber]);
 
-  if (!isLoading && !isLoggedIn) return <Navigate to="/" replace />;
+  if (!isLoading && !isLoggedIn) router.push('/'); return null;
 
   return (
     <>
@@ -36,7 +39,7 @@ export function AccountOrderDetailPage() {
             <AccountNav />
             <div className="account-content">
               <nav className="breadcrumb" aria-label="Breadcrumb" style={{ marginBottom: '1rem' }}>
-                <ol role="list"><li><Link to="/account/orders">My Orders</Link></li><li aria-current="page">{orderNumber}</li></ol>
+                <ol role="list"><li><Link href="/account/orders">My Orders</Link></li><li aria-current="page">{orderNumber}</li></ol>
               </nav>
               <h1 className="page-h1">Order {orderNumber}</h1>
 
@@ -54,7 +57,7 @@ export function AccountOrderDetailPage() {
                     <tbody>
                       {order.items.map(i => (
                         <tr key={i.id}>
-                          <td><Link to={`/products/${i.product_slug}`}>{i.product_name}</Link></td>
+                          <td><Link href={`/products/${i.product_slug}`}>{i.product_name}</Link></td>
                           <td>{i.quantity}</td>
                         </tr>
                       ))}

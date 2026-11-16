@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom';
+'use client';
+import { NavLink } from '../NavLink';
 
 const links = [
   { to: '/account', label: 'Overview', end: true },
@@ -15,7 +16,7 @@ export function AccountNav() {
         {links.map(l => (
           <li key={l.to}>
             <NavLink
-              to={l.to}
+              href={l.to}
               end={l.end}
               className={({ isActive }) => `account-nav__link${isActive ? ' account-nav__link--active' : ''}`}
             >
