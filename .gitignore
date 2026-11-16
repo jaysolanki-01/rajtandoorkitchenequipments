@@ -3,3 +3,7 @@ dist
 *.log
 *.tsbuildinfo
 .env.local
+
+# Next.js build output
+.next/
+out/
