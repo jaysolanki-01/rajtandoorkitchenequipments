@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { brand } from '../config/site';
 
 /* ── Scroll-reveal: adds .b2b-vis to every [data-reveal] element when it enters the viewport ── */
@@ -212,8 +213,8 @@ export function B2BPage() {
                 ))}
               </ul>
               <div className="b2b-hero__ctas">
-                <Link to="/contact?type=quote" className="btn btn--gold b2b-hero__cta-primary">Request a Quote</Link>
-                <Link to="/shop" className="btn btn--outline b2b-hero__cta-secondary">Browse Products</Link>
+                <Link href="/contact?type=quote" className="btn btn--gold b2b-hero__cta-primary">Request a Quote</Link>
+                <Link href="/shop" className="btn btn--outline b2b-hero__cta-secondary">Browse Products</Link>
               </div>
             </div>
 
@@ -235,7 +236,7 @@ export function B2BPage() {
             {STATS.map((s, i) => (
               <div key={s.label} className="b2b-stats__item" data-reveal style={{ '--si': i } as React.CSSProperties}>
                 <strong className="b2b-stats__num">
-                  <Counter to={s.to} suffix={s.suffix} />
+                  <Counter href={s.to} suffix={s.suffix} />
                 </strong>
                 <span className="b2b-stats__label">{s.label}</span>
               </div>
@@ -366,7 +367,7 @@ export function B2BPage() {
                   <li>Floor plan advice and equipment layout guidance</li>
                   <li>Immediate quotation on the spot</li>
                 </ul>
-                <Link to="/contact" className="btn btn--gold" style={{ marginTop: '1.75rem', display: 'inline-flex' }}>
+                <Link href="/contact" className="btn btn--gold" style={{ marginTop: '1.75rem', display: 'inline-flex' }}>
                   Book a Showroom Visit
                 </Link>
               </div>
@@ -383,8 +384,8 @@ export function B2BPage() {
               <p className="b2b-cta__sub">Share your requirements and we'll return a detailed quote within one business day — no obligation, no pressure.</p>
             </div>
             <div className="b2b-cta__actions">
-              <Link to="/contact?type=quote" className="btn btn--gold b2b-cta__btn">Get a Free Quote</Link>
-              <Link to="/shop" className="btn btn--outline b2b-cta__btn-sec">View All Products</Link>
+              <Link href="/contact?type=quote" className="btn btn--gold b2b-cta__btn">Get a Free Quote</Link>
+              <Link href="/shop" className="btn btn--outline b2b-cta__btn-sec">View All Products</Link>
             </div>
           </div>
         </section>

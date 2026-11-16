@@ -1,3 +1,4 @@
+'use client';
 import type { ChapterContent } from '../config/content';
 
 export function HeroCTA({ ctas }: { ctas: NonNullable<ChapterContent['ctas']> }) {

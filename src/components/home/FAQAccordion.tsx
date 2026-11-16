@@ -1,5 +1,6 @@
+'use client';
 import { useId, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const faqs = [
   {
@@ -110,7 +111,7 @@ export function FAQAccordion() {
           <h2 id="faq-heading" className="section-title">Frequently Asked Questions</h2>
           <p className="section-subtitle">
             Common questions about our products and services. For anything not covered here,{' '}
-            <Link to="/contact">contact us</Link>.
+            <Link href="/contact">contact us</Link>.
           </p>
         </div>
 

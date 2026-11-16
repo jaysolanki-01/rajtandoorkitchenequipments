@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
@@ -10,6 +11,7 @@ interface Address { id: number; label: string; name: string; phone: string | nul
 const blankForm = { label: 'Home', name: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', country: 'India', isDefault: false };
 
 export function AccountAddressesPage() {
+  const router = useRouter();
   const { isLoggedIn, isLoading } = useAuth();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,7 @@ export function AccountAddressesPage() {
     load();
   }
 
-  if (!isLoading && !isLoggedIn) return <Navigate to="/" replace />;
+  if (!isLoading && !isLoggedIn) router.push('/'); return null;
 
   return (
     <>

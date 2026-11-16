@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useState } from 'react';
 import { links, nav } from '../config/content';
 import { BrandLockup } from './BrandMark';

@@ -1,3 +1,4 @@
+'use client';
 import { products } from '../../config/products';
 import { ProductCard } from '../product/ProductCard';
 

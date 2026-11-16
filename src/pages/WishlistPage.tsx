@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import { seo } from '../config/site';
 import { products } from '../config/products';
 import { useWishlist } from '../store/WishlistContext';
@@ -16,7 +17,7 @@ export function WishlistPage() {
       <main id="main" tabIndex={-1} className="page-main">
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
+            <li><Link href="/">Home</Link></li>
             <li aria-current="page">Wishlist</li>
           </ol>
         </nav>
@@ -32,7 +33,7 @@ export function WishlistPage() {
           {wishlistProducts.length === 0 ? (
             <div className="empty-state">
               <p>Your wishlist is empty. Browse our products and click the heart icon to save items.</p>
-              <Link to="/shop" className="btn btn--gold">Browse Products</Link>
+              <Link href="/shop" className="btn btn--gold">Browse Products</Link>
             </div>
           ) : (
             <ul className="product-grid" role="list">

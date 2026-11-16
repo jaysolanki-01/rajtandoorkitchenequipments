@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import { seo } from '../config/site';
 import { categories } from '../config/products';
 
@@ -12,7 +13,7 @@ export function CategoriesPage() {
       <main id="main" tabIndex={-1} className="page-main">
         <nav className="breadcrumb container" aria-label="Breadcrumb">
           <ol role="list">
-            <li><Link to="/">Home</Link></li>
+            <li><Link href="/">Home</Link></li>
             <li aria-current="page">Categories</li>
           </ol>
         </nav>
@@ -23,7 +24,7 @@ export function CategoriesPage() {
 
           <div className="category-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
             {categories.map(cat => (
-              <Link key={cat.slug} to={cat.href} className="category-card">
+              <Link key={cat.slug} href={cat.href} className="category-card">
                 <div className="category-card__img-wrap">
                   {cat.image ? <img src={cat.image} alt={cat.label} className="category-card__img" /> : <div className="category-card__img-placeholder" aria-hidden="true" />}
                 </div>

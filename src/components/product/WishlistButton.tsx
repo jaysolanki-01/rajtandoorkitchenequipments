@@ -1,3 +1,4 @@
+'use client';
 import { useWishlist } from '../../store/WishlistContext';
 
 interface WishlistButtonProps {

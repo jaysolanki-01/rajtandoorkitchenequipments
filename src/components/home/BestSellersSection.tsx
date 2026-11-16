@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 import { products } from '../../config/products';
 import { ProductCard } from '../product/ProductCard';
 
@@ -33,7 +34,7 @@ export function BestSellersSection() {
         </ul>
 
         <div className="section-footer">
-          <Link to="/shop" className="btn btn--outline">View All Products</Link>
+          <Link href="/shop" className="btn btn--outline">View All Products</Link>
         </div>
       </div>
     </section>

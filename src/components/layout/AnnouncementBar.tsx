@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const MESSAGES = [
   {
@@ -68,7 +69,7 @@ export function AnnouncementBar() {
       <div className={`ann-bar__content${visible ? ' ann-bar__content--visible' : ''}`}>
         <span className="ann-bar__icon" aria-hidden="true">{msg.icon}</span>
         <p className="ann-bar__text">{msg.text}</p>
-        <Link to={msg.cta.href} className="ann-bar__cta">
+        <Link href={msg.cta.href} className="ann-bar__cta">
           {msg.cta.label}
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M5 12h14M12 5l7 7-7 7"/>

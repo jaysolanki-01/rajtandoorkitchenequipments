@@ -1,3 +1,4 @@
+'use client';
 import { chapters, type ChapterContent } from '../config/content';
 import { HeroCTA } from './HeroCTA';
 

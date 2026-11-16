@@ -1,5 +1,7 @@
+'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useCart, type CartItem } from '../store/CartContext';
 import { useAuth } from '../store/AuthContext';
@@ -173,7 +175,7 @@ function CoOrderSummary({
         </div>
       </dl>
 
-      <Link to="/cart" className="co-summary__edit">
+      <Link href="/cart" className="co-summary__edit">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -328,7 +330,7 @@ function CoCouponSection({
 export function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const { isLoggedIn, user } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const submitted = useRef(false);
   const [step, setStep] = useState<Step>('info');
@@ -391,7 +393,7 @@ export function CheckoutPage() {
     return () => document.body.classList.remove('is-checkout');
   }, []);
 
-  if (items.length === 0 && !submitted.current) return <Navigate to="/cart" replace />;
+  if (items.length === 0 && !submitted.current) router.push("/cart"); return null;
 
   // ── Computed totals ──────────────────────────────────────────────────────────
 
@@ -553,7 +555,7 @@ export function CheckoutPage() {
       }
 
       submitted.current = true;
-      navigate('/checkout/confirmation', {
+      router.push('/checkout/confirmation', {
         state: {
           orderRef,
           isGuest: !isLoggedIn,
@@ -1252,8 +1254,8 @@ export function CheckoutPage() {
 
                     <p className="co-tnc">
                       By placing your order you agree to our{' '}
-                      <Link to="/terms">Terms & Conditions</Link> and{' '}
-                      <Link to="/privacy-policy">Privacy Policy</Link>.
+                      <Link href="/terms">Terms & Conditions</Link> and{' '}
+                      <Link href="/privacy-policy">Privacy Policy</Link>.
                     </p>
                   </section>
                 )}
@@ -1264,7 +1266,7 @@ export function CheckoutPage() {
                 <div className="co-summary-card">
                   <h2 className="co-summary-card__title">
                     Order Summary
-                    <Link to="/cart" className="co-summary-card__shop-link">Edit cart</Link>
+                    <Link href="/cart" className="co-summary-card__shop-link">Edit cart</Link>
                   </h2>
                   <CoOrderSummary
                     items={items}

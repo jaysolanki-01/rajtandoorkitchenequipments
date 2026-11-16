@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
 
 const features = [
   {
@@ -74,8 +75,8 @@ export function CommercialSection() {
               ))}
             </ul>
             <div className="commercial-section__cta">
-              <Link to="/contact?type=quote" className="btn btn--gold btn--lg">Request a Bulk Quote</Link>
-              <Link to="/shop" className="btn btn--outline commercial-section__browse">Browse Products</Link>
+              <Link href="/contact?type=quote" className="btn btn--gold btn--lg">Request a Bulk Quote</Link>
+              <Link href="/shop" className="btn btn--outline commercial-section__browse">Browse Products</Link>
             </div>
           </div>
 
@@ -105,7 +106,7 @@ export function CommercialSection() {
                   Dedicated enquiry team
                 </li>
               </ul>
-              <Link to="/contact?type=quote" className="btn btn--gold btn--sm btn--block" style={{ marginTop: '1.5rem' }}>
+              <Link href="/contact?type=quote" className="btn btn--gold btn--sm btn--block" style={{ marginTop: '1.5rem' }}>
                 Start Your Enquiry →
               </Link>
             </div>

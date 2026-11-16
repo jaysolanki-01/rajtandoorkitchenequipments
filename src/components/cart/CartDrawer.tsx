@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useCart } from '../../store/CartContext';
 
 interface CartDrawerProps {
@@ -65,7 +66,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           {items.length === 0 ? (
             <div className="cart-drawer__empty">
               <p>Your cart is empty.</p>
-              <Link to="/shop" className="btn btn--outline btn--sm" onClick={onClose}>
+              <Link href="/shop" className="btn btn--outline btn--sm" onClick={onClose}>
                 Browse products
               </Link>
             </div>
@@ -82,7 +83,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     loading="lazy"
                   />
                   <div className="cart-item__details">
-                    <Link to={`/products/${product.slug}`} className="cart-item__name" onClick={onClose}>
+                    <Link href={`/products/${product.slug}`} className="cart-item__name" onClick={onClose}>
                       {product.name}
                     </Link>
                     <span className="cart-item__cat">{product.categoryLabel}</span>
@@ -131,14 +132,14 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             )}
             <Link
-              to="/checkout"
+              href="/checkout"
               className="btn btn--gold btn--block"
               onClick={onClose}
             >
               Checkout
             </Link>
             <Link
-              to="/cart"
+              href="/cart"
               className="btn btn--outline btn--sm btn--block cart-drawer__view-cart"
               onClick={onClose}
             >

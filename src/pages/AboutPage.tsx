@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { seo, brand } from '../config/site';
 
 /* ── 3D tilt card ────────────────────────────────────────────────────────── */
@@ -218,11 +219,11 @@ export function AboutPage() {
 
             {/* CTAs with glow */}
             <div className="ab-hero__actions">
-              <Link to="/shop" className="btn btn--gold btn--lg ab-hero__btn-primary ab-hero__btn-glow">
+              <Link href="/shop" className="btn btn--gold btn--lg ab-hero__btn-primary ab-hero__btn-glow">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 Explore Products
               </Link>
-              <Link to="/contact" className="btn btn--outline ab-hero__btn-secondary">Get in Touch</Link>
+              <Link href="/contact" className="btn btn--outline ab-hero__btn-secondary">Get in Touch</Link>
             </div>
 
             {/* Scroll indicator */}
@@ -238,17 +239,17 @@ export function AboutPage() {
             <div className="container">
               <div className="ab-stats-bar__grid">
                 <div className="ab-stats-bar__item">
-                  <strong className="ab-stats-bar__num"><Counter to={500} suffix="+" /></strong>
+                  <strong className="ab-stats-bar__num"><Counter href={500} suffix="+" /></strong>
                   <span className="ab-stats-bar__label">Restaurants Served</span>
                 </div>
                 <div className="ab-stats-bar__divider" aria-hidden="true" />
                 <div className="ab-stats-bar__item">
-                  <strong className="ab-stats-bar__num"><Counter to={12} suffix="+" /></strong>
+                  <strong className="ab-stats-bar__num"><Counter href={12} suffix="+" /></strong>
                   <span className="ab-stats-bar__label">Product Variants</span>
                 </div>
                 <div className="ab-stats-bar__divider" aria-hidden="true" />
                 <div className="ab-stats-bar__item">
-                  <strong className="ab-stats-bar__num"><Counter to={100} suffix="%" /></strong>
+                  <strong className="ab-stats-bar__num"><Counter href={100} suffix="%" /></strong>
                   <span className="ab-stats-bar__label">Commercial Grade</span>
                 </div>
                 <div className="ab-stats-bar__divider" aria-hidden="true" />
@@ -362,7 +363,7 @@ export function AboutPage() {
                 },
               ].map((item, i) => (
                 <Reveal key={item.title} delay={i * 100}>
-                  <Link to={item.link} className="ab-offer__card">
+                  <Link href={item.link} className="ab-offer__card">
                     <div className="ab-offer__card-icon" style={{ '--ab-icon-color': item.color } as React.CSSProperties}>
                       {item.icon}
                     </div>
@@ -557,9 +558,9 @@ export function AboutPage() {
                 to discuss your specific requirements with our team.
               </p>
               <div className="ab-cta__actions">
-                <Link to="/shop" className="btn btn--gold btn--lg">Browse All Products</Link>
-                <Link to="/request-quote" className="btn btn--outline ab-cta__btn-outline">Request a Quote</Link>
-                <Link to="/contact" className="btn btn--outline ab-cta__btn-outline">Contact Us</Link>
+                <Link href="/shop" className="btn btn--gold btn--lg">Browse All Products</Link>
+                <Link href="/request-quote" className="btn btn--outline ab-cta__btn-outline">Request a Quote</Link>
+                <Link href="/contact" className="btn btn--outline ab-cta__btn-outline">Contact Us</Link>
               </div>
             </Reveal>
           </div>

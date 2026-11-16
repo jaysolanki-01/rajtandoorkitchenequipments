@@ -1,5 +1,6 @@
+'use client';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { brand, contact, footerColumns, social } from '../../config/site';
 import type { JSX } from 'react';
 import { BrandMark } from '../BrandMark';
@@ -71,13 +72,13 @@ export function SiteFooter() {
 
         {/* Brand column */}
         <div className="sf__brand">
-          <Link to="/" aria-label={brand.fullName} className="sf__logo">
+          <Link href="/" aria-label={brand.fullName} className="sf__logo">
             <BrandMark size="md" theme="light" />
           </Link>
           <p className="sf__desc">
             Professional tandoors and kitchen equipment for restaurants, hotels, catering businesses, and commercial kitchens.
           </p>
-          <Link to="/contact?type=quote" className="btn btn--gold btn--sm sf__cta">
+          <Link href="/contact?type=quote" className="btn btn--gold btn--sm sf__cta">
             Request a Quote
           </Link>
           {Object.entries(social).some(([, v]) => v) && (
@@ -114,7 +115,7 @@ export function SiteFooter() {
             <ul id={`sf-col-${i}`} className={`sf__links ${openCol === i ? 'sf__links--open' : ''}`} role="list">
               {col.links.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href}>{link.label}</Link>
+                  <Link href={link.href}>{link.label}</Link>
                 </li>
               ))}
             </ul>
@@ -128,10 +129,10 @@ export function SiteFooter() {
         <div className="container sf__bottom-inner">
           <p className="sf__copy">© {year} {brand.fullName}. All rights reserved.</p>
           <ul className="sf__legal" role="list">
-            <li><Link to="/privacy-policy">Privacy Policy</Link></li>
-            <li><Link to="/terms">Terms &amp; Conditions</Link></li>
-            <li><Link to="/shipping-policy">Shipping Policy</Link></li>
-            <li><Link to="/return-policy">Returns</Link></li>
+            <li><Link href="/privacy-policy">Privacy Policy</Link></li>
+            <li><Link href="/terms">Terms &amp; Conditions</Link></li>
+            <li><Link href="/shipping-policy">Shipping Policy</Link></li>
+            <li><Link href="/return-policy">Returns</Link></li>
           </ul>
         </div>
       </div>

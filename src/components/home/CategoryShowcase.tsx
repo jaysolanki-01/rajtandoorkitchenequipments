@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { CATEGORIES } from '../../config/categories';
 
 const ROW1 = CATEGORIES.slice(0, 7);
@@ -58,7 +59,7 @@ export function CategoryShowcase() {
         <ul ref={row1Ref} className="cshow__row" role="list" aria-label="Categories row 1">
           {ROW1.map((cat, i) => (
             <li key={cat.slug} className="cshow__item">
-              <Link to={`/shop?category=${cat.slug}`} className="cshow__card">
+              <Link href={`/shop?category=${cat.slug}`} className="cshow__card">
                 <span className="cshow__num">{String(i + 1).padStart(2, '0')}</span>
                 <div className="cshow__body">
                   <h3 className="cshow__name">{cat.name}</h3>
@@ -76,7 +77,7 @@ export function CategoryShowcase() {
         <ul ref={row2Ref} className="cshow__row" role="list" aria-label="Categories row 2">
           {ROW2.map((cat, i) => (
             <li key={cat.slug} className="cshow__item">
-              <Link to={`/shop?category=${cat.slug}`} className="cshow__card">
+              <Link href={`/shop?category=${cat.slug}`} className="cshow__card">
                 <span className="cshow__num">{String(ROW1.length + i + 1).padStart(2, '0')}</span>
                 <div className="cshow__body">
                   <h3 className="cshow__name">{cat.name}</h3>
