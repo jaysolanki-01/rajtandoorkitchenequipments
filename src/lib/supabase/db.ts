@@ -137,14 +137,14 @@ export type OrderTrackStatus = {
 
 export async function fetchOrderStatus(orderNumber: string, email: string): Promise<OrderTrackStatus | null> {
   const sb = getClient();
-  const { data, error } = await sb
-    .from('orders')
-    .select('order_number, status, created_at, payment_method')
-    .eq('order_number', orderNumber.trim().toUpperCase())
-    .eq('email', email.trim().toLowerCase())
-    .maybeSingle();
-  if (error || !data) return null;
-  return data as OrderTrackStatus;
+  // Use an RPC (SECURITY DEFINER function) so anonymous users can look up their
+  // own order by number + email without needing direct table read access.
+  const { data, error } = await sb.rpc('track_order', {
+    p_order_number: orderNumber.trim().toUpperCase(),
+    p_email: email.trim().toLowerCase(),
+  });
+  if (error || !data?.length) return null;
+  return data[0] as OrderTrackStatus;
 }
 
 // ── Profile update (via Supabase Auth) ───────────────────────────────────────
