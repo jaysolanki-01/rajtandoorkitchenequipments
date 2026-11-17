@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { contact, seo } from '../config/site';
-import { getProductBySlug, products } from '../config/products';
+import { type Product } from '../config/products';
+import { useProducts } from '../hooks/useProducts';
 import { useCart } from '../store/CartContext';
 import { useWishlist } from '../store/WishlistContext';
 import { ProductCard } from '../components/product/ProductCard';
@@ -58,7 +59,7 @@ function WaIcon() {
   );
 }
 
-function productLD(p: ReturnType<typeof getProductBySlug>) {
+function productLD(p: Product | undefined) {
   if (!p) return null;
   return {
     '@context': 'https://schema.org',
@@ -77,7 +78,7 @@ function productLD(p: ReturnType<typeof getProductBySlug>) {
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
-  const product = getProductBySlug(slug ?? '');
+  const { products } = useProducts();
   const { addItem } = useCart();
   const { has, toggle } = useWishlist();
 
@@ -92,7 +93,12 @@ export function ProductDetailPage() {
 
   const relatedRef = useRef<HTMLUListElement>(null);
 
-  if (!product) router.push("/shop"); return null;
+  const product = products.find((p) => p.slug === (slug ?? ''));
+
+  if (!product) {
+    router.push('/shop');
+    return null;
+  }
 
   const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 6);
   const sizeVariants = product.sizeGroup
