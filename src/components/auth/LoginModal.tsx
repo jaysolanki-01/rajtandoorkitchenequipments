@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useAuth } from '../../store/AuthContext';
-import { ApiError } from '../../api/client';
 
 type Mode = 'login' | 'register' | 'forgot';
 
@@ -11,7 +10,7 @@ interface Props {
 }
 
 export function LoginModal({ forceOpen, onClose }: Props) {
-  const { login, register, isLoggedIn } = useAuth();
+  const { login, register, resetPassword, isLoggedIn } = useAuth();
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>('login');
 
@@ -74,7 +73,7 @@ export function LoginModal({ forceOpen, onClose }: Props) {
       await login(email.trim(), password);
       handleClose();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Login failed. Please try again.');
+      setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -89,10 +88,14 @@ export function LoginModal({ forceOpen, onClose }: Props) {
     if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
     setSubmitting(true);
     try {
-      await register(name.trim(), email.trim(), password, phone.trim() || undefined);
-      handleClose();
+      const { needsConfirmation } = await register(name.trim(), email.trim(), password, phone.trim() || undefined);
+      if (needsConfirmation) {
+        setSuccess('Account created! Please check your email to confirm your account.');
+      } else {
+        handleClose();
+      }
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Registration failed. Please try again.');
+      setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -104,14 +107,8 @@ export function LoginModal({ forceOpen, onClose }: Props) {
     if (!email.trim()) { setError('Please enter your email address.'); return; }
     setSubmitting(true);
     try {
-      const res = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
-      });
-      const json = await res.json();
-      setSuccess(json.message || 'If that address is registered, a reset link has been sent.');
+      await resetPassword(email.trim());
+      setSuccess('If that address is registered, a reset link has been sent.');
     } catch {
       setSuccess('If that address is registered, a reset link has been sent.');
     } finally {
@@ -184,7 +181,8 @@ export function LoginModal({ forceOpen, onClose }: Props) {
               <h2 id="lm-title" className="lm__title">Create an account</h2>
               <p className="lm__subtitle">Save your wishlist, track enquiries, and manage your orders.</p>
               {error && <p className="lm__error" role="alert">{error}</p>}
-              <form className="lm__form" onSubmit={handleRegister} noValidate>
+              {success && <p className="lm__success" role="status">{success}</p>}
+              {!success && <form className="lm__form" onSubmit={handleRegister} noValidate>
                 <div className="lm__field">
                   <label htmlFor={nameId} className="lm__label">Full name</label>
                   <input id={nameId} type="text" className="lm__input" placeholder="Your name" value={name} autoComplete="name" onChange={(e) => setName(e.target.value)} />
@@ -215,7 +213,7 @@ export function LoginModal({ forceOpen, onClose }: Props) {
                   <input type="tel" className="lm__input" placeholder="+91 00000 00000" value={phone} autoComplete="tel" onChange={(e) => setPhone(e.target.value)} />
                 </div>
                 <button type="submit" className="btn btn--gold btn--block lm__submit" disabled={submitting}>{submitting ? 'Creating account…' : 'Create account'}</button>
-              </form>
+              </form>}
             </>
           )}
 
@@ -254,7 +252,7 @@ export function LoginModal({ forceOpen, onClose }: Props) {
                     await login('admin@rajtandoor.com', 'Admin@1234');
                     handleClose();
                   } catch (err) {
-                    setError(err instanceof ApiError ? err.message : 'Admin login failed.');
+                    setError(err instanceof Error ? err.message : 'Admin login failed.');
                   } finally {
                     setSubmitting(false);
                   }
