@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { seo, contact } from '../config/site';
@@ -26,22 +26,41 @@ const PAY_LABEL: Record<string, string> = {
   cod: 'Cash on Delivery',
 };
 
+const SESSION_KEY = 'rt_order_confirmation';
+
 export function OrderConfirmationPage() {
   const router = useRouter();
-  const state = null as ConfirmationState | null; // state passed via router is not available in Next.js; handled via query params or server state
+  const [state, setState] = useState<ConfirmationState | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     document.body.classList.add('is-checkout');
     return () => document.body.classList.remove('is-checkout');
   }, []);
 
-  if (typeof window !== 'undefined' && !state?.orderRef) { router.push("/shop"); return null; }
-  if (!state?.orderRef) return null;
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (raw) {
+        setState(JSON.parse(raw) as ConfirmationState);
+        sessionStorage.removeItem(SESSION_KEY);
+      }
+    } catch { /* sessionStorage blocked */ }
+    setReady(true);
+  }, []);
+
+  // Wait until sessionStorage has been checked before deciding to redirect
+  if (!ready) return null;
+
+  if (!state?.orderRef) {
+    router.push('/shop');
+    return null;
+  }
 
   const {
     orderRef, isGuest, customerName, email, address,
     items, subtotal, shippingCharge, couponDiscount, finalTotal, payMethod,
-  } = state as ConfirmationState;
+  } = state;
 
   const waNum = contact.whatsapp as string;
   const waHref = waNum
@@ -119,7 +138,7 @@ export function OrderConfirmationPage() {
                 <div className="co-confirm__card">
                   <h2 className="co-confirm__card-title">Items Ordered</h2>
                   <ul className="co-confirm__items" role="list">
-                    {items.map((item: { name: string; qty: number; price: number | null; slug: string }, idx: number) => (
+                    {items.map((item, idx) => (
                       <li key={idx} className="co-confirm__item">
                         <div className="co-confirm__item-info">
                           <Link href={`/products/${item.slug}`} className="co-confirm__item-name">
@@ -168,7 +187,7 @@ export function OrderConfirmationPage() {
                       <span className="co-confirm__next-num" aria-hidden="true">1</span>
                       <div>
                         <strong>Confirmation email</strong>
-                        <p>We'll send confirmation details to <strong>{email}</strong></p>
+                        <p>We&apos;ll send confirmation details to <strong>{email}</strong></p>
                       </div>
                     </li>
                     <li>
@@ -182,7 +201,7 @@ export function OrderConfirmationPage() {
                       <span className="co-confirm__next-num" aria-hidden="true">3</span>
                       <div>
                         <strong>Dispatch &amp; delivery</strong>
-                        <p>Once payment is confirmed, we'll dispatch your order and share tracking details.</p>
+                        <p>Once payment is confirmed, we&apos;ll dispatch your order and share tracking details.</p>
                       </div>
                     </li>
                   </ol>

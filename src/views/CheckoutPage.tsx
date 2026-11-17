@@ -564,6 +564,36 @@ export function CheckoutPage() {
         }).catch(() => { /* fire-and-forget */ });
       }
 
+      // Pass confirmation data to next page via sessionStorage
+      // (Next.js router.push has no state option; sessionStorage is cleared on read)
+      try {
+        sessionStorage.setItem('rt_order_confirmation', JSON.stringify({
+          orderRef,
+          isGuest: !isLoggedIn,
+          customerName: info.name,
+          email: info.email.trim().toLowerCase(),
+          address: [
+            addr.houseFlatBuilding,
+            addr.streetArea,
+            addr.landmark,
+            addr.city,
+            addr.state,
+            addr.pinCode,
+          ].filter(Boolean).join(', '),
+          items: items.map(i => ({
+            name: i.product.name,
+            qty: i.quantity,
+            price: i.product.price ?? null,
+            slug: i.product.slug,
+          })),
+          subtotal,
+          shippingCharge,
+          couponDiscount,
+          finalTotal,
+          payMethod,
+        }));
+      } catch { /* sessionStorage blocked (private mode) — confirmation page will redirect */ }
+
       submitted.current = true;
       router.push('/checkout/confirmation');
       clearCart();
