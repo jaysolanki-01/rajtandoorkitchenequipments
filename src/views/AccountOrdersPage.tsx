@@ -5,20 +5,18 @@ import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
-import { api } from '../api/client';
-
-interface Order { order_number: string; status: string; placed_at: string; total_minor: number; payment_status: string }
+import { fetchUserOrders, type UserOrder } from '../lib/supabase/db';
 
 export function AccountOrdersPage() {
   const router = useRouter();
-  const { isLoggedIn, isLoading } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
+  const { isLoggedIn, isLoading, user } = useAuth();
+  const [orders, setOrders] = useState<UserOrder[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
-    api.get<Order[]>('/orders').then(setOrders).catch(() => {}).finally(() => setLoading(false));
-  }, [isLoggedIn]);
+    if (!isLoggedIn || !user) return;
+    fetchUserOrders(user.id).then(setOrders).catch(() => {}).finally(() => setLoading(false));
+  }, [isLoggedIn, user]);
 
   if (!isLoading && !isLoggedIn) router.push('/'); return null;
 
@@ -46,7 +44,7 @@ export function AccountOrdersPage() {
                       <th>Order Number</th>
                       <th>Date</th>
                       <th>Status</th>
-                      <th>Payment</th>
+                      <th>Method</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -54,9 +52,9 @@ export function AccountOrdersPage() {
                     {orders.map(o => (
                       <tr key={o.order_number}>
                         <td>{o.order_number}</td>
-                        <td>{new Date(o.placed_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                        <td>{new Date(o.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
                         <td><span className={`order-status order-status--${o.status}`}>{o.status.replace(/_/g, ' ')}</span></td>
-                        <td>{o.payment_status}</td>
+                        <td>{o.payment_method}</td>
                         <td><Link href={`/account/orders/${o.order_number}`} className="btn btn--outline btn--sm">View</Link></td>
                       </tr>
                     ))}

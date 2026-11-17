@@ -87,3 +87,121 @@ export async function insertOrder(payload: OrderInsert): Promise<{ orderNumber: 
   if (error) throw new Error(error.message);
   return { orderNumber: data.order_number };
 }
+
+// ── User orders ──────────────────────────────────────────────────────────────
+
+export type UserOrder = {
+  order_number: string;
+  status: string;
+  created_at: string;
+  total: number;
+  payment_method: string;
+  notes: string | null;
+  items: { product?: { name?: string; slug?: string }; name?: string; slug?: string; quantity: number; price?: number }[];
+  address: Record<string, unknown>;
+  customer_name: string;
+  email: string;
+};
+
+export async function fetchUserOrders(userId: string): Promise<UserOrder[]> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('orders')
+    .select('order_number, status, created_at, total, payment_method, notes')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  if (error || !data) return [];
+  return data as UserOrder[];
+}
+
+export async function fetchUserOrder(userId: string, orderNumber: string): Promise<UserOrder | null> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('orders')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('order_number', orderNumber)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as UserOrder;
+}
+
+// ── Track order (no auth — match by order_number + email) ────────────────────
+
+export type OrderTrackStatus = {
+  order_number: string;
+  status: string;
+  created_at: string;
+  payment_method: string;
+};
+
+export async function fetchOrderStatus(orderNumber: string, email: string): Promise<OrderTrackStatus | null> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('orders')
+    .select('order_number, status, created_at, payment_method')
+    .eq('order_number', orderNumber.trim().toUpperCase())
+    .eq('email', email.trim().toLowerCase())
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as OrderTrackStatus;
+}
+
+// ── Profile update (via Supabase Auth) ───────────────────────────────────────
+
+export async function updateProfile(payload: {
+  full_name?: string;
+  phone?: string;
+  password?: string;
+}): Promise<void> {
+  const sb = getClient();
+  const { password, ...meta } = payload;
+  const updates: { data?: Record<string, string>; password?: string } = {};
+  if (Object.keys(meta).length > 0) updates.data = meta;
+  if (password) updates.password = password;
+  const { error } = await sb.auth.updateUser(updates);
+  if (error) throw new Error(error.message);
+}
+
+// ── Addresses (stored in user_metadata — no extra table needed) ──────────────
+
+export type UserAddress = {
+  id: string;
+  label: string;
+  name: string;
+  phone: string;
+  line1: string;
+  line2: string;
+  city: string;
+  state: string;
+  pincode: string;
+  country: string;
+  is_default: boolean;
+};
+
+export async function fetchUserAddresses(): Promise<UserAddress[]> {
+  const sb = getClient();
+  const { data: { user } } = await sb.auth.getUser();
+  return (user?.user_metadata?.addresses as UserAddress[]) ?? [];
+}
+
+export async function saveUserAddress(address: Omit<UserAddress, 'id'>): Promise<void> {
+  const sb = getClient();
+  const { data: { user } } = await sb.auth.getUser();
+  const existing = (user?.user_metadata?.addresses as UserAddress[]) ?? [];
+  const updated = address.is_default ? existing.map(a => ({ ...a, is_default: false })) : existing;
+  const { error } = await sb.auth.updateUser({
+    data: { addresses: [...updated, { ...address, id: crypto.randomUUID() }] },
+  });
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteUserAddress(id: string): Promise<void> {
+  const sb = getClient();
+  const { data: { user } } = await sb.auth.getUser();
+  const existing = (user?.user_metadata?.addresses as UserAddress[]) ?? [];
+  const { error } = await sb.auth.updateUser({
+    data: { addresses: existing.filter(a => a.id !== id) },
+  });
+  if (error) throw new Error(error.message);
+}

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
-import { api, ApiError } from '../api/client';
+import { updateProfile } from '../lib/supabase/db';
 
 export function AccountProfilePage() {
   const router = useRouter();
@@ -23,13 +23,16 @@ export function AccountProfilePage() {
     setMsg(null);
     setSaving(true);
     try {
-      const payload: Record<string, string> = { name: name.trim(), phone: phone.trim() };
-      if (newPw) { payload.currentPassword = curPw; payload.newPassword = newPw; }
-      await api.patch('/account/profile', payload);
+      const payload: { full_name?: string; phone?: string; password?: string } = {
+        full_name: name.trim(),
+        phone: phone.trim(),
+      };
+      if (newPw) payload.password = newPw;
+      await updateProfile(payload);
       setMsg({ type: 'success', text: 'Profile updated successfully.' });
       setCurPw(''); setNewPw('');
     } catch (err) {
-      setMsg({ type: 'error', text: err instanceof ApiError ? err.message : 'Update failed.' });
+      setMsg({ type: 'error', text: err instanceof Error ? err.message : 'Update failed.' });
     } finally {
       setSaving(false);
     }
@@ -65,10 +68,6 @@ export function AccountProfilePage() {
                 </div>
 
                 <h2 style={{ marginTop: '2rem', marginBottom: '0.75rem', fontSize: '1rem', fontWeight: 700 }}>Change Password <span style={{ fontWeight: 400, fontSize: '0.85rem', color: 'var(--rt-border)' }}>(leave blank to keep current)</span></h2>
-                <div className="form-field">
-                  <label htmlFor="prof-cur-pw" className="form-label">Current Password</label>
-                  <input id="prof-cur-pw" type="password" className="form-input" value={curPw} onChange={e => setCurPw(e.target.value)} autoComplete="current-password" />
-                </div>
                 <div className="form-field">
                   <label htmlFor="prof-new-pw" className="form-label">New Password</label>
                   <input id="prof-new-pw" type="password" className="form-input" value={newPw} onChange={e => setNewPw(e.target.value)} autoComplete="new-password" placeholder="Min. 8 characters" />

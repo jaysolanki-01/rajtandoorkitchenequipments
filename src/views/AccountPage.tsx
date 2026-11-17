@@ -5,19 +5,17 @@ import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
-import { api } from '../api/client';
-
-interface Order { order_number: string; status: string; placed_at: string; total_minor: number }
+import { fetchUserOrders, type UserOrder } from '../lib/supabase/db';
 
 export function AccountPage() {
   const router = useRouter();
   const { isLoggedIn, isLoading, user } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<UserOrder[]>([]);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
-    api.get<Order[]>('/orders').then(setOrders).catch(() => {});
-  }, [isLoggedIn]);
+    if (!isLoggedIn || !user) return;
+    fetchUserOrders(user.id).then(setOrders).catch(() => {});
+  }, [isLoggedIn, user]);
 
   if (!isLoading && !isLoggedIn) router.push('/'); return null;
   if (isLoading) return <main className="page-main"><div className="container"><p style={{ padding: '4rem 0' }}>Loading…</p></div></main>;
@@ -63,7 +61,7 @@ export function AccountPage() {
                       {orders.slice(0, 5).map(o => (
                         <tr key={o.order_number}>
                           <td><Link href={`/account/orders/${o.order_number}`}>{o.order_number}</Link></td>
-                          <td>{new Date(o.placed_at).toLocaleDateString('en-IN')}</td>
+                          <td>{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
                           <td><span className={`order-status order-status--${o.status}`}>{o.status}</span></td>
                         </tr>
                       ))}

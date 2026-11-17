@@ -4,46 +4,44 @@ import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
-import { api, ApiError } from '../api/client';
+import { fetchUserAddresses, saveUserAddress, deleteUserAddress, type UserAddress } from '../lib/supabase/db';
 
-interface Address { id: number; label: string; name: string; phone: string | null; line1: string; line2: string | null; city: string; state: string; pincode: string; country: string; is_default: number }
-
-const blankForm = { label: 'Home', name: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', country: 'India', isDefault: false };
+const blankForm = { label: 'Home', name: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', country: 'India', is_default: false };
 
 export function AccountAddressesPage() {
   const router = useRouter();
   const { isLoggedIn, isLoading } = useAuth();
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState(blankForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
-  const load = () => api.get<Address[]>('/account/addresses').then(setAddresses).catch(() => {}).finally(() => setLoading(false));
+  const load = () => fetchUserAddresses().then(setAddresses).catch(() => {}).finally(() => setLoading(false));
   useEffect(() => { if (isLoggedIn) load(); }, [isLoggedIn]);
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, [k]: e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value }));
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     setSaving(true);
     try {
-      await api.post('/account/addresses', form);
+      await saveUserAddress(form);
       setAdding(false);
       setForm(blankForm);
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not save address.');
+      setError(err instanceof Error ? err.message : 'Could not save address.');
     } finally {
       setSaving(false);
     }
   }
 
-  async function handleDelete(id: number) {
+  async function handleDelete(id: string) {
     if (!confirm('Remove this address?')) return;
-    await api.delete(`/account/addresses/${id}`).catch(() => {});
+    await deleteUserAddress(id).catch(() => {});
     load();
   }
 
@@ -83,7 +81,7 @@ export function AccountAddressesPage() {
                     <div className="form-field"><label className="form-label">Phone</label><input type="tel" className="form-input" value={form.phone} onChange={set('phone')} /></div>
                   </div>
                   <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem', cursor: 'pointer' }}>
-                    <input type="checkbox" checked={form.isDefault} onChange={e => setForm(f => ({ ...f, isDefault: e.target.checked }))} />
+                    <input type="checkbox" checked={form.is_default} onChange={e => setForm(f => ({ ...f, is_default: e.target.checked }))} />
                     Set as default address
                   </label>
                   <button type="submit" className="btn btn--gold" disabled={saving}>{saving ? 'Saving…' : 'Save Address'}</button>
@@ -106,6 +104,7 @@ export function AccountAddressesPage() {
                       <button className="btn btn--outline btn--sm" style={{ marginTop: '0.75rem' }} onClick={() => handleDelete(addr.id)}>Remove</button>
                     </div>
                   ))}
+
                 </div>
               )}
             </div>

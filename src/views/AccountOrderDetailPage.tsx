@@ -5,26 +5,23 @@ import { useParams, useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
-import { api, ApiError } from '../api/client';
-
-interface OrderItem { id: number; product_name: string; product_slug: string; quantity: number; unit_price_minor: number; line_total_minor: number }
-interface OrderDetail { order_number: string; status: string; placed_at: string; total_minor: number; payment_status: string; payment_method: string; notes: string | null; items: OrderItem[] }
+import { fetchUserOrder, type UserOrder } from '../lib/supabase/db';
 
 export function AccountOrderDetailPage() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const router = useRouter();
-  const { isLoggedIn, isLoading } = useAuth();
-  const [order, setOrder] = useState<OrderDetail | null>(null);
+  const { isLoggedIn, isLoading, user } = useAuth();
+  const [order, setOrder] = useState<UserOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!isLoggedIn || !orderNumber) return;
-    api.get<OrderDetail>(`/orders/${orderNumber}`)
-      .then(setOrder)
-      .catch(e => setError(e instanceof ApiError ? e.message : 'Order not found.'))
+    if (!isLoggedIn || !orderNumber || !user) return;
+    fetchUserOrder(user.id, orderNumber)
+      .then(data => { if (data) setOrder(data); else setError('Order not found.'); })
+      .catch(() => setError('Could not load order.'))
       .finally(() => setLoading(false));
-  }, [isLoggedIn, orderNumber]);
+  }, [isLoggedIn, orderNumber, user]);
 
   if (!isLoading && !isLoggedIn) router.push('/'); return null;
 
@@ -46,21 +43,25 @@ export function AccountOrderDetailPage() {
               {loading ? <p>Loading…</p> : error ? <p className="form-status form-status--error">{error}</p> : order && (
                 <>
                   <div className="order-meta">
-                    <div><span>Date</span><strong>{new Date(order.placed_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</strong></div>
+                    <div><span>Date</span><strong>{new Date(order.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</strong></div>
                     <div><span>Status</span><strong className={`order-status order-status--${order.status}`}>{order.status.replace(/_/g, ' ')}</strong></div>
-                    <div><span>Payment</span><strong>{order.payment_status} ({order.payment_method})</strong></div>
+                    <div><span>Payment</span><strong>{order.payment_method}</strong></div>
                   </div>
 
                   <h2 style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1.05rem', fontWeight: 700 }}>Items</h2>
                   <table className="orders-table orders-table--full">
                     <thead><tr><th>Product</th><th>Qty</th></tr></thead>
                     <tbody>
-                      {order.items.map(i => (
-                        <tr key={i.id}>
-                          <td><Link href={`/products/${i.product_slug}`}>{i.product_name}</Link></td>
-                          <td>{i.quantity}</td>
-                        </tr>
-                      ))}
+                      {(order.items ?? []).map((i, idx) => {
+                        const name = i.product?.name ?? i.name ?? 'Product';
+                        const slug = i.product?.slug ?? i.slug ?? '#';
+                        return (
+                          <tr key={idx}>
+                            <td><Link href={`/products/${slug}`}>{name}</Link></td>
+                            <td>{i.quantity}</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
 
