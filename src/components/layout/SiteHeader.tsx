@@ -79,9 +79,7 @@ export function SiteHeader() {
         <div className="sh__inner container">
 
           {/* Logo */}
-          <Link href="/" className="sh__logo" aria-label={brand.fullName}>
-            <BrandMark size="lg" theme="light" />
-          </Link>
+          <Link href="/" className="sh__logo" aria-label={brand.fullName} />
 
           {/* Desktop nav */}
           <nav className="sh__nav" aria-label="Primary navigation">
@@ -264,7 +262,6 @@ export function SiteHeader() {
         >
           {/* Drawer header */}
           <div className="sh__mobile-head">
-            <BrandMark size="lg" theme="light" />
             <button
               type="button"
               className="sh__mobile-close"
