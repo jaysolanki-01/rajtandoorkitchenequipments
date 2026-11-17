@@ -71,7 +71,6 @@ function CatCard({ cat, index, featured }: { cat: (typeof CATEGORIES)[0]; index:
       style={{ animationDelay: `${index * 0.055}s` }}
     >
       <div className="ccat-card__top">
-        <span className="ccat-card__icon" aria-hidden="true">{icon}</span>
         <span className="ccat-card__count">{cat.products.length} products</span>
       </div>
       <h3 className="ccat-card__name">{cat.name}</h3>
