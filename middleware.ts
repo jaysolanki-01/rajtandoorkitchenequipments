@@ -27,7 +27,34 @@ export async function middleware(request: NextRequest) {
   );
 
   // Refresh session so it doesn't expire
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+
+  // Protect /account/* — redirect unauthenticated visitors to /login
+  if (pathname.startsWith('/account') && !user) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = '/login';
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Protect /admin/* — redirect non-admins to home
+  if (pathname.startsWith('/admin')) {
+    if (!user) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = '/login';
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    const role = user.user_metadata?.role;
+    if (role !== 'admin') {
+      const homeUrl = request.nextUrl.clone();
+      homeUrl.pathname = '/';
+      homeUrl.search = '';
+      return NextResponse.redirect(homeUrl);
+    }
+  }
 
   return supabaseResponse;
 }
