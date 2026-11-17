@@ -398,6 +398,7 @@ a { color: inherit; }
   height: 72px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 1.5rem;
   padding: 0 var(--gutter);
   transition: height 0.3s ease;
@@ -784,14 +785,19 @@ a { color: inherit; }
 @media (max-width: 960px) {
   .sh__nav { display: none; }
   .sh__burger { display: flex; }
-  .sh__inner { height: var(--header-h); gap: 1rem; }
-}
-@media (max-width: 480px) {
-  .sh__inner { gap: 0.5rem; }
-  .sh__actions { gap: 0.15rem; }
-  .sh__icon-btn { width: 36px; height: 36px; }
+  .sh__inner { height: var(--header-h); gap: 0.75rem; }
+  /* Constrain logo so it doesn't crowd action buttons */
+  .sh__logo img { height: 44px !important; max-width: 160px !important; }
+  /* Hide text-heavy buttons; avatar + icons + burger stay */
   .sh__quote-btn { display: none; }
   .sh__login-btn { display: none; }
+}
+@media (max-width: 480px) {
+  .sh__inner { gap: 0.4rem; }
+  .sh__actions { gap: 0.1rem; }
+  .sh__icon-btn { width: 36px; height: 36px; }
+  /* Keep logo even smaller on small phones */
+  .sh__logo img { height: 38px !important; max-width: 130px !important; }
 }
 
 /* ── Page layout ───────────────────────────────────────────────────────────── */
