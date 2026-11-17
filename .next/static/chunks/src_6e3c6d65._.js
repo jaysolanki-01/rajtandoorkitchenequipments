@@ -1473,7 +1473,7 @@ function AnnouncementBar() {
         columnNumber: 5
     }, this);
 }
-_s(AnnouncementBar, "X0dEgku+B5y4uSyEHbHqhLsHJZ8=");
+_s(AnnouncementBar, "/XoGso//u7aUtRU99CkyUTeDBes=");
 _c = AnnouncementBar;
 var _c;
 __turbopack_context__.k.register(_c, "AnnouncementBar");
@@ -6275,7 +6275,7 @@ function useMediaQuery(query) {
     ]);
     return matches;
 }
-_s(useMediaQuery, "54YpgWVMhyVSY2//eMUlTps7UN4=");
+_s(useMediaQuery, "2cAPa5EnrjDRO0JmqLZtY0f/zK4=");
 const LAYOUT_QUERIES = {
     desktop: '(min-width: 1200px) and (min-aspect-ratio: 1/1)',
     tablet: '(min-width: 820px) and (min-aspect-ratio: 1/1)'
