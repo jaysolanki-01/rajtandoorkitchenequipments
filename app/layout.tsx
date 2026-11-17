@@ -8,7 +8,7 @@ import { SiteHeader } from '../src/components/layout/SiteHeader';
 import { SiteFooter } from '../src/components/layout/SiteFooter';
 import { WhatsAppFAB } from '../src/components/WhatsAppFAB';
 import { SearchOverlay } from '../src/components/search/SearchOverlay';
-import { PageTransitionOverlay } from '../src/components/transitions/PageTransitionOverlay';
+import { PageTransitionOverlayNoSSR } from '../src/components/transitions/PageTransitionOverlayNoSSR';
 
 export const metadata: Metadata = {
   title: seo.title,
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <SiteFooter />
           <WhatsAppFAB />
-          <PageTransitionOverlay />
+          <PageTransitionOverlayNoSSR />
         </Providers>
       </body>
     </html>

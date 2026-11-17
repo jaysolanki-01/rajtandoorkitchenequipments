@@ -1,7 +1,6 @@
 'use client';
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { seo, contact } from '../config/site';
 
@@ -36,7 +35,8 @@ export function OrderConfirmationPage() {
     return () => document.body.classList.remove('is-checkout');
   }, []);
 
-  if (!state?.orderRef) { router.push("/shop"); return null; }
+  if (typeof window !== 'undefined' && !state?.orderRef) { router.push("/shop"); return null; }
+  if (!state?.orderRef) return null;
 
   const {
     orderRef, isGuest, customerName, email, address,

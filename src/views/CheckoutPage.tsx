@@ -393,7 +393,7 @@ export function CheckoutPage() {
     return () => document.body.classList.remove('is-checkout');
   }, []);
 
-  if (items.length === 0 && !submitted.current) { router.push("/cart"); return null; }
+  if (typeof window !== 'undefined' && items.length === 0 && !submitted.current) { router.push("/cart"); return null; }
 
   // ── Computed totals ──────────────────────────────────────────────────────────
 
