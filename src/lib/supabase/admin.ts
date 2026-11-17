@@ -95,3 +95,141 @@ export async function updateQuoteStatus(id: string, status: string, notes?: stri
   const { error } = await sb.from('quotes').update(payload).eq('id', id);
   if (error) throw new Error(error.message);
 }
+
+// ── Product CRUD ──────────────────────────────────────────────────────────────
+
+export type AdminProduct = {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  category_label: string;
+  short_description: string;
+  description: string;
+  image: string;
+  images: string[];
+  price: number | null;
+  currency: string;
+  specs: { label: string; value: string }[];
+  features: string[];
+  is_demo: boolean;
+  in_stock: boolean;
+  price_label: string | null;
+  group_id: string | null;
+  warranty: string | null;
+  tags: string[] | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export async function fetchAdminProducts(): Promise<AdminProduct[]> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('products')
+    .select('*')
+    .order('name');
+  if (error || !data) return [];
+  return data as AdminProduct[];
+}
+
+export async function createProduct(payload: Omit<AdminProduct, 'created_at' | 'updated_at'>): Promise<AdminProduct> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('products')
+    .insert(payload)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as AdminProduct;
+}
+
+export async function updateProduct(id: string, payload: Partial<Omit<AdminProduct, 'id' | 'created_at' | 'updated_at'>>): Promise<void> {
+  const sb = getClient();
+  const { error } = await sb.from('products').update(payload).eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteProduct(id: string): Promise<void> {
+  const sb = getClient();
+  const { error } = await sb.from('products').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function uploadProductImage(file: File, productId: string): Promise<string> {
+  const sb = getClient();
+  const ext = file.name.split('.').pop() ?? 'jpg';
+  const path = `${productId}/${Date.now()}.${ext}`;
+  const { error } = await sb.storage.from('product-images').upload(path, file, { upsert: true });
+  if (error) throw new Error(error.message);
+  const { data: { publicUrl } } = sb.storage.from('product-images').getPublicUrl(path);
+  return publicUrl;
+}
+
+// ── Customers (derived from orders) ──────────────────────────────────────────
+
+export type AdminCustomer = {
+  email: string;
+  customer_name: string;
+  phone: string;
+  order_count: number;
+  total_spent: number;
+  last_order: string;
+};
+
+export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('orders')
+    .select('email, customer_name, phone, total, created_at')
+    .order('created_at', { ascending: false });
+  if (error || !data) return [];
+
+  // Aggregate by email
+  const map = new Map<string, AdminCustomer>();
+  for (const o of data) {
+    const key = o.email.toLowerCase();
+    const existing = map.get(key);
+    if (existing) {
+      existing.order_count += 1;
+      existing.total_spent += o.total ?? 0;
+    } else {
+      map.set(key, {
+        email: o.email,
+        customer_name: o.customer_name,
+        phone: o.phone ?? '',
+        order_count: 1,
+        total_spent: o.total ?? 0,
+        last_order: o.created_at,
+      });
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => b.order_count - a.order_count);
+}
+
+// ── Inventory (products with in_stock status) ─────────────────────────────────
+
+export type AdminInventoryItem = {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  price: number | null;
+  in_stock: boolean;
+  is_demo: boolean;
+};
+
+export async function fetchAdminInventory(): Promise<AdminInventoryItem[]> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('products')
+    .select('id, slug, name, category, price, in_stock, is_demo')
+    .order('name');
+  if (error || !data) return [];
+  return data as AdminInventoryItem[];
+}
+
+export async function updateInventoryStock(id: string, in_stock: boolean): Promise<void> {
+  const sb = getClient();
+  const { error } = await sb.from('products').update({ in_stock }).eq('id', id);
+  if (error) throw new Error(error.message);
+}
