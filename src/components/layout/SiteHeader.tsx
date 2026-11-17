@@ -79,7 +79,9 @@ export function SiteHeader() {
         <div className="sh__inner container">
 
           {/* Logo */}
-          <Link href="/" className="sh__logo" aria-label={brand.fullName} />
+          <Link href="/" className="sh__logo" aria-label={brand.fullName}>
+            <BrandMark size="md" />
+          </Link>
 
           {/* Desktop nav */}
           <nav className="sh__nav" aria-label="Primary navigation">

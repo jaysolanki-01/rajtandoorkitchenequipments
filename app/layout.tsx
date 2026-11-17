@@ -23,6 +23,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en">
+      <head>
+        {/* Set has-ann class before first paint to prevent layout shift from fixed header */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{if(sessionStorage.getItem('ann-dismissed')!=='1')document.documentElement.classList.add('has-ann');}catch(e){}})();` }} />
+      </head>
       <body>
         <Providers>
           {!isAdmin && <a className="skip-link" href="#main">Skip to main content</a>}
