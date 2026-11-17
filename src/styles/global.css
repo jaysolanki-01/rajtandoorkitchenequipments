@@ -2247,7 +2247,8 @@ a { color: inherit; }
 .sf__strip { background: #0d1627; border-bottom: 1px solid rgba(195,162,104,.15); }
 .sf__strip-inner {
   display: flex; flex-wrap: wrap; gap: 0;
-  padding: 1.25rem 0;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
 }
 .sf__strip-item {
   flex: 1 1 220px; display: flex; flex-direction: column; gap: 0.2rem;
