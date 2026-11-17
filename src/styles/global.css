@@ -2407,7 +2407,7 @@ a { color: inherit; }
 .hero__content {
   position: relative; z-index: 2; height: 100%;
   display: flex; align-items: center;
-  padding: var(--header-h) var(--gutter) 0; pointer-events: none;
+  padding: calc(var(--header-h) + var(--ann-h)) var(--gutter) 0; pointer-events: none;
 }
 .hero__copy { display: grid; width: min(640px, 47vw); }
 .chapter { grid-area: 1/1; align-self: center; pointer-events: auto; }
@@ -2499,7 +2499,7 @@ a { color: inherit; }
 /* Stacked hero overrides */
 .hero[data-layout='stacked'] .hero__content {
   align-items: flex-start;
-  padding-top: calc(var(--header-h) + 2vh);
+  padding-top: calc(var(--header-h) + var(--ann-h) + 2vh);
   /* Keep text in the upper 50% so the product image never overlaps */
   align-self: flex-start;
 }
@@ -2545,7 +2545,7 @@ a { color: inherit; }
   .hero[data-layout='stacked'] .chapter__tag { display: none; }
   .hero[data-layout='stacked'] .cta-row { margin-top: 0.7rem; }
   .hero[data-layout='stacked'] .cta-row .btn { padding: 0.6rem 1rem; font-size: 0.84rem; }
-  .hero[data-layout='stacked'] .hero__copy { max-height: calc(46vh - var(--header-h) - 1vh); }
+  .hero[data-layout='stacked'] .hero__copy { max-height: calc(46vh - var(--header-h) - var(--ann-h) - 1vh); }
 }
 .hero[data-motion='reduced'] .chapter + .chapter { display:none; }
 
@@ -3132,7 +3132,8 @@ a { color: inherit; }
 
 /* ── Checkout Page (co__) ───────────────────────────────────────────────────── */
 
-/* Hide only the footer during checkout */
+/* Hide site header + footer during checkout — the co-page has its own header */
+body.is-checkout .sh { display: none !important; }
 body.is-checkout .sf { display: none !important; }
 
 .co-page {
@@ -5439,7 +5440,7 @@ body.is-checkout .sf { display: none !important; }
   display: flex; align-items: center;
   overflow: hidden;
   background: #080605;
-  padding-top: calc(var(--header-h) + 2rem);
+  padding-top: calc(var(--header-h) + var(--ann-h) + 2rem);
   padding-bottom: 4rem;
 }
 .b2b-hero__bg {
