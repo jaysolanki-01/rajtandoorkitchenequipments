@@ -9,7 +9,9 @@ function LoginPageInner() {
   const params = useSearchParams();
   const { isLoggedIn, isLoading } = useAuth();
 
-  const redirectTo = params.get('redirect') ?? '/account';
+  // Sanitise redirect — only allow relative paths, never external URLs
+  const raw = params.get('redirect') ?? '';
+  const redirectTo = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/account';
 
   // Already logged in — go straight to destination
   useEffect(() => {
