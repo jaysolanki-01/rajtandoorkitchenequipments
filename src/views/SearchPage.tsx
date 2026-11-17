@@ -1,14 +1,15 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { products as localProducts } from '../config/products';
 
 export function SearchPage() {
-  const [params, setParams] = useSearchParams();
-  const [query, setQuery] = useState(params.get('q') ?? '');
-  const [input, setInput] = useState(params.get('q') ?? '');
+  const params = useSearchParams();
+  const router = useRouter();
+  const [query, setQuery] = useState(params?.get('q') ?? '');
+  const [input, setInput] = useState(params?.get('q') ?? '');
 
   const trimmed = query.trim().toLowerCase();
   const results = trimmed.length < 2 ? [] : localProducts.filter(p =>
@@ -20,10 +21,11 @@ export function SearchPage() {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     setQuery(input);
-    setParams(input.trim() ? { q: input.trim() } : {});
+    const qs = input.trim() ? `?q=${encodeURIComponent(input.trim())}` : '';
+    router.push(`/search${qs}`);
   }
 
-  useEffect(() => { setQuery(params.get('q') ?? ''); setInput(params.get('q') ?? ''); }, [params]);
+  useEffect(() => { setQuery(params?.get('q') ?? ''); setInput(params?.get('q') ?? ''); }, [params]);
 
   return (
     <>

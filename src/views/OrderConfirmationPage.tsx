@@ -36,12 +36,12 @@ export function OrderConfirmationPage() {
     return () => document.body.classList.remove('is-checkout');
   }, []);
 
-  if (!state?.orderRef) router.push("/shop"); return null;
+  if (!state?.orderRef) { router.push("/shop"); return null; }
 
   const {
     orderRef, isGuest, customerName, email, address,
     items, subtotal, shippingCharge, couponDiscount, finalTotal, payMethod,
-  } = state;
+  } = state as ConfirmationState;
 
   const waNum = contact.whatsapp as string;
   const waHref = waNum
@@ -119,7 +119,7 @@ export function OrderConfirmationPage() {
                 <div className="co-confirm__card">
                   <h2 className="co-confirm__card-title">Items Ordered</h2>
                   <ul className="co-confirm__items" role="list">
-                    {items.map((item, idx) => (
+                    {items.map((item: { name: string; qty: number; price: number | null; slug: string }, idx: number) => (
                       <li key={idx} className="co-confirm__item">
                         <div className="co-confirm__item-info">
                           <Link href={`/products/${item.slug}`} className="co-confirm__item-name">

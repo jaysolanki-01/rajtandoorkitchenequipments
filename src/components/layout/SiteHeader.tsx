@@ -109,7 +109,7 @@ export function SiteHeader() {
               {nav.map((item) => (
                 <li key={item.href}>
                   <NavLink
-                    href={item.href}
+                    to={item.href}
                     className={({ isActive }) => isActive ? 'sh__link sh__link--active' : 'sh__link'}
                     end={item.href === '/'}
                   >
@@ -312,7 +312,7 @@ export function SiteHeader() {
               {nav.map((item) => (
                 <li key={item.href}>
                   <NavLink
-                    href={item.href}
+                    to={item.href}
                     className={({ isActive }) => isActive ? 'sh__mobile-link sh__mobile-link--active' : 'sh__mobile-link'}
                     end={item.href === '/'}
                     tabIndex={mobileOpen ? 0 : -1}

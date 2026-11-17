@@ -393,7 +393,7 @@ export function CheckoutPage() {
     return () => document.body.classList.remove('is-checkout');
   }, []);
 
-  if (items.length === 0 && !submitted.current) router.push("/cart"); return null;
+  if (items.length === 0 && !submitted.current) { router.push("/cart"); return null; }
 
   // ── Computed totals ──────────────────────────────────────────────────────────
 
@@ -565,27 +565,7 @@ export function CheckoutPage() {
       }
 
       submitted.current = true;
-      router.push('/checkout/confirmation', {
-        state: {
-          orderRef,
-          isGuest: !isLoggedIn,
-          customerName: info.name,
-          email: info.email,
-          address: `${addr.houseFlatBuilding}, ${addr.streetArea}, ${addr.city}, ${addr.state} – ${addr.pinCode}`,
-          items: items.map(i => ({
-            name: i.product.name,
-            qty: i.quantity,
-            price: i.product.price,
-            slug: i.product.slug,
-          })),
-          subtotal,
-          shippingCharge,
-          couponDiscount,
-          finalTotal,
-          payMethod,
-        },
-        replace: true,
-      });
+      router.push('/checkout/confirmation');
       clearCart();
     } catch (err) {
       setGlobalError(

@@ -16,7 +16,7 @@ export function AccountNav() {
         {links.map(l => (
           <li key={l.to}>
             <NavLink
-              href={l.to}
+              to={l.to}
               end={l.end}
               className={({ isActive }) => `account-nav__link${isActive ? ' account-nav__link--active' : ''}`}
             >

@@ -23,7 +23,7 @@ export function AccountOrderDetailPage() {
       .finally(() => setLoading(false));
   }, [isLoggedIn, orderNumber, user]);
 
-  if (!isLoading && !isLoggedIn) router.push('/'); return null;
+  if (!isLoading && !isLoggedIn) { router.push('/'); return null; }
 
   return (
     <>

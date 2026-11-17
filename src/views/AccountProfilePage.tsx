@@ -38,7 +38,13 @@ export function AccountProfilePage() {
     }
   }
 
-  if (!isLoading && !isLoggedIn) router.push('/'); return null;
+  if (!isLoading && !isLoggedIn) { router.push('/'); return null; }
+
+  const msgBanner = msg && (
+    <div className={`form-status form-status--${msg.type === 'success' ? 'success' : 'error'}`} role="alert">
+      {msg.text}
+    </div>
+  );
 
   return (
     <>
@@ -51,7 +57,7 @@ export function AccountProfilePage() {
             <AccountNav />
             <div className="account-content">
               <h1 className="page-h1">My Profile</h1>
-              {msg && <div className={`form-status form-status--${msg.type === 'success' ? 'success' : 'error'}`} role="alert">{msg.text}</div>}
+              {msgBanner}
               <form className="contact-form" onSubmit={handleSave} noValidate style={{ maxWidth: 560 }}>
                 <div className="form-field">
                   <label htmlFor="prof-name" className="form-label">Full Name</label>

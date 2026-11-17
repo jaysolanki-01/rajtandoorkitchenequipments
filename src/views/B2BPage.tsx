@@ -236,7 +236,7 @@ export function B2BPage() {
             {STATS.map((s, i) => (
               <div key={s.label} className="b2b-stats__item" data-reveal style={{ '--si': i } as React.CSSProperties}>
                 <strong className="b2b-stats__num">
-                  <Counter href={s.to} suffix={s.suffix} />
+                  <Counter to={s.to} suffix={s.suffix} />
                 </strong>
                 <span className="b2b-stats__label">{s.label}</span>
               </div>
