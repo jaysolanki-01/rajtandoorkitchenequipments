@@ -10,6 +10,7 @@ import { SiteFooter } from '../src/components/layout/SiteFooter';
 import { WhatsAppFAB } from '../src/components/WhatsAppFAB';
 import { SearchOverlay } from '../src/components/search/SearchOverlay';
 import { PageTransitionOverlayNoSSR } from '../src/components/transitions/PageTransitionOverlayNoSSR';
+import { CookieConsent } from '../src/components/CookieConsent';
 
 export const metadata: Metadata = {
   title: seo.title,
@@ -37,6 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {!isAdmin && <SiteFooter />}
           {!isAdmin && <WhatsAppFAB />}
           {!isAdmin && <PageTransitionOverlayNoSSR />}
+          {!isAdmin && <CookieConsent />}
         </Providers>
       </body>
     </html>
