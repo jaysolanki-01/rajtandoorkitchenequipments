@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { seo } from '../src/config/site';
 import '../src/styles/global.css';
 import '../src/styles/glass.css';
@@ -15,19 +16,23 @@ export const metadata: Metadata = {
   description: seo.description,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const headersList = await headers();
+  const pathname = headersList.get('x-pathname') ?? headersList.get('x-invoke-path') ?? '';
+  const isAdmin = pathname.startsWith('/admin');
+
   return (
     <html lang="en">
       <body>
         <Providers>
-          <a className="skip-link" href="#main">Skip to main content</a>
-          <AnnouncementBar />
-          <SiteHeader />
-          <SearchOverlay />
+          {!isAdmin && <a className="skip-link" href="#main">Skip to main content</a>}
+          {!isAdmin && <AnnouncementBar />}
+          {!isAdmin && <SiteHeader />}
+          {!isAdmin && <SearchOverlay />}
           {children}
-          <SiteFooter />
-          <WhatsAppFAB />
-          <PageTransitionOverlayNoSSR />
+          {!isAdmin && <SiteFooter />}
+          {!isAdmin && <WhatsAppFAB />}
+          {!isAdmin && <PageTransitionOverlayNoSSR />}
         </Providers>
       </body>
     </html>

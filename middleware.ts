@@ -70,6 +70,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Pass pathname to root layout so it can suppress site chrome on /admin pages
+  supabaseResponse.headers.set('x-pathname', pathname);
   return supabaseResponse;
 }
 
