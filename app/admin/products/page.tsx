@@ -27,7 +27,6 @@ export default function AdminProductsPage() {
                 <th>Category</th>
                 <th>Price</th>
                 <th>Slug</th>
-                <th>Tags</th>
               </tr>
             </thead>
             <tbody>
@@ -59,11 +58,6 @@ export default function AdminProductsPage() {
                     {p.price != null ? `₹${Number(p.price).toLocaleString('en-IN')}` : '—'}
                   </td>
                   <td className="admin-mono">{p.slug}</td>
-                  <td>
-                    {Array.isArray(p.tags) && p.tags.map((t: string) => (
-                      <span key={t} style={{ fontSize: 10, padding: '2px 7px', borderRadius: 100, background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-fg-muted)', marginRight: 4, display: 'inline-block' }}>{t}</span>
-                    ))}
-                  </td>
                 </tr>
               ))}
             </tbody>
