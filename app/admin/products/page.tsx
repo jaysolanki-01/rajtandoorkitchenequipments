@@ -4,6 +4,7 @@ import {
   fetchAdminProducts, createProduct, updateProduct, deleteProduct, uploadProductImage,
   type AdminProduct,
 } from '../../../src/lib/supabase/admin';
+import { CATEGORIES } from '../../../src/config/categories';
 
 const EMPTY: Omit<AdminProduct, 'created_at' | 'updated_at'> = {
   id: '', slug: '', name: '', category: '', category_label: '', short_description: '',
@@ -236,11 +237,20 @@ export default function AdminProductsPage() {
             <FieldRow label="Slug *">
               <input style={inp} value={editing.slug ?? ''} onChange={e => set('slug', slugify(e.target.value))} placeholder="auto-generated" />
             </FieldRow>
-            <FieldRow label="Category key *">
-              <input style={inp} value={editing.category ?? ''} onChange={e => set('category', e.target.value)} placeholder="e.g. clay-tandoor" />
-            </FieldRow>
-            <FieldRow label="Category label">
-              <input style={inp} value={editing.category_label ?? ''} onChange={e => set('category_label', e.target.value)} placeholder="e.g. Clay Tandoor" />
+            <FieldRow label="Category *">
+              <select
+                style={inp}
+                value={editing.category ?? ''}
+                onChange={e => {
+                  const cat = CATEGORIES.find(c => c.slug === e.target.value);
+                  setEditing(prev => prev ? { ...prev, category: cat?.slug ?? '', category_label: cat?.name ?? '' } : prev);
+                }}
+              >
+                <option value="">— Select a category —</option>
+                {CATEGORIES.map(cat => (
+                  <option key={cat.slug} value={cat.slug}>{cat.name}</option>
+                ))}
+              </select>
             </FieldRow>
             <FieldRow label="Price (₹, leave blank = on request)">
               <input style={inp} type="number" min={0} value={editing.price ?? ''} onChange={e => set('price', e.target.value === '' ? null : Number(e.target.value))} placeholder="Leave blank for enquiry" />
