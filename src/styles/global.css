@@ -2872,7 +2872,7 @@ a { color: inherit; }
    ═══════════════════════════════════════════ */
 
 /* Page banner */
-.acct-page { padding-top: calc(var(--header-h) + var(--ann-h, 0px) + 1.5rem) !important; }
+.acct-page { padding-top: calc(var(--header-h) + var(--ann-h, 0px) + 2rem) !important; }
 .acct-banner {
   background: var(--rt-charcoal);
   border-bottom: 3px solid var(--rt-gold);
@@ -2894,14 +2894,14 @@ a { color: inherit; }
 .acct-banner__cta { flex-shrink: 0; }
 
 /* Layout */
-.acct-layout { display: grid; grid-template-columns: 240px 1fr; gap: 2rem; align-items: start; padding: 2.5rem 0 4rem; }
+.acct-layout { display: grid; grid-template-columns: 240px 1fr; gap: 2rem; align-items: start; padding: 0 0 4rem; }
 .acct-main { min-width: 0; display: flex; flex-direction: column; gap: 2rem; }
 
 /* Sidebar */
 .acct-sidebar {
   background: var(--rt-bg); border: 1px solid var(--rt-border);
   border-radius: 14px; overflow: hidden;
-  position: sticky; top: calc(var(--header-h) + 1.5rem);
+  position: sticky; top: calc(var(--header-h) + var(--ann-h, 0px) + 2rem);
 }
 .acct-sidebar__user {
   display: flex; align-items: center; gap: 0.75rem;
