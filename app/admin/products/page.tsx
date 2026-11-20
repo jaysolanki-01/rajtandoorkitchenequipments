@@ -298,6 +298,9 @@ export default function AdminProductsPage() {
             <FieldRow label="Warranty">
               <input style={inp} value={editing.warranty ?? ''} onChange={e => set('warranty', e.target.value)} placeholder="e.g. 1 Year" />
             </FieldRow>
+            <FieldRow label="Price Label (when no price)">
+              <input style={inp} value={editing.price_label ?? ''} onChange={e => set('price_label', e.target.value || null)} placeholder="e.g. Contact for Pricing" />
+            </FieldRow>
           </div>
 
           <FieldRow label="Short description">
@@ -306,6 +309,79 @@ export default function AdminProductsPage() {
 
           <FieldRow label="Full description">
             <textarea style={{ ...inp, resize: 'vertical' }} rows={4} value={editing.description ?? ''} onChange={e => set('description', e.target.value)} placeholder="Detailed product description…" />
+          </FieldRow>
+
+          {/* ── Key Features ── */}
+          <FieldRow label="Key Features (shown on Features tab)">
+            {(editing.features ?? []).map((feat, i) => (
+              <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                <input
+                  style={{ ...inp, flex: 1 }}
+                  value={feat}
+                  onChange={e => {
+                    const updated = [...(editing.features ?? [])];
+                    updated[i] = e.target.value;
+                    set('features', updated);
+                  }}
+                  placeholder={`Feature ${i + 1}, e.g. SS 304 grade body`}
+                />
+                <button type="button"
+                  onClick={() => set('features', (editing.features ?? []).filter((_, j) => j !== i))}
+                  style={{ padding: '7px 10px', border: '1px solid #fee2e2', borderRadius: 6, background: 'transparent', color: 'var(--admin-red)', cursor: 'pointer', fontSize: 13, flexShrink: 0 }}>
+                  ✕
+                </button>
+              </div>
+            ))}
+            <button type="button"
+              onClick={() => set('features', [...(editing.features ?? []), ''])}
+              style={{ padding: '7px 14px', border: '1px dashed var(--admin-border)', borderRadius: 6, background: 'transparent', color: 'var(--admin-fg-muted)', fontSize: 12, cursor: 'pointer' }}>
+              + Add Feature
+            </button>
+          </FieldRow>
+
+          {/* ── Specifications ── */}
+          <FieldRow label="Specifications (shown on Specs & Dimensions tabs)">
+            {(editing.specs ?? []).length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 32px', gap: 8, marginBottom: 6, paddingLeft: 2 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--admin-fg-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Label</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--admin-fg-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Value</span>
+                <span />
+              </div>
+            )}
+            {(editing.specs ?? []).map((spec, i) => (
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 32px', gap: 8, marginBottom: 8 }}>
+                <input
+                  style={inp}
+                  value={spec.label}
+                  onChange={e => {
+                    const updated = [...(editing.specs ?? [])];
+                    updated[i] = { ...updated[i], label: e.target.value };
+                    set('specs', updated);
+                  }}
+                  placeholder="e.g. Material"
+                />
+                <input
+                  style={inp}
+                  value={spec.value}
+                  onChange={e => {
+                    const updated = [...(editing.specs ?? [])];
+                    updated[i] = { ...updated[i], value: e.target.value };
+                    set('specs', updated);
+                  }}
+                  placeholder="e.g. SS 304 Stainless Steel"
+                />
+                <button type="button"
+                  onClick={() => set('specs', (editing.specs ?? []).filter((_, j) => j !== i))}
+                  style={{ padding: '7px 8px', border: '1px solid #fee2e2', borderRadius: 6, background: 'transparent', color: 'var(--admin-red)', cursor: 'pointer', fontSize: 13 }}>
+                  ✕
+                </button>
+              </div>
+            ))}
+            <button type="button"
+              onClick={() => set('specs', [...(editing.specs ?? []), { label: '', value: '' }])}
+              style={{ padding: '7px 14px', border: '1px dashed var(--admin-border)', borderRadius: 6, background: 'transparent', color: 'var(--admin-fg-muted)', fontSize: 12, cursor: 'pointer' }}>
+              + Add Specification Row
+            </button>
           </FieldRow>
 
           <FieldRow label="Product Images">
