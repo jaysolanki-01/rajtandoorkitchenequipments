@@ -117,7 +117,7 @@
 
   /* Layout */
   --gutter:    clamp(20px, 4vw, 64px);
-  --header-h:  72px;
+  --header-h:  84px;
   --ann-h:     0px;
   --ease:      cubic-bezier(0.22, 0.61, 0.36, 1);
   --radius:    10px;
@@ -395,7 +395,7 @@ a { color: inherit; }
 
 /* ── Inner row ── */
 .sh__inner {
-  height: 84px;
+  height: var(--header-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -403,7 +403,7 @@ a { color: inherit; }
   padding: 0 var(--gutter);
   transition: height 0.3s ease;
 }
-.sh--scrolled .sh__inner { height: 72px; }
+.sh--scrolled .sh__inner { height: calc(var(--header-h) - 12px); }
 
 /* ── Logo ── */
 .sh__logo {
@@ -2872,7 +2872,7 @@ a { color: inherit; }
    ═══════════════════════════════════════════ */
 
 /* Page banner */
-.acct-page { padding-top: 0 !important; }
+.acct-page { padding-top: calc(var(--header-h) + var(--ann-h, 0px) + 1.5rem) !important; }
 .acct-banner {
   background: var(--rt-charcoal);
   border-bottom: 3px solid var(--rt-gold);
