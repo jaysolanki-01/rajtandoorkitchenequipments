@@ -18,7 +18,8 @@ export function AccountOrdersPage() {
     fetchUserOrders(user.id).then(setOrders).catch(() => {}).finally(() => setLoading(false));
   }, [isLoggedIn, user]);
 
-  if (!isLoading && !isLoggedIn) router.push('/'); return null;
+  if (isLoading) return <main className="page-main"><div className="container"><p style={{ padding: '4rem 0' }}>Loading…</p></div></main>;
+  if (!isLoggedIn) { router.push('/'); return null; }
 
   return (
     <>

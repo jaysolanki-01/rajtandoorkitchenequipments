@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useId, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../store/AuthContext';
 
 type Mode = 'login' | 'register' | 'forgot';
@@ -11,6 +12,7 @@ interface Props {
 
 export function LoginModal({ forceOpen, onClose }: Props) {
   const { login, register, resetPassword, isLoggedIn } = useAuth();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<Mode>('login');
 
@@ -72,6 +74,7 @@ export function LoginModal({ forceOpen, onClose }: Props) {
     try {
       await login(email.trim(), password);
       handleClose();
+      router.push('/account');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
     } finally {
@@ -91,9 +94,10 @@ export function LoginModal({ forceOpen, onClose }: Props) {
     try {
       const { needsConfirmation } = await register(name.trim(), email.trim(), password, phone.trim());
       if (needsConfirmation) {
-        setSuccess('Account created! Please check your email to confirm your account.');
+        setSuccess('Account created! Please check your email to confirm your account, then sign in.');
       } else {
         handleClose();
+        router.push('/account');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
@@ -239,35 +243,6 @@ export function LoginModal({ forceOpen, onClose }: Props) {
 
           <div className="lm__divider"><span>or</span></div>
           <button type="button" className="btn btn--outline btn--block lm__skip" onClick={handleClose}>Continue as guest</button>
-
-          {/* Admin quick-login — dev convenience */}
-          {mode === 'login' && (
-            <div className="lm__admin-access">
-              <button
-                type="button"
-                className="lm__admin-btn"
-                onClick={async () => {
-                  setError('');
-                  setSubmitting(true);
-                  try {
-                    await login('admin@rajtandoor.com', 'Admin@1234');
-                    handleClose();
-                  } catch (err) {
-                    setError(err instanceof Error ? err.message : 'Admin login failed.');
-                  } finally {
-                    setSubmitting(false);
-                  }
-                }}
-                disabled={submitting}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-                Login as Admin
-              </button>
-            </div>
-          )}
         </div>
       </dialog>
     </div>

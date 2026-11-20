@@ -45,7 +45,8 @@ export function AccountAddressesPage() {
     load();
   }
 
-  if (!isLoading && !isLoggedIn) router.push('/'); return null;
+  if (isLoading) return <main className="page-main"><div className="container"><p style={{ padding: '4rem 0' }}>Loading…</p></div></main>;
+  if (!isLoggedIn) { router.push('/'); return null; }
 
   return (
     <>
