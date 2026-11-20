@@ -65,6 +65,7 @@ export default function AdminProductsPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState('');
+  const [urlInput, setUrlInput] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -82,28 +83,67 @@ export default function AdminProductsPage() {
   }
 
   function openEdit(p: AdminProduct) {
-    setEditing({ ...p });
+    // Ensure images array always includes the cover image
+    let images = p.images ?? [];
+    if (p.image && !images.includes(p.image)) {
+      images = [p.image, ...images];
+    }
+    setEditing({ ...p, images });
     setIsNew(false);
     setError('');
+    setUrlInput('');
   }
 
-  function closeModal() { setEditing(null); setError(''); }
+  function closeModal() { setEditing(null); setError(''); setUrlInput(''); }
 
   function set(field: string, value: unknown) {
     setEditing(prev => prev ? { ...prev, [field]: value } : prev);
   }
 
+  function setCover(url: string) {
+    setEditing(prev => prev ? { ...prev, image: url } : prev);
+  }
+
+  function removeImage(url: string) {
+    setEditing(prev => {
+      if (!prev) return prev;
+      const newImages = (prev.images ?? []).filter(u => u !== url);
+      const newCover = prev.image === url ? (newImages[0] ?? '') : prev.image;
+      return { ...prev, images: newImages, image: newCover };
+    });
+  }
+
+  function addImageUrl(url: string) {
+    const trimmed = url.trim();
+    if (!trimmed || !editing) return;
+    const current = editing.images ?? [];
+    if (current.includes(trimmed)) { setUrlInput(''); return; }
+    const newImages = [...current, trimmed];
+    setEditing(prev => prev ? { ...prev, images: newImages, image: prev.image || trimmed } : prev);
+    setUrlInput('');
+  }
+
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !editing) return;
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length || !editing) return;
     setUploadingImage(true);
+    setError('');
     try {
-      const url = await uploadProductImage(file, editing.id ?? 'tmp');
-      set('image', url);
+      const urls: string[] = [];
+      for (const file of files) {
+        const url = await uploadProductImage(file, editing.id ?? 'tmp');
+        urls.push(url);
+      }
+      setEditing(prev => {
+        if (!prev) return prev;
+        const newImages = [...(prev.images ?? []), ...urls];
+        return { ...prev, images: newImages, image: prev.image || urls[0] };
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
       setUploadingImage(false);
+      if (fileRef.current) fileRef.current.value = '';
     }
   }
 
@@ -268,27 +308,56 @@ export default function AdminProductsPage() {
             <textarea style={{ ...inp, resize: 'vertical' }} rows={4} value={editing.description ?? ''} onChange={e => set('description', e.target.value)} placeholder="Detailed product description…" />
           </FieldRow>
 
-          <FieldRow label="Product Image URL (or upload below)">
-            <div style={{ display: 'flex', gap: 8 }}>
-              <input style={{ ...inp, flex: 1 }} value={editing.image ?? ''} onChange={e => set('image', e.target.value)} placeholder="https://…" />
-              {editing.image && (
-                <img src={editing.image} alt="" width={40} height={40} style={{ objectFit: 'cover', borderRadius: 5, border: '1px solid var(--admin-border)', flexShrink: 0 }} />
-              )}
-            </div>
-          </FieldRow>
-
-          <FieldRow label="Upload image">
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <input ref={fileRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
-              <button
-                type="button"
-                disabled={uploadingImage}
-                onClick={() => fileRef.current?.click()}
-                style={{ padding: '7px 14px', border: '1px solid var(--admin-border)', borderRadius: 6, background: 'var(--admin-bg)', color: 'var(--admin-fg)', fontSize: 12, cursor: 'pointer' }}
-              >
-                {uploadingImage ? 'Uploading…' : 'Choose file'}
+          <FieldRow label="Product Images">
+            {/* Thumbnail grid */}
+            {(editing.images?.length ?? 0) > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(96px, 1fr))', gap: 10, marginBottom: 12 }}>
+                {editing.images!.map((url, i) => {
+                  const isCover = url === editing.image;
+                  return (
+                    <div key={url + i} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', border: `2px solid ${isCover ? '#b8912a' : 'var(--admin-border)'}`, aspectRatio: '1', background: '#111' }}>
+                      <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      {isCover ? (
+                        <span style={{ position: 'absolute', top: 4, left: 4, background: '#b8912a', color: '#fff', fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 4, letterSpacing: '0.05em' }}>COVER</span>
+                      ) : (
+                        <button title="Set as cover image" onClick={() => setCover(url)}
+                          style={{ position: 'absolute', top: 4, left: 4, background: 'rgba(0,0,0,0.65)', border: 'none', borderRadius: 4, padding: '2px 5px', cursor: 'pointer', color: '#facc15', fontSize: 12, lineHeight: 1 }}>
+                          ★
+                        </button>
+                      )}
+                      <button title="Remove image" onClick={() => removeImage(url)}
+                        style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.65)', border: 'none', borderRadius: 4, padding: '2px 5px', cursor: 'pointer', color: '#fff', fontSize: 11, lineHeight: 1 }}>
+                        ✕
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {/* Upload button */}
+            <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleImageUpload} style={{ display: 'none' }} />
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <button type="button" disabled={uploadingImage} onClick={() => fileRef.current?.click()}
+                style={{ padding: '7px 14px', border: '1px solid var(--admin-border)', borderRadius: 6, background: 'var(--admin-bg)', color: 'var(--admin-fg)', fontSize: 12, cursor: uploadingImage ? 'not-allowed' : 'pointer', opacity: uploadingImage ? 0.7 : 1 }}>
+                {uploadingImage ? 'Uploading…' : '+ Add Images'}
               </button>
-              <span style={{ fontSize: 11, color: 'var(--admin-fg-muted)' }}>JPEG, PNG or WebP, max 5 MB</span>
+              <span style={{ fontSize: 11, color: 'var(--admin-fg-muted)' }}>
+                {(editing.images?.length ?? 0) > 0 ? 'Click ★ to set cover · ✕ to remove' : 'JPEG / PNG / WebP, max 10 MB each. First image becomes cover.'}
+              </span>
+            </div>
+            {/* URL paste input */}
+            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+              <input
+                style={{ ...inp, flex: 1, fontSize: 12 }}
+                value={urlInput}
+                onChange={e => setUrlInput(e.target.value)}
+                placeholder="Or paste an image URL and press Add URL"
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addImageUrl(urlInput); } }}
+              />
+              <button type="button" onClick={() => addImageUrl(urlInput)}
+                style={{ padding: '7px 12px', border: '1px solid var(--admin-border)', borderRadius: 6, background: 'var(--admin-bg)', color: 'var(--admin-fg)', fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                Add URL
+              </button>
             </div>
           </FieldRow>
 
