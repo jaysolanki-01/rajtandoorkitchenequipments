@@ -412,22 +412,15 @@ a { color: inherit; }
   align-items: center;
   text-decoration: none;
   transition: opacity 0.2s, transform 0.2s;
-  padding: 0.3rem 0.5rem;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(195,162,104,0.12);
 }
 .sh__logo img {
-  filter: drop-shadow(0 0 10px rgba(195,162,104,0.35)) drop-shadow(0 1px 3px rgba(0,0,0,0.5));
-  transition: filter 0.2s;
+  filter: drop-shadow(0 0 8px rgba(195,162,104,0.3));
+  transition: filter 0.2s, transform 0.2s;
 }
-.sh__logo:hover { opacity: 1; transform: translateY(-1px); }
+.sh__logo:hover { opacity: 0.9; }
 .sh__logo:hover img {
-  filter: drop-shadow(0 0 16px rgba(195,162,104,0.55)) drop-shadow(0 2px 6px rgba(0,0,0,0.5));
-}
-.sh--scrolled .sh__logo {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(195,162,104,0.18);
+  filter: drop-shadow(0 0 14px rgba(195,162,104,0.5));
+  transform: scale(1.02);
 }
 
 /* ── Desktop nav — floating pill ── */
