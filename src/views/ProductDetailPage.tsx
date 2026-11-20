@@ -78,7 +78,7 @@ function productLD(p: Product | undefined) {
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
-  const { products } = useProducts();
+  const { products, loading } = useProducts();
   const { addItem } = useCart();
   const { has, toggle } = useWishlist();
 
@@ -94,6 +94,14 @@ export function ProductDetailPage() {
   const relatedRef = useRef<HTMLUListElement>(null);
 
   const product = products.find((p) => p.slug === (slug ?? ''));
+
+  if (!product && loading) {
+    return (
+      <main id="main" className="page-main" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: 'var(--color-text-muted, #888)', fontSize: 14 }}>Loading product…</p>
+      </main>
+    );
+  }
 
   if (!product) {
     router.push('/shop');
