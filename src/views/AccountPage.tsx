@@ -72,6 +72,16 @@ const QUICK_ACTIONS = [
     ),
   },
   {
+    href: '/track-order',
+    label: 'Track Order',
+    desc: 'Check real-time order status',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+    ),
+  },
+  {
     href: '/contact',
     label: 'Contact Support',
     desc: 'Get help from our team',
@@ -261,6 +271,26 @@ export function AccountPage() {
                   <span>Our team is here Monday – Saturday, 9 am – 6 pm IST.</span>
                 </div>
                 <Link href="/contact" className="btn btn--outline btn--sm acct-help-banner__cta">Contact Us</Link>
+              </div>
+
+              {/* Policy links */}
+              <div className="acct-policy-links">
+                <p className="acct-policy-links__title">Policies & Information</p>
+                <div className="acct-policy-links__grid">
+                  {[
+                    { href: '/privacy-policy', label: 'Privacy Policy' },
+                    { href: '/terms', label: 'Terms & Conditions' },
+                    { href: '/shipping-policy', label: 'Shipping Policy' },
+                    { href: '/return-policy', label: 'Return Policy' },
+                    { href: '/track-order', label: 'Track an Order' },
+                    { href: '/faq', label: 'FAQ' },
+                  ].map(p => (
+                    <Link key={p.href} href={p.href} className="acct-policy-link">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                      {p.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
