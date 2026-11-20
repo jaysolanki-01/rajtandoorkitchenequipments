@@ -10,7 +10,7 @@ interface BrandMarkProps {
 }
 
 export function BrandMark({ size = 'sm' }: BrandMarkProps) {
-  const height = size === 'lg' ? 64 : size === 'md' ? 44 : 36;
+  const height = size === 'lg' ? 68 : size === 'md' ? 54 : 38;
 
   return (
     <span
@@ -24,7 +24,7 @@ export function BrandMark({ size = 'sm' }: BrandMarkProps) {
         style={{
           height,
           width: 'auto',
-          maxWidth: size === 'lg' ? 320 : size === 'md' ? 220 : 170,
+          maxWidth: size === 'lg' ? 340 : size === 'md' ? 260 : 180,
           objectFit: 'contain',
           display: 'block',
           borderRadius: 4,

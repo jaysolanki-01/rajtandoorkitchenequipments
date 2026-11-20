@@ -411,9 +411,24 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
+  padding: 0.3rem 0.5rem;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(195,162,104,0.12);
 }
-.sh__logo:hover { opacity: 0.82; }
+.sh__logo img {
+  filter: drop-shadow(0 0 10px rgba(195,162,104,0.35)) drop-shadow(0 1px 3px rgba(0,0,0,0.5));
+  transition: filter 0.2s;
+}
+.sh__logo:hover { opacity: 1; transform: translateY(-1px); }
+.sh__logo:hover img {
+  filter: drop-shadow(0 0 16px rgba(195,162,104,0.55)) drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+}
+.sh--scrolled .sh__logo {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(195,162,104,0.18);
+}
 
 /* ── Desktop nav — floating pill ── */
 .sh__nav {
@@ -787,7 +802,7 @@ a { color: inherit; }
   .sh__burger { display: flex; }
   .sh__inner { height: var(--header-h); gap: 0.75rem; }
   /* Constrain logo so it doesn't crowd action buttons */
-  .sh__logo img { height: 44px !important; max-width: 160px !important; }
+  .sh__logo img { height: 46px !important; max-width: 170px !important; }
   /* Hide text-heavy buttons; avatar + icons + burger stay */
   .sh__quote-btn { display: none; }
   .sh__login-btn { display: none; }
@@ -797,7 +812,7 @@ a { color: inherit; }
   .sh__actions { gap: 0.1rem; }
   .sh__icon-btn { width: 36px; height: 36px; }
   /* Keep logo even smaller on small phones */
-  .sh__logo img { height: 38px !important; max-width: 130px !important; }
+  .sh__logo img { height: 40px !important; max-width: 140px !important; }
 }
 
 /* ── Page layout ───────────────────────────────────────────────────────────── */
@@ -6288,8 +6303,8 @@ table { max-width: 100%; }
 @media (max-width: 768px) {
   .sh__logo .bm img,
   .sh__mobile-head .bm img {
-    height: 36px !important;
-    max-width: 150px !important;
+    height: 40px !important;
+    max-width: 158px !important;
   }
 }
 
