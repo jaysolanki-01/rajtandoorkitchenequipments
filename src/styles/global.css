@@ -395,7 +395,7 @@ a { color: inherit; }
 
 /* ── Inner row ── */
 .sh__inner {
-  height: 72px;
+  height: 84px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -403,7 +403,7 @@ a { color: inherit; }
   padding: 0 var(--gutter);
   transition: height 0.3s ease;
 }
-.sh--scrolled .sh__inner { height: 60px; }
+.sh--scrolled .sh__inner { height: 72px; }
 
 /* ── Logo ── */
 .sh__logo {
@@ -802,7 +802,7 @@ a { color: inherit; }
   .sh__burger { display: flex; }
   .sh__inner { height: var(--header-h); gap: 0.75rem; }
   /* Constrain logo so it doesn't crowd action buttons */
-  .sh__logo img { height: 46px !important; max-width: 170px !important; }
+  .sh__logo img { height: 52px !important; max-width: 190px !important; }
   /* Hide text-heavy buttons; avatar + icons + burger stay */
   .sh__quote-btn { display: none; }
   .sh__login-btn { display: none; }
@@ -812,7 +812,7 @@ a { color: inherit; }
   .sh__actions { gap: 0.1rem; }
   .sh__icon-btn { width: 36px; height: 36px; }
   /* Keep logo even smaller on small phones */
-  .sh__logo img { height: 40px !important; max-width: 140px !important; }
+  .sh__logo img { height: 44px !important; max-width: 155px !important; }
 }
 
 /* ── Page layout ───────────────────────────────────────────────────────────── */
@@ -6303,8 +6303,8 @@ table { max-width: 100%; }
 @media (max-width: 768px) {
   .sh__logo .bm img,
   .sh__mobile-head .bm img {
-    height: 40px !important;
-    max-width: 158px !important;
+    height: 46px !important;
+    max-width: 170px !important;
   }
 }
 
