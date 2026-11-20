@@ -13,6 +13,7 @@ import { useUI } from '../../store/UIContext';
 import { BrandMark } from '../BrandMark';
 import { CartDrawer } from '../cart/CartDrawer';
 import { LoginModal } from '../auth/LoginModal';
+import { QuickViewModal } from '../product/QuickViewModal';
 
 const MEGA_COLS = [
   CATEGORIES.slice(0, 4),
@@ -366,6 +367,8 @@ export function SiteHeader() {
         forceOpen={loginOpen}
         onClose={closeLogin}
       />
+
+      <QuickViewModal />
     </>
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useContext, useState } from 'react';
+import type { Product } from '../config/products';
 
 type UIContextType = {
   cartOpen: boolean;
@@ -8,6 +9,9 @@ type UIContextType = {
   loginOpen: boolean;
   openLogin: () => void;
   closeLogin: () => void;
+  quickViewProduct: Product | null;
+  openQuickView: (product: Product) => void;
+  closeQuickView: () => void;
 };
 
 const UIContext = createContext<UIContextType | null>(null);
@@ -15,6 +19,7 @@ const UIContext = createContext<UIContextType | null>(null);
 export function UIProvider({ children }: { children: React.ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
   return (
     <UIContext.Provider value={{
@@ -24,6 +29,9 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
       loginOpen,
       openLogin: () => setLoginOpen(true),
       closeLogin: () => setLoginOpen(false),
+      quickViewProduct,
+      openQuickView: (product) => setQuickViewProduct(product),
+      closeQuickView: () => setQuickViewProduct(null),
     }}>
       {children}
     </UIContext.Provider>
