@@ -1,12 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { seo } from '../config/site';
-import { products } from '../config/products';
+import { useProducts } from '../hooks/useProducts';
 import { useWishlist } from '../store/WishlistContext';
 import { ProductCard } from '../components/product/ProductCard';
 
 export function WishlistPage() {
   const { ids } = useWishlist();
+  const { products, loading } = useProducts();
   const wishlistProducts = products.filter((p) => ids.has(p.id));
 
   return (
@@ -30,7 +31,11 @@ export function WishlistPage() {
             </h1>
           </div>
 
-          {wishlistProducts.length === 0 ? (
+          {loading ? (
+            <div className="empty-state">
+              <p style={{ color: 'var(--rt-text2)' }}>Loading your wishlist…</p>
+            </div>
+          ) : wishlistProducts.length === 0 ? (
             <div className="empty-state">
               <p>Your wishlist is empty. Browse our products and click the heart icon to save items.</p>
               <Link href="/shop" className="btn btn--gold">Browse Products</Link>
