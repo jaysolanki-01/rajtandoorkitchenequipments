@@ -87,7 +87,6 @@ export function LoginModal({ forceOpen, onClose }: Props) {
     setError('');
     if (!name.trim()) { setError('Please enter your full name.'); return; }
     if (!email.trim()) { setError('Please enter your email address.'); return; }
-    if (!phone.trim()) { setError('Please enter your phone number.'); return; }
     if (password.length < 8) { setError('Password must be at least 8 characters.'); return; }
     if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
     setSubmitting(true);
@@ -213,9 +212,9 @@ export function LoginModal({ forceOpen, onClose }: Props) {
                 </div>
                 <div className="lm__field">
                   <label className="lm__label">
-                    Phone
+                    Phone <span className="lm__label-hint">(optional)</span>
                   </label>
-                  <input type="tel" className="lm__input" placeholder="+91 00000 00000" required value={phone} autoComplete="tel" onChange={(e) => setPhone(e.target.value)} />
+                  <input type="tel" className="lm__input" placeholder="+91 00000 00000" value={phone} autoComplete="tel" onChange={(e) => setPhone(e.target.value)} />
                 </div>
                 <button type="submit" className="btn btn--gold btn--block lm__submit" disabled={submitting}>{submitting ? 'Creating account…' : 'Create account'}</button>
               </form>}
