@@ -6264,6 +6264,9 @@ table { max-width: 100%; }
   text-align: center;
   padding-bottom: 2.5rem;
 }
+.map-section .section-title { color: #fff; }
+.map-section .eyebrow { color: var(--rt-gold); }
+.map-section .section-subtitle { color: rgba(255,255,255,0.6); }
 .map-section__directions-link {
   color: var(--gold);
   font-weight: 600;
