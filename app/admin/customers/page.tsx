@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { fetchAdminCustomers, type AdminCustomer } from '../../../src/lib/supabase/admin';
+import { fetchAdminCustomers, fmtCustomerId, type AdminCustomer } from '../../../src/lib/supabase/admin';
 
 function fmtDate(s: string) {
   return new Date(s).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -68,6 +68,7 @@ export default function AdminCustomersPage() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Customer</th>
                 <th>Phone</th>
                 <th style={{ textAlign: 'center' }}>Orders</th>
@@ -79,6 +80,11 @@ export default function AdminCustomersPage() {
             <tbody>
               {filtered.map(c => (
                 <tr key={c.email} style={{ cursor: 'pointer' }}>
+                  <td>
+                    <span className="admin-mono" style={{ color: 'var(--admin-accent)', fontWeight: 700 }}>
+                      {c.customer_number ? fmtCustomerId(c.customer_number) : '—'}
+                    </span>
+                  </td>
                   <td>
                     <Link href={`/admin/customers/${encodeURIComponent(c.email)}`} style={{ textDecoration: 'none' }}>
                       <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--admin-fg)' }}>{c.customer_name}</div>

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { fetchOrdersByEmail, type AdminOrder } from '../../../../src/lib/supabase/admin';
+import { fetchOrdersByEmail, fetchCustomerByEmail, fmtCustomerId, type AdminOrder } from '../../../../src/lib/supabase/admin';
 
 const PAY_LABEL: Record<string, string> = {
   upi: 'UPI', card: 'Card', netbanking: 'Net Banking',
@@ -26,10 +26,17 @@ export default function AdminCustomerDetailPage() {
 
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [customerNumber, setCustomerNumber] = useState<number | null>(null);
 
   useEffect(() => {
     if (!email) return;
-    fetchOrdersByEmail(email).then(setOrders).finally(() => setLoading(false));
+    Promise.all([
+      fetchOrdersByEmail(email),
+      fetchCustomerByEmail(email),
+    ]).then(([ords, cus]) => {
+      setOrders(ords);
+      setCustomerNumber(cus?.customer_number ?? null);
+    }).finally(() => setLoading(false));
   }, [email]);
 
   const totalSpent = orders.reduce((s, o) => s + (o.total ?? 0), 0);
@@ -73,7 +80,14 @@ export default function AdminCustomerDetailPage() {
           {customerName.charAt(0).toUpperCase()}
         </div>
         <div>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--admin-fg)', margin: '0 0 4px' }}>{customerName}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--admin-fg)', margin: 0 }}>{customerName}</h1>
+            {customerNumber && (
+              <span style={{ fontFamily: 'monospace', fontSize: 12, fontWeight: 700, color: '#fff', background: 'var(--admin-accent)', padding: '2px 8px', borderRadius: 4 }}>
+                {fmtCustomerId(customerNumber)}
+              </span>
+            )}
+          </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 13, color: 'var(--admin-fg-muted)' }}>
             <a href={`mailto:${email}`} style={{ color: 'var(--admin-accent)', textDecoration: 'none' }}>{email}</a>
             {phone && <span>{phone}</span>}

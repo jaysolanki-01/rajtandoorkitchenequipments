@@ -51,6 +51,8 @@ export interface Product {
   included?: string[];
   /** Product-specific FAQs */
   faq?: { q: string; a: string }[];
+  /** Auto-assigned sequential product number, formatted as PRD-XXXXXX */
+  productNumber?: number | null;
 }
 
 export const products: Product[] = [

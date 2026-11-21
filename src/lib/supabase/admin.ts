@@ -1,4 +1,6 @@
 import { createAdminClient } from './admin-client';
+import { fmtProductId, fmtCustomerId } from './db';
+export { fmtProductId, fmtCustomerId };
 
 function getClient() {
   return createAdminClient();
@@ -116,9 +118,31 @@ export type AdminProduct = {
   group_id: string | null;
   warranty: string | null;
   tags: string[] | null;
+  product_number: number | null;
   created_at: string;
   updated_at: string;
 };
+
+export type AdminCustomerRow = {
+  id: string;
+  customer_number: number;
+  email: string;
+  name: string | null;
+  phone: string | null;
+  user_id: string | null;
+  created_at: string;
+};
+
+export async function fetchCustomerByEmail(email: string): Promise<AdminCustomerRow | null> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('customers')
+    .select('id, customer_number, email, name, phone, user_id, created_at')
+    .ilike('email', email)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as AdminCustomerRow;
+}
 
 export async function fetchAdminProducts(): Promise<AdminProduct[]> {
   const sb = getClient();
@@ -172,19 +196,24 @@ export type AdminCustomer = {
   order_count: number;
   total_spent: number;
   last_order: string;
+  customer_number?: number | null;
 };
 
 export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
   const sb = getClient();
-  const { data, error } = await sb
-    .from('orders')
-    .select('email, customer_name, phone, total, created_at')
-    .order('created_at', { ascending: false });
-  if (error || !data) return [];
+  const [ordersRes, cusRes] = await Promise.all([
+    sb.from('orders').select('email, customer_name, phone, total, created_at').order('created_at', { ascending: false }),
+    sb.from('customers').select('email, customer_number'),
+  ]);
+  if (ordersRes.error || !ordersRes.data) return [];
 
-  // Aggregate by email
+  const cusNumMap = new Map<string, number>();
+  for (const c of cusRes.data ?? []) {
+    cusNumMap.set(c.email.toLowerCase(), c.customer_number);
+  }
+
   const map = new Map<string, AdminCustomer>();
-  for (const o of data) {
+  for (const o of ordersRes.data) {
     const key = o.email.toLowerCase();
     const existing = map.get(key);
     if (existing) {
@@ -198,6 +227,7 @@ export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
         order_count: 1,
         total_spent: o.total ?? 0,
         last_order: o.created_at,
+        customer_number: cusNumMap.get(key) ?? null,
       });
     }
   }

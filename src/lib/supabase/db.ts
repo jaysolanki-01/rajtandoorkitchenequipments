@@ -1,5 +1,15 @@
 import { createBrowserClient } from '@supabase/ssr';
 
+// ── Formatted ID helpers ──────────────────────────────────────────────────────
+export function fmtProductId(n: number | null | undefined): string {
+  if (!n) return '';
+  return `PRD-${String(n).padStart(6, '0')}`;
+}
+export function fmtCustomerId(n: number | null | undefined): string {
+  if (!n) return '';
+  return `CUS-${String(n).padStart(6, '0')}`;
+}
+
 export type SupabaseProduct = {
   id: string;
   slug: string;
@@ -21,6 +31,7 @@ export type SupabaseProduct = {
   warranty?: string | null;
   included?: string[] | null;
   tags?: string[] | null;
+  product_number?: number | null;
 };
 
 export type QuoteInsert = {

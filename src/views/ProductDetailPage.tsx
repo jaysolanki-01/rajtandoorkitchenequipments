@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { contact, seo } from '../config/site';
 import { type Product } from '../config/products';
+import { fmtProductId } from '../lib/supabase/db';
 import { useProducts } from '../hooks/useProducts';
 import { useCart } from '../store/CartContext';
 import { useWishlist } from '../store/WishlistContext';
@@ -288,9 +289,12 @@ export function ProductDetailPage() {
 
               <h1 className="pdp3__name">{product.name}</h1>
 
-              {product.sku && (
-                <p className="pdp3__sku">SKU: <span>{product.sku}</span></p>
-              )}
+              <p className="pdp3__sku">
+                {product.productNumber && (
+                  <><span style={{ color: 'var(--rt-gold)', fontWeight: 700 }}>{fmtProductId(product.productNumber)}</span>{product.sku ? '  ·  ' : ''}</>
+                )}
+                {product.sku && <>SKU: <span>{product.sku}</span></>}
+              </p>
 
               <div className="pdp3__stock-row">
                 {product.inStock ? (

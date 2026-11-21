@@ -25,6 +25,7 @@ function toProduct(p: SupabaseProduct): Product {
     sizeGroup: p.group_id ?? undefined,
     warranty: p.warranty ?? undefined,
     included: p.included ?? undefined,
+    productNumber: p.product_number ?? null,
   };
 }
 
