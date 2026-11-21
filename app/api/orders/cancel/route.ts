@@ -1,5 +1,4 @@
 import { createServerClient } from '@supabase/ssr';
-import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 
@@ -45,16 +44,13 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: `Orders with status "${order.status}" cannot be cancelled.` }, { status: 400 });
   }
 
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceKey) {
-    return Response.json({ error: 'Server not configured for order updates. Please contact support.' }, { status: 503 });
-  }
-
-  const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, serviceKey);
-  const { error: updateErr } = await admin
+  // Update status using the user's own session — allowed by the RLS policy
+  // "users can cancel own orders" (migration 011)
+  const { error: updateErr } = await supabase
     .from('orders')
     .update({ status: 'cancelled' })
-    .eq('order_number', orderNumber);
+    .eq('order_number', orderNumber)
+    .eq('user_id', user.id);
 
   if (updateErr) {
     return Response.json({ error: updateErr.message }, { status: 500 });
