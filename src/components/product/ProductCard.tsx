@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import type { Product } from '../../config/products';
 import { useCart } from '../../store/CartContext';
+import { useUI } from '../../store/UIContext';
 import { WishlistButton } from './WishlistButton';
 
 interface ProductCardProps {
@@ -10,6 +11,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
+  const { openCart, openQuickView } = useUI();
 
   const originalPrice = product.price != null
     ? Math.round((product.price * 1.1) / 100) * 100
@@ -38,22 +40,29 @@ export function ProductCard({ product }: ProductCardProps) {
       <WishlistButton productId={product.id} productName={product.name} className="pc__wishlist" />
 
       {/* Image + hover overlay */}
-      <Link href={`/products/${product.slug}`} className="pc__img-wrap" aria-label={`View ${product.name}`}>
-        <img
-          src={product.image}
-          alt={product.name}
-          className="pc__img"
-          loading="lazy"
-          width={400}
-          height={400}
-        />
-        <div className="pc__img-overlay" aria-hidden="true">
+      <div className="pc__img-wrap">
+        <Link href={`/products/${product.slug}`} aria-label={`View ${product.name}`} className="pc__img-link">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="pc__img"
+            loading="lazy"
+            width={400}
+            height={400}
+          />
+        </Link>
+        <button
+          type="button"
+          className="pc__img-overlay"
+          onClick={() => openQuickView(product)}
+          aria-label={`Quick view ${product.name}`}
+        >
           <span className="pc__img-overlay-label">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             Quick View
           </span>
-        </div>
-      </Link>
+        </button>
+      </div>
 
       {/* Info */}
       <div className="pc__body">
@@ -82,7 +91,7 @@ export function ProductCard({ product }: ProductCardProps) {
               <button
                 type="button"
                 className="btn btn--gold btn--sm"
-                onClick={() => addItem(product)}
+                onClick={() => { addItem(product); openCart(); }}
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>

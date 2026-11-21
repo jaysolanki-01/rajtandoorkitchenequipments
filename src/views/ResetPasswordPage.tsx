@@ -1,35 +1,19 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { api } from '../api/client';
 import { seo } from '../config/site';
+import { useAuth } from '../store/AuthContext';
+import { createClient } from '../lib/supabase/client';
 
 export function ResetPasswordPage() {
-  const params = useSearchParams();
-  const token = params.get('token') ?? '';
   const router = useRouter();
-
+  const { isLoggedIn, isLoading } = useAuth();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
-
-  if (!token) {
-    return (
-      <div className="rp-page">
-        <div className="container">
-          <div className="rp-box">
-            <h1 className="rp-title">Invalid Link</h1>
-            <p className="rp-desc">This password reset link is invalid or has expired.</p>
-            <Link href="/" className="btn btn--gold btn--md">Go to Home</Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,15 +22,35 @@ export function ResetPasswordPage() {
     if (password !== confirm) { setError('Passwords do not match.'); return; }
     setBusy(true);
     try {
-      await api.post('/auth/reset-password', { token, password });
+      const supabase = createClient();
+      const { error: updateError } = await supabase.auth.updateUser({ password });
+      if (updateError) throw new Error(updateError.message);
       setDone(true);
       setTimeout(() => router.push('/'), 3000);
-    } catch (err: unknown) {
-      const e = err as { message?: string };
-      setError(e?.message ?? 'Failed to reset password. The link may have expired.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to reset password. The link may have expired.');
     } finally {
       setBusy(false);
     }
+  }
+
+  if (isLoading) return null;
+
+  if (!isLoggedIn) {
+    return (
+      <>
+        <title>{`Reset Password | ${seo.title}`}</title>
+        <div className="rp-page">
+          <div className="container">
+            <div className="rp-box">
+              <h1 className="rp-title">Invalid Link</h1>
+              <p className="rp-desc">This password reset link is invalid or has expired.</p>
+              <Link href="/login" className="btn btn--gold btn--md">Back to Login</Link>
+            </div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (

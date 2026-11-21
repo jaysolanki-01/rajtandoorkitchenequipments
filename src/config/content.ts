@@ -82,7 +82,7 @@ export const chapters: ChapterContent[] = [
     id: 'reveal',
     navLabel: 'Reveal',
     eyebrow: 'Raj Tandoor & Kitchen Equipment',
-    heading: 'Built for the\nHeat of Service.',
+    heading: 'Top Tandoor Manufacturer\nin Gujarat.',
     body: 'Commercial tandoors and professional kitchen equipment, crafted for restaurants, caterers and hospitality kitchens that demand authentic performance.',
     mobileBody: 'Commercial tandoors crafted for restaurants, caterers and hospitality kitchens.',
     ctas: [

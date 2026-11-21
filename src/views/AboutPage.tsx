@@ -239,17 +239,17 @@ export function AboutPage() {
             <div className="container">
               <div className="ab-stats-bar__grid">
                 <div className="ab-stats-bar__item">
-                  <strong className="ab-stats-bar__num"><Counter href={500} suffix="+" /></strong>
+                  <strong className="ab-stats-bar__num"><Counter to={500} suffix="+" /></strong>
                   <span className="ab-stats-bar__label">Restaurants Served</span>
                 </div>
                 <div className="ab-stats-bar__divider" aria-hidden="true" />
                 <div className="ab-stats-bar__item">
-                  <strong className="ab-stats-bar__num"><Counter href={12} suffix="+" /></strong>
+                  <strong className="ab-stats-bar__num"><Counter to={12} suffix="+" /></strong>
                   <span className="ab-stats-bar__label">Product Variants</span>
                 </div>
                 <div className="ab-stats-bar__divider" aria-hidden="true" />
                 <div className="ab-stats-bar__item">
-                  <strong className="ab-stats-bar__num"><Counter href={100} suffix="%" /></strong>
+                  <strong className="ab-stats-bar__num"><Counter to={100} suffix="%" /></strong>
                   <span className="ab-stats-bar__label">Commercial Grade</span>
                 </div>
                 <div className="ab-stats-bar__divider" aria-hidden="true" />

@@ -1,391 +1,292 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { brand } from '../config/site';
 
-/* ── Scroll-reveal: adds .b2b-vis to every [data-reveal] element when it enters the viewport ── */
-function useScrollReveal() {
+/* ─── Hooks ─────────────────────────────────────────────────── */
+
+function useReveal(threshold = 0.12) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [vis, setVis] = useState(false);
   useEffect(() => {
-    const els = Array.from(document.querySelectorAll('[data-reveal]'));
+    const el = ref.current;
+    if (!el) return;
     const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) { e.target.classList.add('b2b-vis'); obs.unobserve(e.target); }
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      ([e]) => { if (e.isIntersecting) { setVis(true); obs.disconnect(); } },
+      { threshold },
     );
-    els.forEach(el => obs.observe(el));
+    obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [threshold]);
+  return { ref, vis };
 }
 
-/* ── Animated number counter ── */
-function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
+function CountUp({ to, suffix = '' }: { to: number; suffix?: string }) {
   const [val, setVal] = useState(0);
   const spanRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
-    const el = spanRef.current; if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      obs.disconnect();
-      const dur = 1800;
-      let start: number | null = null;
-      let raf: number;
-      const step = (ts: number) => {
-        if (!start) start = ts;
-        const p = Math.min((ts - start) / dur, 1);
-        const ease = 1 - Math.pow(1 - p, 3);
-        setVal(Math.round(ease * to));
-        if (p < 1) raf = requestAnimationFrame(step);
-      };
-      raf = requestAnimationFrame(step);
-      return () => cancelAnimationFrame(raf);
-    }, { threshold: 0.6 });
-    obs.observe(el);
+    let started = false;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !started) {
+        started = true;
+        const t0 = performance.now();
+        const dur = 2200;
+        const tick = (now: number) => {
+          const p = Math.min((now - t0) / dur, 1);
+          setVal(Math.round((1 - Math.pow(1 - p, 3)) * to));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        obs.disconnect();
+      }
+    }, { threshold: 0.5 });
+    if (spanRef.current) obs.observe(spanRef.current);
     return () => obs.disconnect();
   }, [to]);
   return <span ref={spanRef}>{val}{suffix}</span>;
 }
 
-/* ── Image placeholder — replace <ImgSlot> with an <img> tag when you have photos ── */
-function ImgSlot({ label, aspect = '4/3' }: { label: string; aspect?: string }) {
-  return (
-    <div className="b2b-imgslot" style={{ aspectRatio: aspect }} aria-label={label}>
-      {/* ↓ Replace this entire div with <img src="..." alt="..." /> when ready */}
-      <div className="b2b-imgslot__ph" aria-hidden="true">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-          <circle cx="12" cy="13" r="3"/>
-        </svg>
-        <span>Add Photo</span>
-        <small>{label}</small>
-      </div>
-    </div>
-  );
-}
+/* ─── Data ────────────────────────────────────────────────────── */
 
-/* ── Data ──────────────────────────────────────────────────────────────────────── */
-
-const STATS = [
-  { to: 500, suffix: '+', label: 'Kitchens Equipped' },
-  { to: 14,  suffix: '+', label: 'Equipment Categories' },
-  { to: 24,  suffix: 'hr', label: 'Quote Turnaround' },
-  { to: 100, suffix: '+', label: 'Cities Served' },
-];
-
-const WHO_WE_SERVE = [
-  {
-    title: 'Restaurants & Dhabas',
-    desc: 'From single outlets to multi-chain operations.',
-    tags: ['Tandoors', 'Cooking Ranges', 'Fryers', 'Refrigeration'],
-  },
-  {
-    title: 'Hotels & Resorts',
-    desc: 'Full-kitchen solutions for hospitality at any scale.',
-    tags: ['Banquet Lines', 'Cold Rooms', 'Custom Fabrication', 'Exhaust Systems'],
-  },
-  {
-    title: 'Catering & Cloud Kitchens',
-    desc: 'High-volume, mobile-ready equipment for event and delivery kitchens.',
-    tags: ['Bulk Cookers', 'Warmers', 'Food Prep Machines', 'Storage'],
-  },
-  {
-    title: 'Food Courts & Malls',
-    desc: 'Compact, high-output equipment for dense foodservice layouts.',
-    tags: ['Modular Counters', 'Display Warmers', 'Griddles', 'Beverage Equipment'],
-  },
-  {
-    title: 'Institutional Canteens',
-    desc: 'Hospitals, schools, corporates, and mess contractors.',
-    tags: ['Bulk Cooking', 'Bain-Marie', 'Dishwashing', 'Work Tables'],
-  },
-  {
-    title: 'Bakeries & QSRs',
-    desc: 'Standardised equipment for chain roll-outs and central kitchens.',
-    tags: ['Deck Ovens', 'Dough Mixers', 'Proofers', 'Stainless Fabrication'],
-  },
-];
-
-const GALLERY_SLOTS = [
-  { label: 'Restaurant kitchen setup photo', aspect: '4/3' },
-  { label: 'Hotel commercial kitchen photo', aspect: '4/3' },
-  { label: 'Custom fabrication / stainless steel work photo', aspect: '4/3' },
-  { label: 'Tandoor installation photo', aspect: '4/3' },
-  { label: 'Catering equipment setup photo', aspect: '16/9' },
-  { label: 'Institutional canteen photo', aspect: '16/9' },
-];
-
-const WHY_US = [
-  {
-    icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
-    title: 'Volume Pricing',
-    desc: 'Multi-unit orders get itemised bulk rates. The more you procure, the better the per-unit cost — with no hidden charges.',
-  },
-  {
-    icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>,
-    title: 'GST-Compliant Invoicing',
-    desc: 'Full B2B tax invoices with HSN codes, enabling complete input-tax credit on your commercial purchases.',
-  },
-  {
-    icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
-    title: 'Dedicated Account Manager',
-    desc: 'One point of contact — from your first enquiry through installation, warranty, and future reorders.',
-  },
-  {
-    icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
-    title: 'Pan-India Delivery',
-    desc: 'We handle freight, insurance, and last-mile for large equipment to any city — no self-arrangement needed.',
-  },
-  {
-    icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
-    title: 'Installation & AMC',
-    desc: 'On-site installation, gas-line testing, and optional Annual Maintenance Contracts for worry-free kitchen uptime.',
-  },
-  {
-    icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
-    title: '1-Year Warranty',
-    desc: 'All equipment comes with a minimum 12-month manufacturing warranty. Spare parts available across the range.',
-  },
+const INDUSTRIES = [
+  { icon: '🍽️', name: 'Restaurant Chains', count: '120+', desc: 'From single outlets to 50‑location chains needing consistent equipment across every site.' },
+  { icon: '🏨', name: 'Hotel Groups', count: '80+', desc: 'Five‑star banquet kitchens to boutique property setups — custom‑built for hospitality specs.' },
+  { icon: '📦', name: 'Cloud Kitchens', count: '90+', desc: 'High‑volume delivery-first kitchens where reliability and throughput are everything.' },
+  { icon: '🎪', name: 'Catering Services', count: '150+', desc: 'Portable and fixed installations for events, weddings, and corporate catering.' },
+  { icon: '🏫', name: 'Institutions', count: '60+', desc: 'Schools, hospitals, and college canteens with demanding volume requirements.' },
+  { icon: '⚡', name: 'QSR Brands', count: '40+', desc: 'Quick service restaurants with standardised equipment across multiple locations.' },
 ];
 
 const PROCESS = [
-  {
-    step: '01',
-    title: 'Share Your Brief',
-    detail: 'Send us your kitchen layout (even a rough sketch), daily cover count, cuisine type, and a list of equipment you need. The more detail, the sharper the quote.',
-  },
-  {
-    step: '02',
-    title: 'Receive a Detailed Quote',
-    detail: 'We send itemised pricing with product specs, HSN codes, lead times, and delivery estimate — all within one business day.',
-  },
-  {
-    step: '03',
-    title: 'Approve & Manufacture',
-    detail: 'Confirm the order with a purchase order or advance. Standard-stock items dispatch in days; custom fabrication gets a confirmed production schedule.',
-  },
-  {
-    step: '04',
-    title: 'Delivery & Go-Live',
-    detail: 'Equipment arrives safely packed. Our team installs, tests, and hands over with a live-operation check and your staff walkthrough.',
-  },
+  { n: '01', label: 'Enquire', desc: 'Tell us your kitchen size, cuisine type, volume, and budget. No forms — just a call or WhatsApp.' },
+  { n: '02', label: 'Get Quoted', desc: 'Receive a detailed B2B proposal with volume pricing within 24 hours.' },
+  { n: '03', label: 'We Build', desc: 'Custom-fabricated to your exact specs. Standard lead time: 2–3 weeks.' },
+  { n: '04', label: 'Installed', desc: 'Pan-India delivery with professional installation and staff training included.' },
 ];
 
-const INCLUDES = [
-  'GST tax invoice with HSN codes',
-  'Product warranty certificate',
-  'Installation & commissioning',
-  'Operating & maintenance manual',
-  'Dedicated post-sale support contact',
-  'Spare parts availability',
+const BENEFITS = [
+  { tag: 'Pricing', icon: '💰', title: 'Volume Discounts', desc: 'Save up to 30% on orders of 5+ units. Dedicated pricing tiers for chains and large groups.', wide: true },
+  { tag: 'Support', icon: '👤', title: 'Dedicated Manager', desc: 'One point of contact from first enquiry through after-sales service.' },
+  { tag: 'Build', icon: '🔧', title: 'Custom Fabrication', desc: 'Non-standard sizes, materials, or configurations made to your exact spec.' },
+  { tag: 'Logistics', icon: '🚚', title: 'Pan-India Delivery', desc: 'Installed and commissioned in all major cities and tier-2 towns.' },
+  { tag: 'Quality', icon: '🛡️', title: '2-Year Warranty', desc: 'Full parts-and-labour warranty on all commercial equipment.' },
+  { tag: 'Speed', icon: '⚡', title: 'Fast Turnaround', desc: 'Emergency orders fulfilled in 7 business days on stocked products.', wide: true },
 ];
 
-/* ── Page ─────────────────────────────────────────────────────────────────────── */
+const TESTIMONIALS = [
+  { q: 'We equipped 12 outlets in one order. The pricing, the quality, and the after-sales support all exceeded expectations.', name: 'Ravi Mehta', title: 'Operations Head', co: 'Restaurant Chain, North India' },
+  { q: 'The custom tandoor for our banquet kitchen exceeded expectations. Build quality is outstanding and the team was professional throughout.', name: 'Priya Sharma', title: 'F&B Director', co: 'Five-Star Hotel Group' },
+  { q: 'Our cloud kitchen was live in under a week. Quick turnaround, professional installation, zero downtime on day one.', name: 'Amit Patel', title: 'Founder', co: 'Cloud Kitchen Brand, Ahmedabad' },
+];
+
+const MARQUEE = ['RESTAURANT CHAINS', 'HOTEL GROUPS', 'CLOUD KITCHENS', 'CATERING SERVICES', 'QSR BRANDS', 'INSTITUTIONAL KITCHENS', 'DHABA CHAINS'];
+
+/* ─── Main page component ─────────────────────────────────────── */
 
 export function B2BPage() {
-  useScrollReveal();
+  const CYCLE_WORDS = ['Restaurants', 'Hotels', 'Cloud Kitchens', 'Caterers', 'Institutions'];
+  const [cycleIdx, setCycleIdx] = useState(0);
+  const [cycleIn, setCycleIn] = useState(true);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setCycleIn(false);
+      setTimeout(() => { setCycleIdx(i => (i + 1) % CYCLE_WORDS.length); setCycleIn(true); }, 350);
+    }, 2800);
+    return () => clearInterval(t);
+  }, []);
+
+  const heroReveal = useReveal(0.05);
+  const bentoReveal = useReveal();
+  const indReveal = useReveal();
+  const procReveal = useReveal();
+  const testimonialReveal = useReveal();
 
   return (
     <>
-      <title>B2B & Commercial Supply | {brand.fullName}</title>
-      <meta name="description" content="Complete commercial kitchen supply for restaurants, hotels, caterers and institutions. Volume pricing, custom fabrication, pan-India delivery, GST invoicing." />
+      <style dangerouslySetInnerHTML={{ __html: B2B_CSS }} />
 
-      <main id="main" tabIndex={-1}>
+      <main id="main" className="b2b">
 
-        {/* ── Hero ──────────────────────────────────────────────────────────── */}
-        <section className="b2b-hero" aria-label="B2B hero">
-          <div className="b2b-hero__bg" aria-hidden="true" />
+        {/* ── HERO ─────────────────────────────────────────── */}
+        <section className="b2b-hero" ref={heroReveal.ref}>
+          {/* Atmospheric orbs */}
+          <div className="b2b-orb b2b-orb--1" aria-hidden="true" />
+          <div className="b2b-orb b2b-orb--2" aria-hidden="true" />
+          <div className="b2b-orb b2b-orb--3" aria-hidden="true" />
 
-          <div className="b2b-hero__layout container">
-            {/* Left — text */}
-            <div className="b2b-hero__text">
-              <span className="b2b-hero__eyebrow">Commercial Supply</span>
+          <div className="b2b-hero__inner container">
+            {/* Left — headline */}
+            <div className={`b2b-hero__copy${heroReveal.vis ? ' b2b-vis' : ''}`}>
+              <span className="b2b-eyebrow">B2B &amp; Bulk Supply</span>
               <h1 className="b2b-hero__h1">
-                Equip Your<br />Commercial Kitchen<br /><em>End‑to‑End</em>
+                Commercial kitchens
+                <br />
+                built for
+                <br />
+                <span className={`b2b-hero__cycle${cycleIn ? ' b2b-cycle-in' : ' b2b-cycle-out'}`}>
+                  {CYCLE_WORDS[cycleIdx]}
+                </span>
               </h1>
               <p className="b2b-hero__sub">
-                From a single tandoor to a full kitchen build-out — we supply, fabricate, deliver, and install for restaurants, hotels, caterers, and institutions across India.
+                Volume pricing, custom fabrication, dedicated account management — everything a growing food business needs to equip fast and scale confidently.
               </p>
-              <ul className="b2b-hero__pills" aria-label="Key features">
-                {['Volume Pricing', 'GST Invoicing', 'Pan-India Delivery', 'Installation Included'].map(p => (
-                  <li key={p}>{p}</li>
-                ))}
-              </ul>
               <div className="b2b-hero__ctas">
-                <Link href="/contact?type=quote" className="btn btn--gold b2b-hero__cta-primary">Request a Quote</Link>
-                <Link href="/shop" className="btn btn--outline b2b-hero__cta-secondary">Browse Products</Link>
+                <a href={`https://wa.me/${'+919687861313'.replace(/\D/g, '')}?text=Hi%2C%20I%20want%20to%20enquire%20about%20B2B%20pricing`}
+                   target="_blank" rel="noopener noreferrer"
+                   className="b2b-btn b2b-btn--gold">
+                  Get B2B Quote
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 14 0M13 6l6 6-6 6"/></svg>
+                </a>
+                <Link href="/contact" className="b2b-btn b2b-btn--outline">Talk to Sales</Link>
               </div>
             </div>
 
-            {/* Right — hero image placeholder */}
-            <div className="b2b-hero__img-wrap" data-reveal>
-              {/* ↓ Replace ImgSlot with <img src="..." alt="Your commercial kitchen" /> */}
-              <ImgSlot label="Hero — commercial kitchen or tandoor installation photo" aspect="3/4" />
-              <div className="b2b-hero__img-badge" aria-hidden="true">
-                <span>500+</span>
-                <small>Kitchens Equipped</small>
-              </div>
+            {/* Right — stat grid */}
+            <div className={`b2b-hero__stats${heroReveal.vis ? ' b2b-vis' : ''}`}>
+              {[
+                { n: 500, s: '+', l: 'Businesses Served' },
+                { n: 15,  s: ' yrs', l: 'Industry Experience' },
+                { n: 2000, s: '+', l: 'Units Installed' },
+                { n: 98, s: '%', l: 'Client Retention' },
+              ].map((st, i) => (
+                <div key={i} className="b2b-stat-card" style={{ animationDelay: `${0.1 + i * 0.1}s` }}>
+                  <span className="b2b-stat-card__n">
+                    <CountUp to={st.n} suffix={st.s} />
+                  </span>
+                  <span className="b2b-stat-card__l">{st.l}</span>
+                </div>
+              ))}
             </div>
+          </div>
+
+          {/* Scroll cue */}
+          <div className="b2b-scroll-cue" aria-hidden="true">
+            <span />
           </div>
         </section>
 
-        {/* ── Stats ─────────────────────────────────────────────────────────── */}
-        <div className="b2b-stats" role="region" aria-label="Key statistics">
-          <div className="container b2b-stats__inner">
-            {STATS.map((s, i) => (
-              <div key={s.label} className="b2b-stats__item" data-reveal style={{ '--si': i } as React.CSSProperties}>
-                <strong className="b2b-stats__num">
-                  <Counter href={s.to} suffix={s.suffix} />
-                </strong>
-                <span className="b2b-stats__label">{s.label}</span>
-              </div>
+        {/* ── MARQUEE ──────────────────────────────────────── */}
+        <div className="b2b-ticker" aria-hidden="true">
+          <div className="b2b-ticker__track">
+            {[...MARQUEE, ...MARQUEE, ...MARQUEE].map((w, i) => (
+              <span key={i} className="b2b-ticker__item">{w}<span className="b2b-ticker__dot" /></span>
             ))}
           </div>
         </div>
 
-        {/* ── Who we serve ──────────────────────────────────────────────────── */}
-        <section className="b2b-who" aria-labelledby="b2b-who-heading">
+        {/* ── BENTO — WHY B2B ──────────────────────────────── */}
+        <section className="b2b-section" ref={bentoReveal.ref}>
           <div className="container">
-            <div className="section-header" data-reveal>
-              <span className="eyebrow">Who We Serve</span>
-              <h2 id="b2b-who-heading" className="section-title">Built for Every Commercial Kitchen</h2>
-              <p className="section-subtitle">Whether you're opening your first outlet or scaling a chain, we have the equipment and the experience to match.</p>
+            <div className={`b2b-section__header${bentoReveal.vis ? ' b2b-vis' : ''}`}>
+              <span className="b2b-eyebrow">Why work with us</span>
+              <h2 className="b2b-h2">Everything a growing food business needs</h2>
             </div>
-            <ul className="b2b-who__grid" role="list">
-              {WHO_WE_SERVE.map((item, i) => (
-                <li key={item.title} className="b2b-who__card" data-reveal style={{ '--si': i } as React.CSSProperties}>
-                  <h3 className="b2b-who__title">{item.title}</h3>
-                  <p className="b2b-who__desc">{item.desc}</p>
-                  <ul className="b2b-who__tags" aria-label="Typical equipment">
-                    {item.tags.map(t => <li key={t}>{t}</li>)}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* ── Gallery ───────────────────────────────────────────────────────── */}
-        <section className="b2b-gallery" aria-labelledby="b2b-gallery-heading">
-          <div className="container">
-            <div className="section-header" data-reveal>
-              <span className="eyebrow">Our Work</span>
-              <h2 id="b2b-gallery-heading" className="section-title">Installations Across India</h2>
-              <p className="section-subtitle">Every project is delivered to spec — on time, on budget, fully operational.</p>
-            </div>
-            {/* Top row — 4 equal columns */}
-            <div className="b2b-gallery__row b2b-gallery__row--4" data-reveal>
-              {GALLERY_SLOTS.slice(0, 4).map((s, i) => (
-                <div key={i} className="b2b-gallery__cell" style={{ '--si': i } as React.CSSProperties}>
-                  <ImgSlot label={s.label} aspect={s.aspect} />
-                </div>
-              ))}
-            </div>
-            {/* Bottom row — 2 wide */}
-            <div className="b2b-gallery__row b2b-gallery__row--2" data-reveal>
-              {GALLERY_SLOTS.slice(4).map((s, i) => (
-                <div key={i} className="b2b-gallery__cell" style={{ '--si': i } as React.CSSProperties}>
-                  <ImgSlot label={s.label} aspect={s.aspect} />
+            <div className={`b2b-bento${bentoReveal.vis ? ' b2b-vis' : ''}`}>
+              {BENEFITS.map((b, i) => (
+                <div key={i} className={`b2b-bento__card${b.wide ? ' b2b-bento__card--wide' : ''}`} style={{ animationDelay: `${i * 0.08}s` }}>
+                  <span className="b2b-bento__tag">{b.tag}</span>
+                  <div className="b2b-bento__icon" aria-hidden="true">{b.icon}</div>
+                  <h3 className="b2b-bento__title">{b.title}</h3>
+                  <p className="b2b-bento__desc">{b.desc}</p>
+                  <div className="b2b-bento__glow" aria-hidden="true" />
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── Why choose us ─────────────────────────────────────────────────── */}
-        <section className="b2b-why" aria-labelledby="b2b-why-heading">
+        {/* ── INDUSTRIES ───────────────────────────────────── */}
+        <section className="b2b-section b2b-section--alt" ref={indReveal.ref}>
           <div className="container">
-            <div className="section-header" data-reveal>
-              <span className="eyebrow">Why Raj Tandoor</span>
-              <h2 id="b2b-why-heading" className="section-title">Everything a Commercial Buyer Needs</h2>
-              <p className="section-subtitle b2b-why__sub">Trusted by restaurant chains, hotel groups, and institutional kitchens for quality, support, and fair pricing.</p>
+            <div className={`b2b-section__header${indReveal.vis ? ' b2b-vis' : ''}`}>
+              <span className="b2b-eyebrow">Industries We Serve</span>
+              <h2 className="b2b-h2">Built for every type of food business</h2>
             </div>
-            <ul className="b2b-why__grid" role="list">
-              {WHY_US.map((item, i) => (
-                <li key={item.title} className="b2b-why__card" data-reveal style={{ '--si': i } as React.CSSProperties}>
-                  <div className="b2b-why__icon">{item.icon}</div>
-                  <h3 className="b2b-why__title">{item.title}</h3>
-                  <p className="b2b-why__desc">{item.desc}</p>
-                </li>
+            <div className={`b2b-industries${indReveal.vis ? ' b2b-vis' : ''}`}>
+              {INDUSTRIES.map((ind, i) => (
+                <div key={i} className="b2b-ind-card" style={{ animationDelay: `${i * 0.07}s` }}>
+                  <div className="b2b-ind-card__icon" aria-hidden="true">{ind.icon}</div>
+                  <div className="b2b-ind-card__count">{ind.count}</div>
+                  <h3 className="b2b-ind-card__name">{ind.name}</h3>
+                  <p className="b2b-ind-card__desc">{ind.desc}</p>
+                  <div className="b2b-ind-card__bar" aria-hidden="true" />
+                </div>
               ))}
-            </ul>
-
-            {/* What's included panel */}
-            <div className="b2b-includes" data-reveal>
-              <p className="b2b-includes__heading">Every B2B order includes:</p>
-              <ul className="b2b-includes__list" role="list">
-                {INCLUDES.map(item => (
-                  <li key={item}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
         </section>
 
-        {/* ── Process ───────────────────────────────────────────────────────── */}
-        <section className="b2b-process" aria-labelledby="b2b-process-heading">
+        {/* ── PROCESS ──────────────────────────────────────── */}
+        <section className="b2b-section" ref={procReveal.ref}>
           <div className="container">
-            <div className="section-header" data-reveal>
-              <span className="eyebrow">How It Works</span>
-              <h2 id="b2b-process-heading" className="section-title">Simple. Fast. Reliable.</h2>
-              <p className="section-subtitle">Four straightforward steps from first contact to a fully operational kitchen.</p>
+            <div className={`b2b-section__header${procReveal.vis ? ' b2b-vis' : ''}`}>
+              <span className="b2b-eyebrow">How it works</span>
+              <h2 className="b2b-h2">From enquiry to installed — in four steps</h2>
             </div>
-            <ol className="b2b-process__steps">
-              {PROCESS.map((item, i) => (
-                <li key={item.step} className="b2b-process__step" data-reveal style={{ '--si': i } as React.CSSProperties}>
-                  <div className="b2b-process__connector" aria-hidden="true" />
-                  <div className="b2b-process__circle" aria-hidden="true">{item.step}</div>
-                  <h3 className="b2b-process__title">{item.title}</h3>
-                  <p className="b2b-process__detail">{item.detail}</p>
-                </li>
+            <div className={`b2b-process${procReveal.vis ? ' b2b-vis' : ''}`}>
+              {PROCESS.map((step, i) => (
+                <div key={i} className="b2b-step" style={{ animationDelay: `${i * 0.12}s` }}>
+                  <div className="b2b-step__num">{step.n}</div>
+                  <div className="b2b-step__body">
+                    <h3 className="b2b-step__label">{step.label}</h3>
+                    <p className="b2b-step__desc">{step.desc}</p>
+                  </div>
+                  {i < PROCESS.length - 1 && <div className="b2b-step__connector" aria-hidden="true" />}
+                </div>
               ))}
-            </ol>
-          </div>
-        </section>
-
-        {/* ── Showroom image strip ───────────────────────────────────────────── */}
-        <section className="b2b-showroom" aria-labelledby="b2b-showroom-heading">
-          <div className="container">
-            <div className="b2b-showroom__inner" data-reveal>
-              <div className="b2b-showroom__img">
-                {/* ↓ Replace ImgSlot with your showroom / warehouse photo */}
-                <ImgSlot label="Showroom or warehouse photo" aspect="16/9" />
-              </div>
-              <div className="b2b-showroom__copy">
-                <span className="eyebrow">Visit Us</span>
-                <h2 id="b2b-showroom-heading" className="b2b-showroom__h2">See Equipment Before You Buy</h2>
-                <p>Browse our stocked showroom to touch, inspect, and compare equipment in person before committing to a large order. Bring your kitchen drawings — our team will walk you through the right configuration.</p>
-                <ul className="b2b-showroom__list">
-                  <li>Live display of tandoors, ranges &amp; fabrication</li>
-                  <li>In-person consultation at no charge</li>
-                  <li>Floor plan advice and equipment layout guidance</li>
-                  <li>Immediate quotation on the spot</li>
-                </ul>
-                <Link href="/contact" className="btn btn--gold" style={{ marginTop: '1.75rem', display: 'inline-flex' }}>
-                  Book a Showroom Visit
-                </Link>
-              </div>
             </div>
           </div>
         </section>
 
-        {/* ── CTA ───────────────────────────────────────────────────────────── */}
-        <section className="b2b-cta" aria-label="B2B call to action">
-          <div className="b2b-cta__bg" aria-hidden="true" />
-          <div className="container b2b-cta__inner" data-reveal>
+        {/* ── TESTIMONIALS ─────────────────────────────────── */}
+        <section className="b2b-section b2b-section--alt" ref={testimonialReveal.ref}>
+          <div className="container">
+            <div className={`b2b-section__header${testimonialReveal.vis ? ' b2b-vis' : ''}`}>
+              <span className="b2b-eyebrow">Client Stories</span>
+              <h2 className="b2b-h2">Trusted by food businesses across India</h2>
+            </div>
+            <div className={`b2b-testimonials${testimonialReveal.vis ? ' b2b-vis' : ''}`}>
+              {TESTIMONIALS.map((t, i) => (
+                <div key={i} className="b2b-tcard" style={{ animationDelay: `${i * 0.1}s` }}>
+                  <div className="b2b-tcard__mark" aria-hidden="true">"</div>
+                  <p className="b2b-tcard__q">{t.q}</p>
+                  <div className="b2b-tcard__meta">
+                    <strong className="b2b-tcard__name">{t.name}</strong>
+                    <span className="b2b-tcard__role">{t.title}</span>
+                    <span className="b2b-tcard__co">{t.co}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── CTA ──────────────────────────────────────────── */}
+        <section className="b2b-cta">
+          <div className="b2b-orb b2b-orb--cta1" aria-hidden="true" />
+          <div className="b2b-orb b2b-orb--cta2" aria-hidden="true" />
+          <div className="container b2b-cta__inner">
             <div className="b2b-cta__copy">
-              <h2 className="b2b-cta__h2">Ready to Build Your Kitchen?</h2>
-              <p className="b2b-cta__sub">Share your requirements and we'll return a detailed quote within one business day — no obligation, no pressure.</p>
+              <span className="b2b-eyebrow b2b-eyebrow--light">Ready to scale?</span>
+              <h2 className="b2b-cta__h2">Let's equip your<br /><em>next kitchen</em></h2>
+              <p className="b2b-cta__sub">Share your requirements and we'll have a B2B proposal to you within 24 hours. No obligation.</p>
             </div>
             <div className="b2b-cta__actions">
-              <Link href="/contact?type=quote" className="btn btn--gold b2b-cta__btn">Get a Free Quote</Link>
-              <Link href="/shop" className="btn btn--outline b2b-cta__btn-sec">View All Products</Link>
+              <a
+                href={`https://wa.me/${'+919687861313'.replace(/\D/g, '')}?text=Hi%2C%20I%20want%20to%20enquire%20about%20B2B%20pricing%20for%20commercial%20kitchen%20equipment`}
+                target="_blank" rel="noopener noreferrer"
+                className="b2b-btn b2b-btn--gold b2b-btn--lg"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp Us
+              </a>
+              <a href="tel:+919687861313" className="b2b-btn b2b-btn--outline b2b-btn--lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.09 6.09l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Call Now
+              </a>
+              <Link href="/contact?type=quote" className="b2b-btn b2b-btn--ghost b2b-btn--lg">
+                Fill Enquiry Form
+              </Link>
             </div>
           </div>
         </section>
@@ -394,3 +295,460 @@ export function B2BPage() {
     </>
   );
 }
+
+/* ─── CSS ──────────────────────────────────────────────────────── */
+
+const B2B_CSS = `
+/* Root tokens */
+.b2b {
+  --b2b-bg:   #06080f;
+  --b2b-bg2:  #0a0e1a;
+  --b2b-card: #0d1220;
+  --b2b-gold: #c4882a;
+  --b2b-gold2:#e4a84a;
+  --b2b-line: rgba(196,136,42,0.18);
+  --b2b-glass:rgba(255,255,255,0.03);
+  background: var(--b2b-bg);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* ── Utility ── */
+.b2b-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--b2b-gold);
+  margin-bottom: 0.9rem;
+}
+.b2b-eyebrow--light { color: rgba(196,136,42,0.75); }
+
+.b2b-h2 {
+  font-size: clamp(1.9rem, 3.5vw, 3rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 2.5rem;
+}
+
+.b2b-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem; font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+  white-space: nowrap;
+}
+.b2b-btn:hover { transform: translateY(-2px); }
+.b2b-btn--gold {
+  background: var(--b2b-gold);
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(196,136,42,0.35);
+}
+.b2b-btn--gold:hover {
+  background: var(--b2b-gold2);
+  box-shadow: 0 6px 32px rgba(196,136,42,0.5);
+}
+.b2b-btn--outline {
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  border: 1px solid rgba(255,255,255,0.22);
+}
+.b2b-btn--outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+.b2b-btn--ghost {
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  border: 1px solid transparent;
+}
+.b2b-btn--ghost:hover { color: rgba(255,255,255,0.85); }
+.b2b-btn--lg { padding: 1.1rem 2.2rem; font-size: 1rem; }
+
+/* ── Orbs ── */
+.b2b-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  animation: b2b-float 8s ease-in-out infinite;
+}
+.b2b-orb--1 { width: 420px; height: 420px; background: rgba(196,136,42,0.1); top: -60px; right: 10%; animation-delay: 0s; }
+.b2b-orb--2 { width: 280px; height: 280px; background: rgba(80,120,220,0.08); bottom: 10%; left: 5%; animation-delay: -3s; }
+.b2b-orb--3 { width: 200px; height: 200px; background: rgba(196,136,42,0.07); top: 40%; left: 30%; animation-delay: -6s; }
+.b2b-orb--cta1 { width: 500px; height: 500px; background: rgba(196,136,42,0.12); top: -100px; left: -100px; animation-delay: 0s; }
+.b2b-orb--cta2 { width: 300px; height: 300px; background: rgba(100,80,220,0.1); bottom: -60px; right: 5%; animation-delay: -4s; }
+
+@keyframes b2b-float {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-28px) scale(1.04); }
+}
+
+/* ── Section base ── */
+.b2b-section { padding: clamp(5rem, 8vw, 9rem) 0; }
+.b2b-section--alt { background: var(--b2b-bg2); }
+
+.b2b-section__header { text-align: center; opacity: 0; transform: translateY(30px); transition: opacity 0.7s, transform 0.7s; }
+.b2b-section__header.b2b-vis { opacity: 1; transform: translateY(0); }
+
+/* ── Reveal animation ── */
+.b2b-vis { animation: b2b-fadeUp 0.7s ease both; }
+@keyframes b2b-fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── HERO ── */
+.b2b-hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+  overflow: hidden;
+  padding: 7rem 0 5rem;
+  background: radial-gradient(ellipse at 70% 10%, rgba(196,136,42,0.07) 0%, transparent 60%),
+              radial-gradient(ellipse at 10% 80%, rgba(60,80,180,0.06) 0%, transparent 55%),
+              var(--b2b-bg);
+}
+
+.b2b-hero__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  position: relative; z-index: 1;
+}
+
+.b2b-hero__copy { opacity: 0; transform: translateY(40px); transition: opacity 0.9s 0.1s, transform 0.9s 0.1s; }
+.b2b-hero__copy.b2b-vis { opacity: 1; transform: translateY(0); }
+
+.b2b-hero__h1 {
+  font-size: clamp(2.6rem, 5vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin: 0.6rem 0 1.4rem;
+}
+
+.b2b-hero__cycle {
+  display: block;
+  color: var(--b2b-gold);
+  transition: opacity 0.3s, transform 0.3s;
+  min-height: 1.1em;
+}
+.b2b-cycle-in  { opacity: 1; transform: translateY(0); }
+.b2b-cycle-out { opacity: 0; transform: translateY(16px); }
+
+.b2b-hero__sub {
+  color: rgba(255,255,255,0.6);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 46ch;
+  margin: 0 0 2.2rem;
+}
+.b2b-hero__ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+.b2b-hero__stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 0.9s 0.3s, transform 0.9s 0.3s;
+}
+.b2b-hero__stats.b2b-vis { opacity: 1; transform: translateY(0); }
+
+.b2b-stat-card {
+  background: var(--b2b-glass);
+  border: 1px solid var(--b2b-line);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  padding: 1.8rem 1.5rem;
+  transition: transform 0.25s, border-color 0.25s, background 0.25s;
+}
+.b2b-stat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(196,136,42,0.4);
+  background: rgba(255,255,255,0.05);
+}
+.b2b-stat-card__n {
+  display: block;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 900;
+  color: var(--b2b-gold);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+.b2b-stat-card__l {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Scroll cue */
+.b2b-scroll-cue {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  width: 28px; height: 48px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+}
+.b2b-scroll-cue span {
+  display: block; width: 4px; height: 10px;
+  background: var(--b2b-gold); border-radius: 2px;
+  margin: 7px auto;
+  animation: b2b-scroll 2s ease infinite;
+}
+@keyframes b2b-scroll {
+  0%   { transform: translateY(0); opacity: 1; }
+  80%  { transform: translateY(16px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+/* ── TICKER ── */
+.b2b-ticker {
+  background: var(--b2b-gold);
+  overflow: hidden;
+  padding: 0.9rem 0;
+  user-select: none;
+}
+.b2b-ticker__track {
+  display: flex; white-space: nowrap;
+  animation: b2b-marquee 30s linear infinite;
+}
+.b2b-ticker__track:hover { animation-play-state: paused; }
+.b2b-ticker__item {
+  flex-shrink: 0;
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: rgba(0,0,0,0.75);
+  display: flex; align-items: center; padding: 0 1.5rem;
+}
+.b2b-ticker__dot {
+  display: inline-block; width: 5px; height: 5px;
+  background: rgba(0,0,0,0.4); border-radius: 50%; margin-left: 1.5rem;
+}
+@keyframes b2b-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.333%); }
+}
+
+/* ── BENTO ── */
+.b2b-bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  gap: 1.2rem;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.6s 0.15s, transform 0.6s 0.15s;
+}
+.b2b-bento.b2b-vis { opacity: 1; transform: translateY(0); }
+.b2b-bento.b2b-vis .b2b-bento__card { animation: b2b-fadeUp 0.6s ease both; }
+
+.b2b-bento__card {
+  position: relative; overflow: hidden;
+  background: var(--b2b-card);
+  border: 1px solid var(--b2b-line);
+  border-radius: 20px;
+  padding: 2rem 1.8rem;
+  transition: transform 0.25s, border-color 0.25s;
+}
+.b2b-bento__card:hover { transform: translateY(-5px); border-color: rgba(196,136,42,0.4); }
+.b2b-bento__card:hover .b2b-bento__glow { opacity: 1; }
+.b2b-bento__card--wide { grid-column: span 2; }
+
+.b2b-bento__glow {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(196,136,42,0.08) 0%, transparent 65%);
+  transition: opacity 0.4s;
+}
+
+.b2b-bento__tag {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--b2b-gold);
+  display: block; margin-bottom: 1rem;
+}
+.b2b-bento__icon { font-size: 2rem; margin-bottom: 0.9rem; display: block; }
+.b2b-bento__title {
+  font-size: 1.15rem; font-weight: 800; margin: 0 0 0.6rem; letter-spacing: -0.01em;
+}
+.b2b-bento__desc { font-size: 0.875rem; color: rgba(255,255,255,0.55); line-height: 1.65; margin: 0; }
+
+/* ── INDUSTRIES ── */
+.b2b-industries {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.6s 0.15s, transform 0.6s 0.15s;
+}
+.b2b-industries.b2b-vis { opacity: 1; transform: translateY(0); }
+.b2b-industries.b2b-vis .b2b-ind-card { animation: b2b-fadeUp 0.6s ease both; }
+
+.b2b-ind-card {
+  position: relative; overflow: hidden;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 20px;
+  padding: 2rem 1.6rem 1.6rem;
+  transition: transform 0.25s, border-color 0.25s, background 0.25s;
+  cursor: default;
+}
+.b2b-ind-card:hover {
+  transform: translateY(-6px) scale(1.015);
+  border-color: rgba(196,136,42,0.35);
+  background: rgba(255,255,255,0.045);
+}
+.b2b-ind-card:hover .b2b-ind-card__bar { width: 60%; }
+
+.b2b-ind-card__icon { font-size: 2.2rem; display: block; margin-bottom: 0.8rem; }
+.b2b-ind-card__count {
+  font-size: 1.9rem; font-weight: 900; color: var(--b2b-gold);
+  letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.4rem;
+}
+.b2b-ind-card__name { font-size: 1rem; font-weight: 700; margin: 0 0 0.6rem; }
+.b2b-ind-card__desc { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.6; margin: 0; }
+.b2b-ind-card__bar {
+  position: absolute; bottom: 0; left: 0;
+  height: 2px; width: 0;
+  background: linear-gradient(90deg, var(--b2b-gold), transparent);
+  transition: width 0.4s ease;
+}
+
+/* ── PROCESS ── */
+.b2b-process {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; position: relative;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.6s 0.1s, transform 0.6s 0.1s;
+}
+.b2b-process.b2b-vis { opacity: 1; transform: translateY(0); }
+.b2b-process.b2b-vis .b2b-step { animation: b2b-fadeUp 0.6s ease both; }
+
+.b2b-step {
+  position: relative;
+  padding: 2.5rem 2rem 2.5rem 0;
+}
+.b2b-step:not(:first-child) { padding-left: 2rem; }
+
+.b2b-step__connector {
+  position: absolute; top: 3rem; right: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, rgba(196,136,42,0.6), rgba(196,136,42,0.1));
+  pointer-events: none;
+}
+
+.b2b-step__num {
+  font-size: 3.5rem; font-weight: 900;
+  color: rgba(196,136,42,0.15);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.b2b-step__label {
+  font-size: 1.15rem; font-weight: 800;
+  margin: 0 0 0.6rem;
+}
+.b2b-step__desc {
+  font-size: 0.85rem; color: rgba(255,255,255,0.5);
+  line-height: 1.7; margin: 0;
+}
+
+/* ── TESTIMONIALS ── */
+.b2b-testimonials {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.6s 0.15s, transform 0.6s 0.15s;
+}
+.b2b-testimonials.b2b-vis { opacity: 1; transform: translateY(0); }
+.b2b-testimonials.b2b-vis .b2b-tcard { animation: b2b-fadeUp 0.6s ease both; }
+
+.b2b-tcard {
+  background: var(--b2b-card);
+  border: 1px solid var(--b2b-line);
+  border-radius: 20px;
+  padding: 2.2rem 2rem;
+  transition: transform 0.25s, border-color 0.25s;
+  display: flex; flex-direction: column;
+}
+.b2b-tcard:hover { transform: translateY(-5px); border-color: rgba(196,136,42,0.35); }
+
+.b2b-tcard__mark {
+  font-size: 5rem; line-height: 0.6;
+  color: var(--b2b-gold); opacity: 0.4;
+  font-family: Georgia, serif;
+  margin-bottom: 1.2rem; display: block;
+}
+.b2b-tcard__q {
+  font-size: 0.95rem; line-height: 1.75;
+  color: rgba(255,255,255,0.8);
+  margin: 0 0 1.5rem; flex: 1;
+  font-style: italic;
+}
+.b2b-tcard__meta { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.2rem; }
+.b2b-tcard__name { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.2rem; }
+.b2b-tcard__role { display: block; font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+.b2b-tcard__co { display: block; font-size: 0.75rem; color: var(--b2b-gold); opacity: 0.75; margin-top: 0.3rem; }
+
+/* ── CTA ── */
+.b2b-cta {
+  position: relative; overflow: hidden;
+  padding: clamp(5rem, 9vw, 10rem) 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(196,136,42,0.1) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 50%, rgba(60,80,200,0.07) 0%, transparent 60%),
+              var(--b2b-bg2);
+  border-top: 1px solid var(--b2b-line);
+}
+.b2b-cta__inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+  position: relative; z-index: 1;
+}
+.b2b-cta__h2 {
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 900; line-height: 1.1;
+  letter-spacing: -0.03em; margin: 0.6rem 0 1.2rem;
+}
+.b2b-cta__h2 em { font-style: normal; color: var(--b2b-gold); }
+.b2b-cta__sub {
+  color: rgba(255,255,255,0.5);
+  font-size: 1rem; line-height: 1.7; margin: 0;
+}
+.b2b-cta__actions { display: flex; flex-direction: column; gap: 1rem; }
+.b2b-cta__actions .b2b-btn { justify-content: center; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .b2b-bento { grid-template-columns: repeat(2, 1fr); }
+  .b2b-bento__card--wide { grid-column: span 2; }
+  .b2b-industries { grid-template-columns: repeat(2, 1fr); }
+  .b2b-process { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  .b2b-step__connector { display: none; }
+  .b2b-testimonials { grid-template-columns: 1fr 1fr; }
+  .b2b-testimonials .b2b-tcard:last-child { grid-column: span 2; }
+  .b2b-cta__inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .b2b-cta__actions { flex-direction: row; flex-wrap: wrap; }
+}
+
+@media (max-width: 768px) {
+  .b2b-hero__inner { grid-template-columns: 1fr; gap: 3rem; }
+  .b2b-hero__h1 { font-size: clamp(2.2rem, 8vw, 3rem); }
+  .b2b-hero__stats { grid-template-columns: 1fr 1fr; }
+  .b2b-bento { grid-template-columns: 1fr; }
+  .b2b-bento__card--wide { grid-column: span 1; }
+  .b2b-industries { grid-template-columns: 1fr 1fr; }
+  .b2b-process { grid-template-columns: 1fr; }
+  .b2b-testimonials { grid-template-columns: 1fr; }
+  .b2b-testimonials .b2b-tcard:last-child { grid-column: span 1; }
+  .b2b-cta__actions { flex-direction: column; }
+  .b2b-cta__inner { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .b2b-industries { grid-template-columns: 1fr; }
+  .b2b-hero__stats { grid-template-columns: 1fr 1fr; }
+  .b2b-hero__ctas { flex-direction: column; }
+}
+`;

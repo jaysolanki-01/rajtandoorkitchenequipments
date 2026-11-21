@@ -1,21 +1,11 @@
 'use client';
 import Link from 'next/link';
-import { products } from '../../config/products';
+import { useProducts } from '../../hooks/useProducts';
 import { ProductCard } from '../product/ProductCard';
 
-// Curated best-seller IDs — update when sales data is available
-const BEST_SELLER_IDS = [
-  'ss-tandoor-mini',
-  'ss-tandoor-medium',
-  'ss-tandoor-large',
-  'copper-tandoor-medium',
-];
-
-const bestSellers = BEST_SELLER_IDS
-  .map((id) => products.find((p) => p.id === id))
-  .filter(Boolean) as typeof products;
-
 export function BestSellersSection() {
+  const { products } = useProducts();
+  const bestSellers = products.filter(p => !p.isDemo).slice(0, 4);
   if (bestSellers.length === 0) return null;
 
   return (

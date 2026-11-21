@@ -1,8 +1,9 @@
 'use client';
-import { products } from '../../config/products';
+import { useProducts } from '../../hooks/useProducts';
 import { ProductCard } from '../product/ProductCard';
 
 export function FeaturedProducts() {
+  const { products } = useProducts();
   // Show all real products first, then demo products
   const featured = [...products].sort((a, b) => Number(a.isDemo) - Number(b.isDemo));
 

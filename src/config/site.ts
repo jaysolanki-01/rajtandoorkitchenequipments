@@ -103,6 +103,7 @@ export const footerColumns = [
     heading: 'Company',
     links: [
       { label: 'About Us', href: '/about' },
+      { label: 'B2B & Bulk Supply', href: '/b2b' },
     ],
   },
 ] as const;

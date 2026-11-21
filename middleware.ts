@@ -39,23 +39,39 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Protect /admin/* — redirect non-admins to home
+  // Protect /admin/* — redirect unauthenticated to /admin/login
   if (pathname.startsWith('/admin')) {
-    if (!user) {
+    if (!user && pathname !== '/admin/login') {
       const loginUrl = request.nextUrl.clone();
-      loginUrl.pathname = '/login';
-      loginUrl.searchParams.set('redirect', pathname);
+      loginUrl.pathname = '/admin/login';
+      loginUrl.search = '';
       return NextResponse.redirect(loginUrl);
     }
+    if (!user) {
+      // Allow /admin/login for unauthenticated visitors
+      return supabaseResponse;
+    }
     const role = user.user_metadata?.role;
-    if (role !== 'admin') {
-      const homeUrl = request.nextUrl.clone();
-      homeUrl.pathname = '/';
-      homeUrl.search = '';
-      return NextResponse.redirect(homeUrl);
+    if (role !== 'admin' && role !== 'super_admin') {
+      // Admins have their own login page; non-admins go home
+      if (pathname !== '/admin/login') {
+        const loginUrl = request.nextUrl.clone();
+        loginUrl.pathname = '/admin/login';
+        loginUrl.search = '';
+        return NextResponse.redirect(loginUrl);
+      }
+    }
+    // Admin already logged in — skip the login page
+    if (pathname === '/admin/login') {
+      const dashUrl = request.nextUrl.clone();
+      dashUrl.pathname = '/admin';
+      dashUrl.search = '';
+      return NextResponse.redirect(dashUrl);
     }
   }
 
+  // Pass pathname to root layout so it can suppress site chrome on /admin pages
+  supabaseResponse.headers.set('x-pathname', pathname);
   return supabaseResponse;
 }
 

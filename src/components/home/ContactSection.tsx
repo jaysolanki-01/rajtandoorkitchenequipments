@@ -119,8 +119,8 @@ export function ContactSection() {
                       <input id="cf-email" name="email" type="email" className="form-input" required autoComplete="email" placeholder="you@example.com" />
                     </div>
                     <div className="form-field">
-                      <label htmlFor="cf-phone" className="form-label">Phone Number <span className="form-optional">(optional)</span></label>
-                      <input id="cf-phone" name="phone" type="tel" className="form-input" autoComplete="tel" placeholder="+91 00000 00000" />
+                      <label htmlFor="cf-phone" className="form-label">Phone Number</label>
+                      <input id="cf-phone" name="phone" type="tel" className="form-input" required autoComplete="tel" placeholder="+91 00000 00000" />
                     </div>
                   </div>
                   <div className="form-row">

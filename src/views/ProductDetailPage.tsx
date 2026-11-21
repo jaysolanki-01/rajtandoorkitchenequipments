@@ -8,6 +8,7 @@ import { type Product } from '../config/products';
 import { useProducts } from '../hooks/useProducts';
 import { useCart } from '../store/CartContext';
 import { useWishlist } from '../store/WishlistContext';
+import { useUI } from '../store/UIContext';
 import { ProductCard } from '../components/product/ProductCard';
 
 type TabId = 'overview' | 'features' | 'specs' | 'dimensions' | 'included' | 'delivery' | 'faq' | 'reviews';
@@ -78,9 +79,10 @@ function productLD(p: Product | undefined) {
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
-  const { products } = useProducts();
+  const { products, loading } = useProducts();
   const { addItem } = useCart();
   const { has, toggle } = useWishlist();
+  const { openCart } = useUI();
 
   const [activeImg, setActiveImg] = useState(0);
   const [zoomed, setZoomed] = useState(false);
@@ -94,6 +96,14 @@ export function ProductDetailPage() {
   const relatedRef = useRef<HTMLUListElement>(null);
 
   const product = products.find((p) => p.slug === (slug ?? ''));
+
+  if (!product && loading) {
+    return (
+      <main id="main" className="page-main" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: 'var(--color-text-muted, #888)', fontSize: 14 }}>Loading product…</p>
+      </main>
+    );
+  }
 
   if (!product) {
     router.push('/shop');
@@ -135,6 +145,7 @@ export function ProductDetailPage() {
     addItem(product, qty);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+    openCart();
   };
 
   const handleBuyNow = () => {

@@ -26,7 +26,7 @@ export function RequestQuotePage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    if (!form.name.trim() || !form.email.trim() || !form.requirements.trim()) {
+    if (!form.name.trim() || !form.email.trim() || !form.phone.trim() || !form.requirements.trim()) {
       setError('Please fill in all required fields.'); return;
     }
     setStatus('submitting');
@@ -97,8 +97,8 @@ export function RequestQuotePage() {
                   <input id="rq-email" type="email" className="form-input" required value={form.email} onChange={set('email')} autoComplete="email" />
                 </div>
                 <div className="form-field">
-                  <label htmlFor="rq-phone" className="form-label">Phone Number <span className="form-optional">(optional)</span></label>
-                  <input id="rq-phone" type="tel" className="form-input" value={form.phone} onChange={set('phone')} autoComplete="tel" />
+                  <label htmlFor="rq-phone" className="form-label">Phone Number</label>
+                  <input id="rq-phone" type="tel" className="form-input" required value={form.phone} onChange={set('phone')} autoComplete="tel" />
                 </div>
               </div>
               <div className="form-row">

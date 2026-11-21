@@ -393,7 +393,7 @@ export function CheckoutPage() {
     return () => document.body.classList.remove('is-checkout');
   }, []);
 
-  if (items.length === 0 && !submitted.current) router.push("/cart"); return null;
+  if (typeof window !== 'undefined' && items.length === 0 && !submitted.current) { router.push("/cart"); return null; }
 
   // ── Computed totals ──────────────────────────────────────────────────────────
 
@@ -581,18 +581,26 @@ export function CheckoutPage() {
         }).catch(() => { /* fire-and-forget */ });
       }
 
-      submitted.current = true;
-      router.push('/checkout/confirmation', {
-        state: {
+      // Pass confirmation data to next page via sessionStorage
+      // (Next.js router.push has no state option; sessionStorage is cleared on read)
+      try {
+        sessionStorage.setItem('rt_order_confirmation', JSON.stringify({
           orderRef,
           isGuest: !isLoggedIn,
           customerName: info.name,
-          email: info.email,
-          address: `${addr.houseFlatBuilding}, ${addr.streetArea}, ${addr.city}, ${addr.state} – ${addr.pinCode}`,
+          email: info.email.trim().toLowerCase(),
+          address: [
+            addr.houseFlatBuilding,
+            addr.streetArea,
+            addr.landmark,
+            addr.city,
+            addr.state,
+            addr.pinCode,
+          ].filter(Boolean).join(', '),
           items: items.map(i => ({
             name: i.product.name,
             qty: i.quantity,
-            price: i.product.price,
+            price: i.product.price ?? null,
             slug: i.product.slug,
           })),
           subtotal,
@@ -600,9 +608,11 @@ export function CheckoutPage() {
           couponDiscount,
           finalTotal,
           payMethod,
-        },
-        replace: true,
-      });
+        }));
+      } catch { /* sessionStorage blocked (private mode) — confirmation page will redirect */ }
+
+      submitted.current = true;
+      router.push('/checkout/confirmation');
       clearCart();
     } catch (err) {
       setGlobalError(

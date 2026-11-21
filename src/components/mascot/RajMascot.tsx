@@ -82,7 +82,7 @@ function getWaypoint(pct: number, vw: number, vh: number): WayPt {
 }
 
 export function RajMascot() {
-  const { pathname } = useLocation();
+  const pathname = usePathname();
 
   // DOM refs
   const wrapRef   = useRef<HTMLDivElement>(null);

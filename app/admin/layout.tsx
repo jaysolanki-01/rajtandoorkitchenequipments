@@ -5,20 +5,27 @@ import { useAuth } from '../../src/store/AuthContext';
 import { useEffect } from 'react';
 
 const NAV = [
-  { href: '/admin',          label: 'Dashboard',  icon: '◈' },
-  { href: '/admin/orders',   label: 'Orders',     icon: '◫' },
-  { href: '/admin/quotes',   label: 'Quotes',     icon: '◳' },
-  { href: '/admin/products', label: 'Products',   icon: '◉' },
+  { href: '/admin',              label: 'Dashboard',  icon: '◈' },
+  { href: '/admin/orders',       label: 'Orders',     icon: '◫' },
+  { href: '/admin/quotes',       label: 'Quotes',     icon: '◳' },
+  { href: '/admin/products',     label: 'Products',   icon: '◉' },
+  { href: '/admin/categories',   label: 'Categories', icon: '⊞' },
+  { href: '/admin/inventory',    label: 'Inventory',  icon: '◎' },
+  { href: '/admin/customers',    label: 'Customers',  icon: '◷' },
+  { href: '/admin/settings',     label: 'Settings',   icon: '⚙' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAdmin, isLoading, logout } = useAuth();
+  const { isAdmin, isLoading, logout, user } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && !isAdmin) router.replace('/');
+    if (!isLoading && !isAdmin) router.replace('/admin/login');
   }, [isAdmin, isLoading, router]);
+
+  // Let the login page render without the admin shell
+  if (pathname === '/admin/login') return <>{children}</>;
 
   if (isLoading || !isAdmin) return null;
 
@@ -211,7 +218,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="admin-topbar-title">
             {NAV.find(n => n.href === '/admin' ? pathname === '/admin' : pathname.startsWith(n.href))?.label ?? 'Admin'}
           </span>
-          <span className="admin-topbar-badge">Admin</span>
+          <span className="admin-topbar-badge" style={user?.role === 'super_admin' ? { background: 'var(--admin-blue)' } : undefined}>
+            {user?.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+          </span>
         </header>
         <main className="admin-content">{children}</main>
       </div>

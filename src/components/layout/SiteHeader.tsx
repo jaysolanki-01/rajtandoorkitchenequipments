@@ -9,9 +9,11 @@ import { useCart } from '../../store/CartContext';
 import { useWishlist } from '../../store/WishlistContext';
 import { useSearch } from '../../store/SearchContext';
 import { useAuth } from '../../store/AuthContext';
+import { useUI } from '../../store/UIContext';
 import { BrandMark } from '../BrandMark';
 import { CartDrawer } from '../cart/CartDrawer';
 import { LoginModal } from '../auth/LoginModal';
+import { QuickViewModal } from '../product/QuickViewModal';
 
 const MEGA_COLS = [
   CATEGORIES.slice(0, 4),
@@ -23,9 +25,8 @@ const MEGA_COLS = [
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
+  const { cartOpen, openCart, closeCart, loginOpen, openLogin, closeLogin } = useUI();
   const [mobileProdOpen, setMobileProdOpen] = useState(false);
   const megaTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const { itemCount } = useCart();
@@ -80,7 +81,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="sh__logo" aria-label={brand.fullName}>
-            <BrandMark size="lg" theme="light" />
+            <BrandMark size="md" />
           </Link>
 
           {/* Desktop nav */}
@@ -109,7 +110,7 @@ export function SiteHeader() {
               {nav.map((item) => (
                 <li key={item.href}>
                   <NavLink
-                    href={item.href}
+                    to={item.href}
                     className={({ isActive }) => isActive ? 'sh__link sh__link--active' : 'sh__link'}
                     end={item.href === '/'}
                   >
@@ -138,7 +139,7 @@ export function SiteHeader() {
             </Link>
 
             {/* Cart */}
-            <button className="sh__icon-btn sh__icon-btn--badge sh__cart-btn" aria-label={`Shopping cart${itemCount ? `, ${itemCount} item${itemCount !== 1 ? 's' : ''}` : ''}`} onClick={() => setCartOpen(true)} type="button">
+            <button className="sh__icon-btn sh__icon-btn--badge sh__cart-btn" aria-label={`Shopping cart${itemCount ? `, ${itemCount} item${itemCount !== 1 ? 's' : ''}` : ''}`} onClick={openCart} type="button">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                 <line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
@@ -175,7 +176,7 @@ export function SiteHeader() {
               <button
                 type="button"
                 className="btn btn--outline sh__login-btn"
-                onClick={() => setLoginOpen(true)}
+                onClick={openLogin}
               >
                 Login
               </button>
@@ -264,7 +265,6 @@ export function SiteHeader() {
         >
           {/* Drawer header */}
           <div className="sh__mobile-head">
-            <BrandMark size="lg" theme="light" />
             <button
               type="button"
               className="sh__mobile-close"
@@ -312,7 +312,7 @@ export function SiteHeader() {
               {nav.map((item) => (
                 <li key={item.href}>
                   <NavLink
-                    href={item.href}
+                    to={item.href}
                     className={({ isActive }) => isActive ? 'sh__mobile-link sh__mobile-link--active' : 'sh__mobile-link'}
                     end={item.href === '/'}
                     tabIndex={mobileOpen ? 0 : -1}
@@ -343,7 +343,7 @@ export function SiteHeader() {
                     type="button"
                     className="sh__mobile-link sh__mobile-link--btn"
                     tabIndex={mobileOpen ? 0 : -1}
-                    onClick={() => { setMobileOpen(false); setLoginOpen(true); }}
+                    onClick={() => { setMobileOpen(false); openLogin(); }}
                   >
                     Login / Sign in
                   </button>
@@ -361,12 +361,14 @@ export function SiteHeader() {
         </div>
       </header>
 
-      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartDrawer isOpen={cartOpen} onClose={closeCart} />
 
       <LoginModal
         forceOpen={loginOpen}
-        onClose={() => setLoginOpen(false)}
+        onClose={closeLogin}
       />
+
+      <QuickViewModal />
     </>
   );
 }
