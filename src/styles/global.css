@@ -3027,7 +3027,10 @@ a { color: inherit; }
   padding: 1.5rem 1.75rem; margin-bottom: 1.25rem;
 }
 .od-summary-card__row {
-  display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem 1.5rem;
+  align-items: start;
 }
 .od-summary-card__label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.45); margin: 0 0 0.3rem; }
 .od-summary-card__val { font-size: 0.9rem; color: #fff; margin: 0; }
@@ -3159,6 +3162,89 @@ a.od-item__name:hover { color: var(--rt-gold); text-decoration: underline; }
   animation: od-spin 0.65s linear infinite; flex-shrink: 0;
 }
 @keyframes od-spin { to { transform: rotate(360deg); } }
+
+/* ── Browsing History ─────────────────────────────────────────── */
+.hist-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+}
+.hist-header__sub { font-size: 0.8rem; color: var(--rt-text2); margin: 0.25rem 0 0; }
+.hist-clear-btn {
+  flex-shrink: 0;
+  background: none; border: 1px solid var(--rt-border);
+  border-radius: 8px; padding: 0.4rem 0.9rem;
+  font-size: 0.8rem; color: var(--rt-text2); cursor: pointer;
+  transition: all 0.15s;
+}
+.hist-clear-btn:hover { border-color: #ef4444; color: #ef4444; }
+.hist-clear-btn--confirm { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+
+.hist-empty {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 3.5rem 1rem; text-align: center; gap: 0.75rem;
+}
+.hist-empty__icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--rt-bg); border: 1px solid var(--rt-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--rt-border); margin-bottom: 0.5rem;
+}
+.hist-empty__title { font-size: 1rem; font-weight: 700; color: var(--rt-charcoal); margin: 0; }
+.hist-empty__desc { font-size: 0.85rem; color: var(--rt-text2); margin: 0; max-width: 320px; line-height: 1.55; }
+
+.hist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  list-style: none; margin: 0; padding: 0;
+}
+.hist-card {
+  position: relative; border-radius: 12px;
+  border: 1px solid var(--rt-border);
+  background: var(--rt-bg);
+  overflow: hidden;
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+.hist-card:hover {
+  box-shadow: 0 4px 18px rgba(0,0,0,0.09);
+  transform: translateY(-2px);
+}
+.hist-card__remove {
+  position: absolute; top: 6px; right: 6px; z-index: 2;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(0,0,0,0.5); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; opacity: 0; transition: opacity 0.15s;
+}
+.hist-card:hover .hist-card__remove { opacity: 1; }
+.hist-card__remove:hover { background: #ef4444; }
+.hist-card__img-wrap {
+  position: relative; display: block;
+  width: 100%; aspect-ratio: 1;
+  background: var(--rt-gold-pale);
+  overflow: hidden;
+}
+.hist-card__img { object-fit: cover; transition: transform 0.3s; }
+.hist-card__img-wrap:hover .hist-card__img { transform: scale(1.05); }
+.hist-card__img-ph {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--rt-border);
+}
+.hist-card__body {
+  padding: 0.65rem 0.75rem 0.75rem;
+  display: flex; flex-direction: column; gap: 0.2rem;
+}
+.hist-card__cat { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--rt-gold); font-weight: 700; }
+.hist-card__name {
+  font-size: 0.82rem; font-weight: 600; color: var(--rt-charcoal);
+  text-decoration: none; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.hist-card__name:hover { color: var(--rt-gold); }
+.hist-card__footer { display: flex; align-items: center; justify-content: space-between; margin-top: 0.3rem; }
+.hist-card__price { font-size: 0.82rem; font-weight: 700; color: var(--rt-charcoal); }
+.hist-card__time { font-size: 0.7rem; color: var(--rt-text2); }
 
 /* ── Account v2 — Profile Card ─────────────────────────────────── */
 .acct-profile-card {
@@ -3765,7 +3851,8 @@ a.od-item__name:hover { color: var(--rt-gold); text-decoration: underline; }
   .acct-banner__name { font-size: 1.2rem; }
   .acct-help-banner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
   .acct-help-banner__cta { width: 100%; text-align: center; justify-content: center; }
-  .od-summary-card__row { gap: 1rem 2rem; }
+  .od-summary-card__row { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .hist-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
   .od-item { gap: 0.75rem; }
   .od-item__view-btn { display: none; }
   .od-cancel-wrap { padding: 1rem; }

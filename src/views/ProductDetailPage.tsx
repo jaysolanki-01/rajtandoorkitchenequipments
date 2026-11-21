@@ -1,11 +1,12 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { contact, seo } from '../config/site';
 import { type Product } from '../config/products';
 import { fmtProductId } from '../lib/supabase/db';
+import { pushHistoryItem } from '../lib/browsingHistory';
 import { useProducts } from '../hooks/useProducts';
 import { useCart } from '../store/CartContext';
 import { useWishlist } from '../store/WishlistContext';
@@ -110,6 +111,19 @@ export function ProductDetailPage() {
     router.push('/shop');
     return null;
   }
+
+  // Track this view in browsing history (client-side only)
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    pushHistoryItem({
+      slug: product.slug,
+      name: product.name,
+      image: product.image ?? null,
+      price: product.price ?? null,
+      category_label: product.categoryLabel ?? product.category ?? '',
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.slug]);
 
   const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 6);
   const sizeVariants = product.sizeGroup
