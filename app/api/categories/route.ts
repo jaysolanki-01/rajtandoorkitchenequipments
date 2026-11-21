@@ -18,7 +18,7 @@ export async function GET() {
     .eq('is_active', true)
     .order('sort_order');
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ categories: [] });
 
   return NextResponse.json({ categories: data ?? [] }, {
     headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
