@@ -39,6 +39,10 @@ $$;
 grant execute on function public.generate_order_number() to authenticated;
 
 -- 3. Replace the random default on orders.order_number with the new generator
+--    Drop identity first (identity columns reject SET DEFAULT directly)
+alter table public.orders
+  alter column order_number drop identity if exists;
+
 alter table public.orders
   alter column order_number set default public.generate_order_number();
 
