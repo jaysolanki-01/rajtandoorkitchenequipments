@@ -1,11 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../src/store/AuthContext';
+import { AdminAuthProvider, useAdminAuth } from '../../../src/store/AdminAuthContext';
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const router = useRouter();
-  const { login, isAdmin, isLoading } = useAuth();
+  const { login, isAdmin, isLoading } = useAdminAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -119,5 +119,13 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <AdminAuthProvider>
+      <AdminLoginForm />
+    </AdminAuthProvider>
   );
 }

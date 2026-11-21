@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { fetchAdminCustomers, type AdminCustomer } from '../../../src/lib/supabase/admin';
+import Link from 'next/link';
+import { fetchAdminCustomers, fmtCustomerId, type AdminCustomer } from '../../../src/lib/supabase/admin';
 
 function fmtDate(s: string) {
   return new Date(s).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -67,19 +68,28 @@ export default function AdminCustomersPage() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Customer</th>
                 <th>Phone</th>
                 <th style={{ textAlign: 'center' }}>Orders</th>
                 <th style={{ textAlign: 'right' }}>Total Spent</th>
                 <th>Last Order</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {filtered.map(c => (
-                <tr key={c.email}>
+                <tr key={c.email} style={{ cursor: 'pointer' }}>
                   <td>
-                    <div style={{ fontWeight: 600, fontSize: 13 }}>{c.customer_name}</div>
-                    <a href={`mailto:${c.email}`} style={{ fontSize: 11, color: 'var(--admin-accent)', marginTop: 2, display: 'block' }}>{c.email}</a>
+                    <span className="admin-mono" style={{ color: 'var(--admin-accent)', fontWeight: 700 }}>
+                      {c.customer_number ? fmtCustomerId(c.customer_number) : '—'}
+                    </span>
+                  </td>
+                  <td>
+                    <Link href={`/admin/customers/${encodeURIComponent(c.email)}`} style={{ textDecoration: 'none' }}>
+                      <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--admin-fg)' }}>{c.customer_name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--admin-accent)', marginTop: 2 }}>{c.email}</div>
+                    </Link>
                   </td>
                   <td style={{ fontSize: 13, color: 'var(--admin-fg-muted)' }}>{c.phone || '—'}</td>
                   <td style={{ textAlign: 'center' }}>
@@ -90,6 +100,11 @@ export default function AdminCustomersPage() {
                   </td>
                   <td style={{ fontSize: 12, color: 'var(--admin-fg-muted)', whiteSpace: 'nowrap' }}>
                     {fmtDate(c.last_order)}
+                  </td>
+                  <td>
+                    <Link href={`/admin/customers/${encodeURIComponent(c.email)}`} style={{ fontSize: 12, color: 'var(--admin-accent)', textDecoration: 'none', fontWeight: 600 }}>
+                      View →
+                    </Link>
                   </td>
                 </tr>
               ))}

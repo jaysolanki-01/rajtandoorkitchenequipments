@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '../../src/store/AuthContext';
+import { AdminAuthProvider, useAdminAuth } from '../../src/store/AdminAuthContext';
 import { useEffect } from 'react';
 
 const NAV = [
@@ -15,10 +15,10 @@ const NAV = [
   { href: '/admin/settings',     label: 'Settings',   icon: '⚙' },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAdmin, isLoading, logout, user } = useAuth();
+  const { isAdmin, isLoading, logout, user } = useAdminAuth();
 
   useEffect(() => {
     if (!isLoading && !isAdmin) router.replace('/admin/login');
@@ -147,12 +147,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           padding: 2px 9px; border-radius: 100px; font-size: 11px; font-weight: 600;
           white-space: nowrap;
         }
-        .badge-pending  { background: #fef9c3; color: #854d0e; }
-        .badge-contacted, .badge-processing { background: #dbeafe; color: #1d4ed8; }
-        .badge-quoted   { background: #ede9fe; color: #6d28d9; }
+        .badge-pending    { background: #fef9c3; color: #854d0e; }
+        .badge-confirmed  { background: #dbeafe; color: #1d4ed8; }
+        .badge-contacted, .badge-processing { background: #e0f2fe; color: #0369a1; }
+        .badge-quoted     { background: #ede9fe; color: #6d28d9; }
         .badge-done, .badge-delivered { background: #dcfce7; color: #166534; }
-        .badge-cancelled { background: #fee2e2; color: #991b1b; }
-        .badge-shipped   { background: #e0f2fe; color: #0369a1; }
+        .badge-cancelled  { background: #fee2e2; color: #991b1b; }
+        .badge-shipped    { background: #e8f5e9; color: #2e7d32; }
         .admin-select {
           font-size: 12px; padding: 4px 8px; border-radius: 5px;
           border: 1px solid var(--admin-border); background: var(--admin-bg);
@@ -225,5 +226,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <main className="admin-content">{children}</main>
       </div>
     </div>
+  );
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AdminAuthProvider>
+      <AdminShell>{children}</AdminShell>
+    </AdminAuthProvider>
   );
 }

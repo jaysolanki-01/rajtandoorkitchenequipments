@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import {
   fetchAdminProducts, createProduct, updateProduct, deleteProduct, uploadProductImage,
-  type AdminProduct,
+  fmtProductId, type AdminProduct,
 } from '../../../src/lib/supabase/admin';
 import { CATEGORIES } from '../../../src/config/categories';
 
@@ -215,6 +215,7 @@ export default function AdminProductsPage() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Product</th>
                 <th>Category</th>
                 <th>Price</th>
@@ -225,6 +226,11 @@ export default function AdminProductsPage() {
             <tbody>
               {filtered.map(p => (
                 <tr key={p.id}>
+                  <td>
+                    <span className="admin-mono" style={{ color: 'var(--admin-accent)', fontWeight: 700 }}>
+                      {p.product_number ? fmtProductId(p.product_number) : '—'}
+                    </span>
+                  </td>
                   <td>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                       {p.image && (

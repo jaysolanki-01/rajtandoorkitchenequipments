@@ -494,6 +494,7 @@ export function CheckoutPage() {
   // ── Place Order ──────────────────────────────────────────────────────────────
 
   async function placeOrder() {
+    if (submitted.current || submitting) return;
     setGlobalError('');
     setSubmitting(true);
     try {
@@ -551,6 +552,7 @@ export function CheckoutPage() {
           payment_method: payMethod,
           user_id: user?.id,
           notes: deliveryNotes || undefined,
+          ...(coupon.appliedCode ? { coupon_code: coupon.appliedCode, coupon_discount: couponDiscount } : {}),
         });
         orderRef = result.orderNumber;
 
@@ -612,8 +614,8 @@ export function CheckoutPage() {
       } catch { /* sessionStorage blocked (private mode) — confirmation page will redirect */ }
 
       submitted.current = true;
-      router.push('/checkout/confirmation');
       clearCart();
+      router.push(isLoggedIn ? `/checkout/confirmation/${orderRef}` : '/checkout/confirmation');
     } catch (err) {
       setGlobalError(
         err instanceof Error

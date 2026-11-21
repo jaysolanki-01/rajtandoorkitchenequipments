@@ -1,12 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { useWishlist } from '../store/WishlistContext';
 import { AccountNav } from '../components/account/AccountNav';
-import { fetchUserOrders, type UserOrder } from '../lib/supabase/db';
+import { fetchUserOrders, fetchMyCustomerNumber, fmtCustomerId, type UserOrder } from '../lib/supabase/db';
 
 function pad(n: number) { return String(n).padStart(2, '0'); }
 
@@ -24,10 +25,12 @@ export function AccountPage() {
   const { isLoggedIn, isLoading, user } = useAuth();
   const { count: wishlistCount } = useWishlist();
   const [orders, setOrders] = useState<UserOrder[]>([]);
+  const [customerNumber, setCustomerNumber] = useState<number | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn || !user) return;
     fetchUserOrders(user.id).then(setOrders).catch(() => {});
+    fetchMyCustomerNumber(user.id).then(setCustomerNumber).catch(() => {});
   }, [isLoggedIn, user]);
 
   if (isLoading) return (
@@ -73,6 +76,9 @@ export function AccountPage() {
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5l-4-4 1.41-1.41L10 13.67l6.59-6.59L18 8.5l-8 8z"/>
                         </svg>
                       </span>
+                      {customerNumber && (
+                        <span className="acct-cus-id">{fmtCustomerId(customerNumber)}</span>
+                      )}
                     </h1>
                     <div className="acct-profile-meta">
                       <span className="acct-profile-meta__item">
@@ -147,33 +153,70 @@ export function AccountPage() {
                   </div>
                 ) : (
                   <div className="acct-order-rows">
-                    {orders.slice(0, 3).map(o => (
-                      <div key={o.order_number} className="acct-order-row">
-                        <div className="acct-order-row__img" aria-hidden="true">
-                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
-                          </svg>
-                        </div>
-                        <div className="acct-order-row__info">
-                          <div className="acct-order-row__num">{o.order_number}</div>
-                          <div className="acct-order-row__date">
-                            {new Date(o.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    {orders.slice(0, 3).map(o => {
+                      const items = o.items ?? [];
+                      return (
+                        <div key={o.order_number} className="acct-order-row">
+                          {/* Product image(s) — clickable to product page */}
+                          <div className="acct-order-row__imgs">
+                            {items.length > 0 ? items.slice(0, 3).map((it, i) => (
+                              it.slug ? (
+                                <Link
+                                  key={i}
+                                  href={`/products/${it.slug}`}
+                                  className="acct-order-row__img-wrap"
+                                  style={{ zIndex: items.length - i }}
+                                  title={it.name ?? ''}
+                                >
+                                  {it.image ? (
+                                    <Image src={it.image} alt={it.name ?? ''} fill sizes="52px" style={{ objectFit: 'cover' }} />
+                                  ) : (
+                                    <span className="acct-order-row__img-fallback" aria-hidden="true">
+                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                    </span>
+                                  )}
+                                </Link>
+                              ) : (
+                                <div key={i} className="acct-order-row__img-wrap" style={{ zIndex: items.length - i }}>
+                                  {it.image ? (
+                                    <Image src={it.image} alt={it.name ?? ''} fill sizes="52px" style={{ objectFit: 'cover' }} />
+                                  ) : (
+                                    <span className="acct-order-row__img-fallback" aria-hidden="true">
+                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                    </span>
+                                  )}
+                                </div>
+                              )
+                            )) : (
+                              <div className="acct-order-row__img-wrap">
+                                <span className="acct-order-row__img-fallback" aria-hidden="true">
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                </span>
+                              </div>
+                            )}
                           </div>
+
+                          <div className="acct-order-row__info">
+                            <div className="acct-order-row__num">#{o.order_number}</div>
+                            <div className="acct-order-row__date">
+                              {new Date(o.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            </div>
+                          </div>
+                          <span
+                            className="acct-order-row__status"
+                            style={{ background: `${STATUS_COLOR[o.status] ?? '#888'}18`, color: STATUS_COLOR[o.status] ?? '#888', borderColor: `${STATUS_COLOR[o.status] ?? '#888'}40` }}
+                          >
+                            {o.status.charAt(0).toUpperCase() + o.status.slice(1)}
+                          </span>
+                          {o.total != null && (
+                            <div className="acct-order-row__price">₹{o.total.toLocaleString('en-IN')}</div>
+                          )}
+                          <Link href={`/account/orders/${o.order_number}`} className="btn btn--outline btn--sm acct-order-row__track">
+                            Track Order →
+                          </Link>
                         </div>
-                        <span
-                          className="acct-order-row__status"
-                          style={{ background: `${STATUS_COLOR[o.status] ?? '#888'}18`, color: STATUS_COLOR[o.status] ?? '#888', borderColor: `${STATUS_COLOR[o.status] ?? '#888'}40` }}
-                        >
-                          {o.status.charAt(0).toUpperCase() + o.status.slice(1)}
-                        </span>
-                        {o.total != null && (
-                          <div className="acct-order-row__price">₹{o.total.toLocaleString('en-IN')}</div>
-                        )}
-                        <Link href={`/account/orders/${o.order_number}`} className="btn btn--outline btn--sm acct-order-row__track">
-                          Track Order →
-                        </Link>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>

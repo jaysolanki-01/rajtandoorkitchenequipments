@@ -11,3 +11,6 @@ out/
 # Legacy Express server — SQLite data files and its own node_modules
 server/data/
 server/node_modules/
+
+# Supabase CLI cache
+supabase/.temp/

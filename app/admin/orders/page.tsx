@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { fetchAdminOrders, updateOrderStatus, type AdminOrder } from '../../../src/lib/supabase/admin';
 
-const STATUSES = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+const STATUSES = ['all', 'pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
 
 function fmt(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
@@ -76,15 +77,21 @@ export default function AdminOrdersPage() {
             <tbody>
               {filtered.map(o => (
                 <tr key={o.id}>
-                  <td className="admin-mono">{o.order_number}</td>
                   <td>
-                    <div style={{ fontWeight: 600, fontSize: 13 }}>{o.customer_name}</div>
-                    <div style={{ fontSize: 11, color: 'var(--admin-fg-muted)', marginTop: 2 }}>{o.email}</div>
-                    {o.phone && <div style={{ fontSize: 11, color: 'var(--admin-fg-muted)' }}>{o.phone}</div>}
+                    <Link href={`/admin/orders/${o.id}`} style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: 'var(--admin-accent)', textDecoration: 'none', fontWeight: 600 }}>
+                      {o.order_number}
+                    </Link>
+                  </td>
+                  <td>
+                    <Link href={`/admin/customers/${encodeURIComponent(o.email)}`} style={{ textDecoration: 'none' }}>
+                      <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--admin-fg)' }}>{o.customer_name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--admin-accent)', marginTop: 2 }}>{o.email}</div>
+                      {o.phone && <div style={{ fontSize: 11, color: 'var(--admin-fg-muted)' }}>{o.phone}</div>}
+                    </Link>
                   </td>
                   <td style={{ fontSize: 12, color: 'var(--admin-fg-muted)' }}>
                     {Array.isArray(o.items) ? o.items.map((i, idx) => (
-                      <div key={idx}>{i.product?.name ?? i.name ?? 'Product'} ×{i.quantity}</div>
+                      <div key={idx}>{i.product?.name ?? i.name ?? 'Product'} ×{(i as {qty?:number;quantity?:number}).qty ?? i.quantity ?? 1}</div>
                     )) : '—'}
                   </td>
                   <td style={{ fontWeight: 600 }}>{fmt(o.total)}</td>

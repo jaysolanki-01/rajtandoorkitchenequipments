@@ -51,6 +51,15 @@ const links = [
     showCount: true,
   },
   {
+    to: '/account/history', label: 'History',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 0 .5-4.5"/>
+        <polyline points="3 3 3 7 7 7"/>
+      </svg>
+    ),
+  },
+  {
     to: '/track-order', label: 'Track Order',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
