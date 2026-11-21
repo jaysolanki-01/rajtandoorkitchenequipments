@@ -231,6 +231,15 @@ export function SiteHeader() {
                 <p className="sh-mega__detail-desc">{activeCat.description}</p>
               )}
               <div className="sh-mega__detail-visual" aria-hidden="true">
+                {activeCat.image && (
+                  <img
+                    src={activeCat.image}
+                    alt=""
+                    className="sh-mega__detail-visual-img"
+                    loading="lazy"
+                  />
+                )}
+                <div className="sh-mega__detail-visual-overlay" />
                 <span className="sh-mega__detail-visual-label">{activeCat.name}</span>
               </div>
               <Link

@@ -7,6 +7,7 @@ export interface CategoryItem {
   slug: string;
   name: string;
   description?: string;
+  image?: string;
   products: ProductItem[];
 }
 
@@ -23,6 +24,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'tandoor-equipment',
     name: 'Tandoor Equipment',
     description: 'Traditional and modern tandoors in clay, drum, and stainless steel for restaurants, dhabas, and cloud kitchens.',
+    image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Clay Tandoor', 'Drum Tandoor', 'Stainless Steel Tandoor', 'Gas Tandoor',
       'Electric Tandoor', 'Charcoal Tandoor', 'Commercial Tandoor', 'Portable Tandoor',
@@ -33,6 +35,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'burners-gas-stoves',
     name: 'Burners & Gas Stoves',
     description: 'Single to multi-burner commercial gas stoves and high-pressure LPG burners built for heavy-duty kitchen use.',
+    image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Single Burner Gas Stove', 'Double Burner Gas Stove', 'Three Burner Gas Stove',
       'Four Burner Gas Stove', 'Heavy-Duty Gas Range', 'High-Pressure Burner',
@@ -44,6 +47,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'commercial-cooking-ranges',
     name: 'Commercial Cooking Ranges',
     description: 'Full-width Indian and Chinese cooking ranges engineered for high-volume restaurant and catering kitchens.',
+    image: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Indian Cooking Range', 'Chinese Cooking Range', 'Multi-Burner Cooking Range',
       'Stock Pot Range', 'Commercial Hot Plate', 'Commercial Griddle Range',
@@ -54,6 +58,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'fryers-griddles',
     name: 'Fryers & Griddles',
     description: 'Gas and electric deep fryers, flat-top griddles, and charbroilers for QSR, fast-food, and food-court operations.',
+    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Gas Deep Fryer', 'Electric Deep Fryer', 'Single-Tank Fryer', 'Double-Tank Fryer',
       'Flat-Top Griddle', 'Commercial Hot Plate', 'Charbroiler',
@@ -64,6 +69,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'stainless-steel-fabrication',
     name: 'Stainless Steel Fabrication',
     description: 'Custom-fabricated work tables, sinks, shelves, and exhaust hoods in food-grade stainless steel to your specification.',
+    image: 'https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Stainless Steel Work Table', 'Food Preparation Table', 'Wall Shelf', 'Storage Rack',
       'Storage Cabinet', 'Single-Bowl Sink', 'Double-Bowl Sink', 'Dish Landing Table',
@@ -74,6 +80,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'food-preparation-machines',
     name: 'Food Preparation Machines',
     description: 'Vegetable cutters, dough kneaders, planetary mixers, and grinders to streamline your commercial prep line.',
+    image: 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Vegetable Cutting Machine', 'Potato Peeler', 'Dough Kneader', 'Planetary Mixer',
       'Wet Grinder', 'Food Processor', 'Meat Mincer', 'Commercial Slicer',
@@ -84,6 +91,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'food-warming-display',
     name: 'Food Warming & Display',
     description: 'Bain-maries, buffet counters, and hot display cases to keep food at temperature and always service-ready.',
+    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Bain-Marie', 'Food Warmer', 'Hot Display Case', 'Buffet Counter',
       'Soup Kettle', 'Chapati Warmer', 'Serving Counter', 'Heated Display Cabinet',
@@ -93,6 +101,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'refrigeration-equipment',
     name: 'Refrigeration Equipment',
     description: 'Commercial refrigerators, deep freezers, display chillers, and cold rooms for all storage and chilling needs.',
+    image: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Commercial Refrigerator', 'Deep Freezer', 'Undercounter Refrigerator',
       'Display Chiller', 'Beverage Cooler', 'Cold Room',
@@ -103,6 +112,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'exhaust-ventilation',
     name: 'Exhaust & Ventilation',
     description: 'Exhaust hoods, grease filters, ducting, and fresh-air systems to meet commercial kitchen ventilation standards.',
+    image: 'https://images.unsplash.com/photo-1484980972926-edee96e0960d?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Commercial Exhaust Hood', 'Kitchen Chimney', 'Exhaust Ducting',
       'Fresh-Air System', 'Grease Filter', 'Ventilation Fan',
@@ -113,6 +123,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'kitchen-accessories-spare-parts',
     name: 'Kitchen Accessories & Spare Parts',
     description: 'Tandoor seekhs, gas regulators, cooking utensils, and genuine spare parts for all commercial kitchen equipment.',
+    image: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Tandoor Seekh / Skewer', 'Tandoor Cooking Tools', 'Commercial Cooking Pot',
       'Commercial Frying Pan', 'Kitchen Utensil Set', 'Burner Replacement Part',
@@ -124,6 +135,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'bakery-pizza-equipment',
     name: 'Bakery & Pizza Equipment',
     description: 'Pizza ovens, deck ovens, dough mixers, and proofers purpose-built for bakery and pizzeria operations.',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Commercial Pizza Oven', 'Deck Oven', 'Convection Oven', 'Dough Mixer',
       'Dough Sheeter', 'Proofing Cabinet', 'Bakery Work Table', 'Baking Tray',
@@ -133,6 +145,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'dishwashing-cleaning',
     name: 'Dishwashing & Cleaning',
     description: 'Commercial dishwashers, glass washers, pre-rinse units, and sinks for fast, hygienic ware cleaning.',
+    image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Commercial Dishwasher', 'Glass Washer', 'Pre-Rinse Spray Unit',
       'Pot Washing Sink', 'Dish Rack', 'Hand Wash Sink', 'Cleaning Trolley',
@@ -142,6 +155,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'storage-material-handling',
     name: 'Storage & Material Handling',
     description: 'Heavy-duty shelves, four-tier storage racks, platform trolleys, and LPG cylinder cage storage solutions.',
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Wall-Mounted Storage Shelf', 'Four-Tier Storage Rack', 'Ingredient Bin',
       'Heavy-Duty Storage Rack', 'Platform Trolley', 'Service Trolley',
@@ -152,6 +166,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'beverage-equipment',
     name: 'Beverage Equipment',
     description: 'Tea urns, coffee machines, juice dispensers, and blenders for high-volume beverage service in hotels and cafes.',
+    image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Commercial Tea Coffee Urn', 'Hot Water Dispenser', 'Commercial Coffee Machine',
       'Juice Dispenser', 'Milkshake Mixer', 'Beverage Blender',
