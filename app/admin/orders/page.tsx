@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { fetchAdminOrders, updateOrderStatus, type AdminOrder } from '../../../src/lib/supabase/admin';
 
-const STATUSES = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+const STATUSES = ['all', 'pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
 
 function fmt(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
@@ -84,7 +84,7 @@ export default function AdminOrdersPage() {
                   </td>
                   <td style={{ fontSize: 12, color: 'var(--admin-fg-muted)' }}>
                     {Array.isArray(o.items) ? o.items.map((i, idx) => (
-                      <div key={idx}>{i.product?.name ?? i.name ?? 'Product'} ×{i.quantity}</div>
+                      <div key={idx}>{i.product?.name ?? i.name ?? 'Product'} ×{(i as {qty?:number;quantity?:number}).qty ?? i.quantity ?? 1}</div>
                     )) : '—'}
                   </td>
                   <td style={{ fontWeight: 600 }}>{fmt(o.total)}</td>
