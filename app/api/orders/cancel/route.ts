@@ -28,10 +28,10 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: 'Not authenticated.' }, { status: 401 });
   }
 
-  // Verify the order belongs to this user
+  // Fetch order and verify ownership
   const { data: order, error: fetchErr } = await supabase
     .from('orders')
-    .select('status, user_id')
+    .select('status, user_id, customer_name, email, items, total, payment_method')
     .eq('order_number', orderNumber)
     .maybeSingle();
 
@@ -59,6 +59,22 @@ export async function POST(req: NextRequest) {
   if (updateErr) {
     return Response.json({ error: updateErr.message }, { status: 500 });
   }
+
+  // Send cancellation email (best-effort — don't block the response)
+  const origin = req.headers.get('origin') || req.headers.get('host') || '';
+  const baseUrl = origin.startsWith('http') ? origin : `https://${origin}`;
+  fetch(`${baseUrl}/api/orders/send-cancellation`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      orderNumber,
+      customerName: order.customer_name,
+      email: order.email,
+      items: order.items ?? [],
+      total: order.total,
+      payMethod: order.payment_method,
+    }),
+  }).catch(() => { /* fire-and-forget */ });
 
   return Response.json({ success: true });
 }

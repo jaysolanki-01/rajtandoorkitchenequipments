@@ -15,22 +15,22 @@ const PAY_LABEL: Record<string, string> = {
   cod: 'Cash on Delivery',
 };
 
-const STATUS_COLOR: Record<string, { bg: string; text: string; border: string }> = {
-  pending:    { bg: '#fef9ec', text: '#92400e', border: '#fde68a' },
-  confirmed:  { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
-  processing: { bg: '#f5f3ff', text: '#6d28d9', border: '#ddd6fe' },
-  shipped:    { bg: '#ecfeff', text: '#0e7490', border: '#a5f3fc' },
-  delivered:  { bg: '#f0fdf4', text: '#15803d', border: '#86efac' },
-  cancelled:  { bg: '#fef2f2', text: '#b91c1c', border: '#fca5a5' },
-};
-
 function itemQty(item: OrderItem): number { return item.qty ?? item.quantity ?? 1; }
+
+function resolveImg(src: string | null | undefined): string | null {
+  if (!src) return null;
+  if (src.startsWith('http')) return src;
+  // relative path — make absolute using window.location.origin
+  if (typeof window !== 'undefined') return `${window.location.origin}${src.startsWith('/') ? '' : '/'}${src}`;
+  return src;
+}
 
 function ProductPlaceholder() {
   return (
     <div className="od-item__img-ph" aria-hidden="true">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 9 6 6m0-6-6 6"/>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <path d="M3 9h18M9 21V9"/>
       </svg>
     </div>
   );
@@ -81,7 +81,6 @@ export function AccountOrderDetailPage() {
   if (!isLoggedIn) { router.push('/'); return null; }
 
   const currentStatus = order?.status ?? '';
-  const statusStyle = STATUS_COLOR[currentStatus] ?? STATUS_COLOR.pending;
   const canCancel = ['pending', 'confirmed'].includes(currentStatus) && !cancelled;
 
   return (
@@ -132,11 +131,8 @@ export function AccountOrderDetailPage() {
                       </div>
                       <div>
                         <p className="od-summary-card__label">Status</p>
-                        <span
-                          className="od-status-pill"
-                          style={{ background: statusStyle.bg, color: statusStyle.text, borderColor: statusStyle.border }}
-                        >
-                          {currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1).replace(/_/g, ' ')}
+                        <span className={`order-status order-status--${currentStatus}`}>
+                          {currentStatus.replace(/_/g, ' ')}
                         </span>
                       </div>
                       {order.total != null && order.total > 0 && (
@@ -168,28 +164,28 @@ export function AccountOrderDetailPage() {
                           const slug = item.slug ?? null;
                           const qty = itemQty(item);
                           const lineTotal = item.price != null ? item.price * qty : null;
+                          const imgSrc = resolveImg(item.image);
+
+                          const ImgNode = imgSrc ? (
+                            <img
+                              src={imgSrc}
+                              alt={name}
+                              className="od-item__img"
+                              onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; (e.currentTarget.parentElement as HTMLElement).classList.add('od-item__img-ph--err'); }}
+                            />
+                          ) : null;
 
                           return (
                             <li key={idx} className="od-item">
                               {/* Image / placeholder */}
-                              {item.image ? (
-                                slug ? (
-                                  <Link href={`/products/${slug}`} className="od-item__img-link" tabIndex={-1} aria-hidden="true">
-                                    <img src={item.image} alt={name} className="od-item__img" />
-                                  </Link>
-                                ) : (
-                                  <div className="od-item__img-wrap">
-                                    <img src={item.image} alt={name} className="od-item__img" />
-                                  </div>
-                                )
+                              {slug ? (
+                                <Link href={`/products/${slug}`} className="od-item__img-link" tabIndex={-1} aria-hidden="true">
+                                  {ImgNode ?? <ProductPlaceholder />}
+                                </Link>
+                              ) : imgSrc ? (
+                                <div className="od-item__img-wrap">{ImgNode}</div>
                               ) : (
-                                slug ? (
-                                  <Link href={`/products/${slug}`} className="od-item__img-link" tabIndex={-1} aria-hidden="true">
-                                    <ProductPlaceholder />
-                                  </Link>
-                                ) : (
-                                  <ProductPlaceholder />
-                                )
+                                <ProductPlaceholder />
                               )}
 
                               {/* Name + qty */}
@@ -237,17 +233,22 @@ export function AccountOrderDetailPage() {
                   {(canCancel || currentStatus === 'cancelled') && (
                     <div className="od-cancel-section">
                       {currentStatus === 'cancelled' ? (
-                        <div className="od-cancel-notice">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
-                          </svg>
-                          This order has been cancelled.
+                        <div className="od-cancel-notice od-cancel-notice--done">
+                          <div className="od-cancel-notice__icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <strong>Order Cancelled</strong>
+                            <p>This order has been cancelled. A confirmation email has been sent to your email address.</p>
+                          </div>
                         </div>
                       ) : (
                         <div className="od-cancel-wrap">
                           <div className="od-cancel-info">
-                            <strong>Cancel this order?</strong>
-                            <p>You can cancel while the order is pending or confirmed. Once shipped, cancellation is not possible.</p>
+                            <strong>Need to cancel?</strong>
+                            <p>You can cancel this order while it is pending or confirmed. Once it is shipped, cancellation is not possible. A cancellation confirmation will be sent to your email.</p>
                           </div>
                           {cancelError && (
                             <div className="form-status form-status--error od-cancel-err" role="alert">{cancelError}</div>
@@ -258,7 +259,12 @@ export function AccountOrderDetailPage() {
                             onClick={handleCancel}
                             disabled={cancelling}
                           >
-                            {cancelling ? 'Cancelling…' : 'Cancel Order'}
+                            {cancelling ? (
+                              <>
+                                <span className="od-cancel-btn__spinner" aria-hidden="true" />
+                                Cancelling…
+                              </>
+                            ) : 'Cancel Order'}
                           </button>
                         </div>
                       )}

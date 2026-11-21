@@ -3034,11 +3034,7 @@ a { color: inherit; }
 .od-summary-card__val--mono { font-family: ui-monospace, 'Courier New', monospace; font-weight: 700; letter-spacing: 0.04em; color: var(--rt-gold); }
 .od-summary-card__val--total { font-size: 1rem; font-weight: 700; color: var(--rt-gold); }
 
-.od-status-pill {
-  display: inline-block; font-size: 0.75rem; font-weight: 700;
-  padding: 0.3rem 0.8rem; border-radius: 999px; border: 1px solid;
-  letter-spacing: 0.03em; line-height: 1;
-}
+/* od-status-pill removed — uses .order-status classes from orders table */
 .od-notes {
   display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 1rem;
   padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);
@@ -3095,26 +3091,42 @@ a.od-item__name:hover { color: var(--rt-gold); text-decoration: underline; }
 
 /* Cancel */
 .od-cancel-section { margin-bottom: 1.25rem; }
+
 .od-cancel-notice {
-  display: flex; align-items: center; gap: 0.6rem;
-  padding: 1rem 1.25rem; border-radius: 10px;
-  background: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c;
-  font-size: 0.875rem; font-weight: 600;
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: 1.1rem 1.25rem; border-radius: 10px;
+  background: #fef2f2; border: 1px solid #fca5a5;
 }
+.od-cancel-notice--done { background: #fef2f2; border-color: #fca5a5; }
+.od-cancel-notice__icon {
+  width: 36px; height: 36px; border-radius: 50%; background: #ef4444;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; flex-shrink: 0; margin-top: 0.1rem;
+}
+.od-cancel-notice strong { display: block; font-size: 0.95rem; color: #7f1d1d; margin-bottom: 0.25rem; }
+.od-cancel-notice p { font-size: 0.82rem; color: #991b1b; margin: 0; line-height: 1.5; }
+
 .od-cancel-wrap {
   padding: 1.25rem 1.5rem; border-radius: 12px;
   background: #fff8f0; border: 1px solid #fed7aa;
 }
-.od-cancel-info { margin-bottom: 0.75rem; }
-.od-cancel-info strong { display: block; color: var(--rt-charcoal); margin-bottom: 0.3rem; }
-.od-cancel-info p { font-size: 0.82rem; color: var(--rt-text2); margin: 0; }
+.od-cancel-info { margin-bottom: 0.9rem; }
+.od-cancel-info strong { display: block; color: var(--rt-charcoal); font-size: 0.95rem; margin-bottom: 0.3rem; }
+.od-cancel-info p { font-size: 0.82rem; color: var(--rt-text2); margin: 0; line-height: 1.55; }
 .od-cancel-err { margin-bottom: 0.75rem; }
 .od-cancel-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
   background: #ef4444 !important; color: #fff !important; border-color: #ef4444 !important;
   font-size: 0.85rem !important; padding: 0.6rem 1.25rem !important;
 }
 .od-cancel-btn:hover:not(:disabled) { background: #dc2626 !important; border-color: #dc2626 !important; }
 .od-cancel-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.od-cancel-btn__spinner {
+  width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff; border-radius: 50%;
+  animation: od-spin 0.65s linear infinite; flex-shrink: 0;
+}
+@keyframes od-spin { to { transform: rotate(360deg); } }
 
 /* ── Account v2 — Profile Card ─────────────────────────────────── */
 .acct-profile-card {
