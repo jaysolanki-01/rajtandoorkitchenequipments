@@ -208,12 +208,6 @@ export function AccountOrderDetailPage() {
                                 </span>
                               </div>
 
-                              {/* View product link */}
-                              {slug && (
-                                <Link href={`/products/${slug}`} className="btn btn--outline btn--sm od-item__view-btn">
-                                  View →
-                                </Link>
-                              )}
                             </li>
                           );
                         })}
@@ -221,43 +215,46 @@ export function AccountOrderDetailPage() {
                     )}
 
                     {/* Price breakdown */}
-                    <div className="od-price-breakdown">
-                      <div className="od-price-row">
-                        <span>Subtotal</span>
-                        <span>
-                          {order.subtotal > 0
-                            ? `₹${order.subtotal.toLocaleString('en-IN')}`
-                            : (order.items ?? []).reduce((s, it) => s + (it.price ?? 0) * (it.qty ?? it.quantity ?? 1), 0) > 0
-                              ? `₹${(order.items ?? []).reduce((s, it) => s + (it.price ?? 0) * (it.qty ?? it.quantity ?? 1), 0).toLocaleString('en-IN')}`
-                              : '—'
-                          }
-                        </span>
-                      </div>
-                      <div className="od-price-row">
-                        <span>Shipping</span>
-                        <span style={{ color: (order.shipping ?? 0) === 0 ? 'var(--rt-success)' : undefined }}>
-                          {(order.shipping ?? 0) === 0 ? 'Free' : `₹${order.shipping.toLocaleString('en-IN')}`}
-                        </span>
-                      </div>
-                      {(order.coupon_discount ?? 0) > 0 && (
-                        <div className="od-price-row od-price-row--discount">
-                          <span>
-                            Coupon discount
-                            {order.coupon_code && (
-                              <span className="od-coupon-tag">{order.coupon_code}</span>
-                            )}
-                          </span>
-                          <span>−₹{order.coupon_discount.toLocaleString('en-IN')}</span>
+                    {order.total != null && order.total > 0 && (() => {
+                      const itemsTotal = (order.items ?? []).reduce((s, it) => s + (it.price ?? 0) * (it.qty ?? it.quantity ?? 1), 0);
+                      const subtotal = order.subtotal > 0 ? order.subtotal : itemsTotal;
+                      const shipping = order.shipping ?? 0;
+                      const discount = order.coupon_discount ?? 0;
+                      return (
+                        <div className="od-price-breakdown">
+                          {subtotal > 0 && (
+                            <div className="od-price-row">
+                              <span>Subtotal</span>
+                              <span>₹{subtotal.toLocaleString('en-IN')}</span>
+                            </div>
+                          )}
+                          <div className="od-price-row">
+                            <span>Shipping</span>
+                            <span style={{ color: shipping === 0 ? 'var(--rt-success)' : undefined }}>
+                              {shipping === 0 ? 'Free' : `₹${shipping.toLocaleString('en-IN')}`}
+                            </span>
+                          </div>
+                          {discount > 0 && (
+                            <div className="od-price-row od-price-row--discount">
+                              <span>
+                                Coupon discount
+                                {order.coupon_code && (
+                                  <span className="od-coupon-tag">{order.coupon_code}</span>
+                                )}
+                              </span>
+                              <span>−₹{discount.toLocaleString('en-IN')}</span>
+                            </div>
+                          )}
+                          <div className="od-price-row od-price-row--total">
+                            <span>
+                              Order Total
+                              <span className="od-price-row__gst">Incl. GST</span>
+                            </span>
+                            <strong>₹{order.total.toLocaleString('en-IN')}</strong>
+                          </div>
                         </div>
-                      )}
-                      <div className="od-price-row od-price-row--total">
-                        <span>
-                          Order Total
-                          <span className="od-price-row__gst">Incl. GST</span>
-                        </span>
-                        <strong>₹{order.total.toLocaleString('en-IN')}</strong>
-                      </div>
-                    </div>
+                      );
+                    })()}
                   </div>
 
                   {/* ── Cancel order ── */}
