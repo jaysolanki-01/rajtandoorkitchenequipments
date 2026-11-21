@@ -52,21 +52,22 @@ export async function middleware(request: NextRequest) {
       return supabaseResponse;
     }
     const role = user.user_metadata?.role;
-    if (role !== 'admin' && role !== 'super_admin') {
-      // Admins have their own login page; non-admins go home
-      if (pathname !== '/admin/login') {
-        const loginUrl = request.nextUrl.clone();
-        loginUrl.pathname = '/admin/login';
-        loginUrl.search = '';
-        return NextResponse.redirect(loginUrl);
-      }
-    }
+    const isAdmin = role === 'admin' || role === 'super_admin';
+
     // Admin already logged in — skip the login page
-    if (pathname === '/admin/login') {
+    if (pathname === '/admin/login' && isAdmin) {
       const dashUrl = request.nextUrl.clone();
       dashUrl.pathname = '/admin';
       dashUrl.search = '';
       return NextResponse.redirect(dashUrl);
+    }
+
+    // Non-admin trying to access any admin page (except login) → send to login
+    if (!isAdmin && pathname !== '/admin/login') {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = '/admin/login';
+      loginUrl.search = '';
+      return NextResponse.redirect(loginUrl);
     }
   }
 
