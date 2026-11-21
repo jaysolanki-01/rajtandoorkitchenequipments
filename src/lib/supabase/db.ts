@@ -58,6 +58,8 @@ export type OrderInsert = {
   payment_method?: string;
   user_id?: string;
   notes?: string;
+  coupon_code?: string;
+  coupon_discount?: number;
 };
 
 function getClient() {
@@ -115,6 +117,10 @@ export type UserOrder = {
   order_number: string;
   status: string;
   created_at: string;
+  subtotal: number;
+  shipping: number;
+  coupon_discount: number;
+  coupon_code: string | null;
   total: number;
   payment_method: string;
   notes: string | null;
@@ -128,7 +134,7 @@ export async function fetchUserOrders(userId: string): Promise<UserOrder[]> {
   const sb = getClient();
   const { data, error } = await sb
     .from('orders')
-    .select('order_number, status, created_at, total, payment_method, notes, items')
+    .select('order_number, status, created_at, subtotal, shipping, coupon_discount, coupon_code, total, payment_method, notes, items')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
   if (error || !data) return [];

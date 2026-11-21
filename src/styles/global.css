@@ -3082,6 +3082,38 @@ a.od-item__name:hover { color: var(--rt-gold); text-decoration: underline; }
 
 .od-item__view-btn { flex-shrink: 0; font-size: 0.75rem !important; padding: 0.3rem 0.7rem !important; }
 
+/* Price breakdown table */
+.od-price-breakdown {
+  margin-top: 1rem; border-top: 1px solid var(--rt-border);
+  padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0;
+}
+.od-price-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.5rem 0; font-size: 0.88rem; color: var(--rt-text2);
+  border-bottom: 1px dashed var(--rt-border);
+}
+.od-price-row:last-child { border-bottom: none; }
+.od-price-row--discount { color: var(--rt-success); }
+.od-price-row--total {
+  margin-top: 0.25rem; padding-top: 0.75rem;
+  border-top: 2px solid var(--rt-charcoal) !important;
+  border-bottom: none !important;
+  font-size: 1rem; font-weight: 700; color: var(--rt-charcoal);
+}
+.od-price-row--total strong { font-size: 1.15rem; color: var(--rt-charcoal); }
+.od-price-row__gst {
+  margin-left: 0.4rem; font-size: 0.72rem; font-weight: 400;
+  color: var(--rt-text2); vertical-align: middle;
+}
+.od-coupon-tag {
+  display: inline-block; margin-left: 0.5rem;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+  background: rgba(34,197,94,0.12); color: var(--rt-success);
+  border: 1px solid rgba(34,197,94,0.3); border-radius: 4px;
+  padding: 0.1em 0.5em; text-transform: uppercase;
+}
+
+/* Legacy – kept for any stray usage */
 .od-total-row {
   display: flex; justify-content: space-between; align-items: center;
   padding: 1rem 0 0; margin-top: 0.5rem; border-top: 2px solid var(--rt-charcoal);
