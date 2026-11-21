@@ -3363,14 +3363,44 @@ a.od-item__name:hover { color: var(--rt-gold); text-decoration: underline; }
 .orders-table tbody tr:hover td { background: var(--rt-bg2); }
 .orders-table a { color: var(--rt-gold); }
 
-/* Order status badges */
-.order-status { display: inline-block; padding: 0.2em 0.6em; border-radius: 4px; font-size: 0.78rem; font-weight: 600; text-transform: capitalize; }
-.order-status--pending { background: #FFF4E5; color: var(--rt-warn); }
-.order-status--confirmed { background: #E6F4EA; color: var(--rt-success); }
-.order-status--processing { background: #E8F0FE; color: #1A56DB; }
-.order-status--shipped { background: #EDE9FE; color: #5521B5; }
-.order-status--delivered { background: #E6F4EA; color: var(--rt-success); }
-.order-status--cancelled { background: #FEE2E2; color: var(--rt-error); }
+/* Order row card */
+.order-row-card {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.9rem 1rem; border-radius: 10px;
+  border: 1px solid var(--rt-border); background: var(--rt-bg);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+}
+.order-row-card:hover { border-color: var(--rt-gold); box-shadow: 0 2px 10px rgba(195,162,104,0.12); }
+.order-row-imgs { display: flex; flex-shrink: 0; }
+.order-row-img-wrap {
+  position: relative; width: 52px; height: 52px; border-radius: 7px;
+  overflow: hidden; border: 2px solid var(--rt-bg);
+  background: var(--rt-bg2); flex-shrink: 0;
+}
+.order-row-imgs .order-row-img-wrap + .order-row-img-wrap { margin-left: -14px; }
+.order-row-img-placeholder { display: flex; align-items: center; justify-content: center; }
+.order-row-info { flex: 1; min-width: 0; }
+.order-row-top { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.2rem; flex-wrap: wrap; }
+.order-row-num { font-weight: 700; font-size: 0.88rem; color: var(--rt-gold); }
+.order-row-names { font-size: 0.82rem; color: var(--rt-text2); margin: 0 0 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.order-row-meta { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--rt-text2); flex-wrap: wrap; }
+.order-row-dot { opacity: 0.4; }
+.order-row-arrow { color: var(--rt-text2); flex-shrink: 0; opacity: 0.5; }
+.order-row-card:hover .order-row-arrow { color: var(--rt-gold); opacity: 1; }
+
+/* Order status badges — square pill */
+.order-status {
+  display: inline-block; padding: 0.28em 0.75em;
+  border-radius: 5px; font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+}
+.order-status--pending    { background: #FFF4E5; color: #92400E; border: 1.5px solid #FDE68A; }
+.order-status--confirmed  { background: #D1FAE5; color: #065F46; border: 1.5px solid #6EE7B7; }
+.order-status--processing { background: #DBEAFE; color: #1E40AF; border: 1.5px solid #93C5FD; }
+.order-status--shipped    { background: #EDE9FE; color: #4C1D95; border: 1.5px solid #C4B5FD; }
+.order-status--delivered  { background: #D1FAE5; color: #065F46; border: 1.5px solid #6EE7B7; }
+.order-status--cancelled  { background: #FEE2E2; color: #991B1B; border: 1.5px solid #FCA5A5; }
 
 /* Order detail meta */
 .order-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; padding: 1.25rem; background: var(--rt-bg2); border-radius: var(--radius); margin-bottom: 1.5rem; }

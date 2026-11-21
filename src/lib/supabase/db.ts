@@ -117,7 +117,7 @@ export async function fetchUserOrders(userId: string): Promise<UserOrder[]> {
   const sb = getClient();
   const { data, error } = await sb
     .from('orders')
-    .select('order_number, status, created_at, total, payment_method, notes')
+    .select('order_number, status, created_at, total, payment_method, notes, items')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
   if (error || !data) return [];

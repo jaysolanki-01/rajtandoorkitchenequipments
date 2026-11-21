@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
@@ -58,38 +59,62 @@ export function AccountOrdersPage() {
                   </div>
                 ) : (
                   <>
-                    <p style={{ fontSize: '0.82rem', color: 'var(--rt-text2)', marginBottom: '1rem' }}>
+                    <p style={{ fontSize: '0.82rem', color: 'var(--rt-text2)', marginBottom: '1.25rem' }}>
                       {orders.length} order{orders.length !== 1 ? 's' : ''} total
                     </p>
-                    <div className="acct-orders-table-wrap">
-                      <table className="orders-table">
-                        <thead>
-                          <tr>
-                            <th>Order #</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Method</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {orders.map(o => (
-                            <tr key={o.order_number}>
-                              <td>
-                                <Link href={`/account/orders/${o.order_number}`} style={{ color: 'var(--rt-gold)', fontWeight: 600 }}>
-                                  {o.order_number}
-                                </Link>
-                              </td>
-                              <td>{new Date(o.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
-                              <td><span className={`order-status order-status--${o.status}`}>{o.status.replace(/_/g, ' ')}</span></td>
-                              <td style={{ color: 'var(--rt-text2)', fontSize: '0.85rem' }}>{o.payment_method}</td>
-                              <td>
-                                <Link href={`/account/orders/${o.order_number}`} className="btn btn--outline btn--sm">View</Link>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {orders.map(o => {
+                        const imgs = (o.items ?? [])
+                          .slice(0, 4)
+                          .map(it => it.image)
+                          .filter(Boolean) as string[];
+                        const names = (o.items ?? []).map(it => it.name).filter(Boolean).join(', ');
+                        return (
+                          <Link
+                            key={o.order_number}
+                            href={`/account/orders/${o.order_number}`}
+                            style={{ textDecoration: 'none' }}
+                          >
+                            <div className="order-row-card">
+                              {/* Product image stack */}
+                              <div className="order-row-imgs">
+                                {imgs.length > 0 ? imgs.map((src, i) => (
+                                  <div key={i} className="order-row-img-wrap" style={{ zIndex: imgs.length - i }}>
+                                    <Image src={src} alt="" fill sizes="52px" style={{ objectFit: 'cover' }} />
+                                  </div>
+                                )) : (
+                                  <div className="order-row-img-wrap order-row-img-placeholder">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true" style={{ color: 'var(--rt-gold)', opacity: 0.5 }}>
+                                      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Order info */}
+                              <div className="order-row-info">
+                                <div className="order-row-top">
+                                  <span className="order-row-num">#{o.order_number}</span>
+                                  <span className={`order-status order-status--${o.status}`}>{o.status.replace(/_/g, ' ')}</span>
+                                </div>
+                                {names && <p className="order-row-names">{names}</p>}
+                                <div className="order-row-meta">
+                                  <span>{new Date(o.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                                  <span className="order-row-dot">·</span>
+                                  <span style={{ textTransform: 'uppercase', fontSize: '0.78rem' }}>{o.payment_method}</span>
+                                  <span className="order-row-dot">·</span>
+                                  <span style={{ fontWeight: 600, color: 'var(--rt-fg)' }}>₹{(o.total ?? 0).toLocaleString('en-IN')}</span>
+                                </div>
+                              </div>
+
+                              {/* Arrow */}
+                              <div className="order-row-arrow" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </>
                 )}
