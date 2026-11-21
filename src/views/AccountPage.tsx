@@ -7,7 +7,7 @@ import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { useWishlist } from '../store/WishlistContext';
 import { AccountNav } from '../components/account/AccountNav';
-import { fetchUserOrders, type UserOrder } from '../lib/supabase/db';
+import { fetchUserOrders, fetchMyCustomerNumber, fmtCustomerId, type UserOrder } from '../lib/supabase/db';
 
 function pad(n: number) { return String(n).padStart(2, '0'); }
 
@@ -25,10 +25,12 @@ export function AccountPage() {
   const { isLoggedIn, isLoading, user } = useAuth();
   const { count: wishlistCount } = useWishlist();
   const [orders, setOrders] = useState<UserOrder[]>([]);
+  const [customerNumber, setCustomerNumber] = useState<number | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn || !user) return;
     fetchUserOrders(user.id).then(setOrders).catch(() => {});
+    fetchMyCustomerNumber(user.id).then(setCustomerNumber).catch(() => {});
   }, [isLoggedIn, user]);
 
   if (isLoading) return (
@@ -74,6 +76,9 @@ export function AccountPage() {
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5l-4-4 1.41-1.41L10 13.67l6.59-6.59L18 8.5l-8 8z"/>
                         </svg>
                       </span>
+                      {customerNumber && (
+                        <span className="acct-cus-id">{fmtCustomerId(customerNumber)}</span>
+                      )}
                     </h1>
                     <div className="acct-profile-meta">
                       <span className="acct-profile-meta__item">

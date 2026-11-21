@@ -153,6 +153,23 @@ export async function fetchUserOrder(userId: string, orderNumber: string): Promi
   return data as UserOrder;
 }
 
+// ── My customer number (CUS-XXXXXX) ─────────────────────────────────────────
+// Returns null if migration 009 hasn't been run yet (table may not exist)
+export async function fetchMyCustomerNumber(userId: string): Promise<number | null> {
+  const sb = getClient();
+  try {
+    const { data, error } = await sb
+      .from('customers')
+      .select('customer_number')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return (data as { customer_number: number }).customer_number ?? null;
+  } catch {
+    return null;
+  }
+}
+
 // ── Cancel order (via server API route — needs service role) ─────────────────
 
 export async function requestOrderCancellation(orderNumber: string): Promise<void> {

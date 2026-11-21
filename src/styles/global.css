@@ -3298,6 +3298,13 @@ a.od-item__name:hover { color: var(--rt-gold); text-decoration: underline; }
   display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; line-height: 1.2;
 }
 .acct-verified { color: #22c55e; display: flex; align-items: center; flex-shrink: 0; }
+.acct-cus-id {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+  font-family: ui-monospace, 'Courier New', monospace;
+  color: var(--rt-gold); background: var(--rt-gold-pale);
+  padding: 0.2em 0.65em; border-radius: 100px; border: 1px solid rgba(195,162,104,0.3);
+  flex-shrink: 0;
+}
 .acct-profile-meta { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.5rem; }
 .acct-profile-meta__item {
   display: inline-flex; align-items: center; gap: 0.45rem;
