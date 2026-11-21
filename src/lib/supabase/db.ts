@@ -148,6 +148,14 @@ export async function requestOrderCancellation(orderNumber: string): Promise<voi
   if (!res.ok) throw new Error(json.error ?? 'Could not cancel order.');
 }
 
+export function fmtProductId(n: number): string {
+  return `RT-${String(n).padStart(5, '0')}`;
+}
+
+export function fmtCustomerId(n: number): string {
+  return `C-${String(n).padStart(5, '0')}`;
+}
+
 // ── Track order (no auth — match by order_number + email) ────────────────────
 
 export type OrderTrackStatus = {

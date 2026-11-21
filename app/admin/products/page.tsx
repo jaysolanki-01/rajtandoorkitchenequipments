@@ -10,7 +10,7 @@ const EMPTY: Omit<AdminProduct, 'created_at' | 'updated_at'> = {
   id: '', slug: '', name: '', category: '', category_label: '', short_description: '',
   description: '', image: '', images: [], price: null, currency: 'INR', specs: [],
   features: [], is_demo: false, in_stock: true, price_label: null, group_id: null,
-  warranty: null, tags: null,
+  warranty: null, tags: null, product_number: null,
 };
 
 function slugify(s: string) {
