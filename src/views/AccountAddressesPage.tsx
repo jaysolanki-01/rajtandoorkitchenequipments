@@ -66,24 +66,26 @@ export function AccountAddressesPage() {
 
       <main id="main" tabIndex={-1} className="page-main">
         <div className="container">
+
+          <div className="acct-page-hdr" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div>
+              <Link href="/account" className="acct-page-hdr__back">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                Overview
+              </Link>
+              <h1 className="acct-page-hdr__title">Delivery Addresses</h1>
+            </div>
+            <button
+              className={`btn btn--sm ${adding ? 'btn--outline' : 'btn--gold'}`}
+              onClick={() => { setAdding(v => !v); setError(''); setForm(blankForm); }}
+            >
+              {adding ? 'Cancel' : '+ Add Address'}
+            </button>
+          </div>
+
           <div className="acct-layout">
             <AccountNav />
             <div className="acct-main">
-              <div className="acct-subhdr" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-                <div>
-                  <Link href="/account" className="acct-subhdr__back">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-                    Overview
-                  </Link>
-                  <h1 className="acct-subhdr__title">Delivery Addresses</h1>
-                </div>
-                <button
-                  className={`btn btn--sm ${adding ? 'btn--outline' : 'btn--gold'}`}
-                  onClick={() => { setAdding(v => !v); setError(''); setForm(blankForm); }}
-                >
-                  {adding ? 'Cancel' : '+ Add Address'}
-                </button>
-              </div>
 
               {/* Add address form */}
               {adding && (
