@@ -28,6 +28,14 @@ const PAY_LABEL: Record<string, string> = {
 
 const SESSION_KEY = 'rt_order_confirmation';
 
+const JOURNEY = [
+  { label: 'Order Placed' },
+  { label: 'Confirmed' },
+  { label: 'Processing' },
+  { label: 'Dispatched' },
+  { label: 'Delivered' },
+];
+
 function AnimatedCheck() {
   return (
     <div className="conf-check" aria-hidden="true">
@@ -36,6 +44,38 @@ function AnimatedCheck() {
         <polyline className="conf-check__mark" points="28,52 43,67 72,33" stroke="currentColor" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
+  );
+}
+
+function IconCalendar() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+  );
+}
+
+function IconCard() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>
+    </svg>
+  );
+}
+
+function IconRupee() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+    </svg>
+  );
+}
+
+function IconCheck() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
   );
 }
 
@@ -86,6 +126,8 @@ export function OrderConfirmationPage() {
     ? `https://wa.me/${waNum.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi Raj Tandoor! I placed an order. Reference: ${orderRef}`)}`
     : '/contact';
 
+  const dateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
   return (
     <>
       <title>{`Order Confirmed | ${seo.title}`}</title>
@@ -93,69 +135,95 @@ export function OrderConfirmationPage() {
 
       <div className="co-page">
         <main id="main" tabIndex={-1}>
-          <div className="container">
-            <div className="conf">
 
-              {/* ── Hero ── */}
-              <div className="conf__hero">
-                <AnimatedCheck />
+          {/* ── Full-width dark hero ── */}
+          <div className="conf__hero">
+            {/* Floating sparkles */}
+            {Array.from({ length: 16 }).map((_, i) => (
+              <span key={i} className={`conf__spark conf__spark--${i + 1}`} aria-hidden="true" />
+            ))}
 
-                <h1 className="conf__heading">
-                  {isGuest ? 'Enquiry Received!' : 'Order Confirmed!'}
-                </h1>
-                <p className="conf__thanks">
-                  Thank you, <strong>{firstName}</strong>!{' '}
-                  {isGuest
-                    ? 'Our team will reach out shortly with pricing and availability.'
-                    : 'Your order is confirmed and in our hands.'}
-                </p>
+            <div className="conf__hero-inner">
+              <AnimatedCheck />
 
-                {/* Order ID badge */}
-                <div className="conf__ref-row">
-                  <span className="conf__ref-label">Order ID</span>
-                  <span className="conf__ref-num">{orderRef}</span>
-                  <button
-                    type="button"
-                    className="conf__copy-btn"
-                    onClick={copyOrderRef}
-                    title="Copy order ID"
-                    aria-label="Copy order ID"
-                  >
-                    {copied ? (
-                      <>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                        </svg>
-                        Copy
-                      </>
-                    )}
-                  </button>
-                </div>
+              <h1 className="conf__heading">
+                {isGuest ? 'Enquiry Received!' : 'Order Confirmed!'}
+              </h1>
+              <p className="conf__thanks">
+                Thank you, <strong>{firstName}</strong>!{' '}
+                {isGuest
+                  ? 'Our team will reach out shortly with pricing and availability.'
+                  : 'Your order is confirmed and in our hands.'}
+              </p>
 
-                <p className="conf__meta">
-                  {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-                  <span className="conf__meta-dot" aria-hidden="true">·</span>
-                  {PAY_LABEL[payMethod] ?? payMethod}
-                  {finalTotal !== null && (
+              {/* Order ID */}
+              <div className="conf__ref-row">
+                <span className="conf__ref-label">Order ID</span>
+                <span className="conf__ref-num">{orderRef}</span>
+                <button
+                  type="button"
+                  className="conf__copy-btn"
+                  onClick={copyOrderRef}
+                  aria-label="Copy order ID"
+                >
+                  {copied ? (
+                    <><IconCheck /> Copied!</>
+                  ) : (
                     <>
-                      <span className="conf__meta-dot" aria-hidden="true">·</span>
-                      <strong>₹{finalTotal.toLocaleString('en-IN')}</strong>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                      Copy
                     </>
                   )}
-                </p>
+                </button>
               </div>
 
-              {/* ── Two-column body ── */}
+              {/* Meta pills */}
+              <div className="conf__hero-pills">
+                <span className="conf__hero-pill">
+                  <IconCalendar />
+                  {dateStr}
+                </span>
+                <span className="conf__hero-pill">
+                  <IconCard />
+                  {PAY_LABEL[payMethod] ?? payMethod}
+                </span>
+                {finalTotal !== null && (
+                  <span className="conf__hero-pill conf__hero-pill--gold">
+                    <IconRupee />
+                    ₹{finalTotal.toLocaleString('en-IN')}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Order journey tracker ── */}
+          <div className="conf__journey">
+            <div className="container">
+              <div className="conf__journey-track">
+                {JOURNEY.map((step, i) => (
+                  <div
+                    key={step.label}
+                    className={`conf__journey-step${i < 2 ? ' is-done' : ''}${i === 1 ? ' is-active' : ''}`}
+                  >
+                    <div className="conf__journey-dot">
+                      {i < 2 ? <IconCheck /> : <span>{i + 1}</span>}
+                    </div>
+                    <span className="conf__journey-label">{step.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Main content ── */}
+          <div className="container">
+            <div className="conf">
               <div className="conf__grid">
 
-                {/* ── Left column ── */}
+                {/* ── Left col ── */}
                 <div className="conf__col">
 
                   {/* Order summary */}
@@ -169,14 +237,15 @@ export function OrderConfirmationPage() {
                     <ul className="conf__items" role="list">
                       {items.map((item, idx) => (
                         <li key={idx} className="conf__item">
+                          <div className="conf__item-num" aria-hidden="true">{idx + 1}</div>
                           <div className="conf__item-info">
                             <Link href={`/products/${item.slug}`} className="conf__item-name">{item.name}</Link>
-                            <span className="conf__item-qty">× {item.qty}</span>
+                            <span className="conf__item-qty-badge">Qty: {item.qty}</span>
                           </div>
                           <span className="conf__item-price">
                             {item.price !== null
                               ? `₹${(item.price * item.qty).toLocaleString('en-IN')}`
-                              : 'On request'}
+                              : <em style={{ color: 'var(--rt-text2)', fontStyle: 'normal', fontSize: '0.8rem' }}>On request</em>}
                           </span>
                         </li>
                       ))}
@@ -205,7 +274,7 @@ export function OrderConfirmationPage() {
                     </div>
                   </div>
 
-                  {/* Delivery & order info */}
+                  {/* Delivery details */}
                   <div className="conf__card">
                     <h2 className="conf__card-title">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -213,7 +282,12 @@ export function OrderConfirmationPage() {
                       </svg>
                       Delivery Details
                     </h2>
-                    <p className="conf__address">{address}</p>
+                    <div className="conf__address-box">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ color: 'var(--rt-gold)', flexShrink: 0, marginTop: 2 }}>
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                      </svg>
+                      <p className="conf__address">{address}</p>
+                    </div>
                     <div className="conf__detail-rows">
                       <div className="conf__detail-row">
                         <span>Customer</span>
@@ -221,7 +295,7 @@ export function OrderConfirmationPage() {
                       </div>
                       <div className="conf__detail-row">
                         <span>Email</span>
-                        <span>{email}</span>
+                        <span style={{ maxWidth: 180, wordBreak: 'break-word', textAlign: 'right' }}>{email}</span>
                       </div>
                       <div className="conf__detail-row">
                         <span>Payment</span>
@@ -235,10 +309,10 @@ export function OrderConfirmationPage() {
                   </div>
                 </div>
 
-                {/* ── Right column ── */}
+                {/* ── Right col ── */}
                 <div className="conf__col">
 
-                  {/* What's next */}
+                  {/* What happens next */}
                   <div className="conf__card">
                     <h2 className="conf__card-title">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -247,34 +321,24 @@ export function OrderConfirmationPage() {
                       What Happens Next
                     </h2>
                     <ol className="conf__steps" role="list">
-                      <li className="conf__step">
-                        <div className="conf__step-icon">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
-                          </svg>
+                      <li className="conf__step conf__step--done">
+                        <div className="conf__step-num">
+                          <IconCheck />
                         </div>
                         <div className="conf__step-body">
-                          <strong>Confirmation email</strong>
+                          <strong>Confirmation email sent</strong>
                           <p>Order details sent to <strong>{email}</strong></p>
                         </div>
                       </li>
-                      <li className="conf__step">
-                        <div className="conf__step-icon">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                          </svg>
-                        </div>
+                      <li className="conf__step conf__step--active">
+                        <div className="conf__step-num">2</div>
                         <div className="conf__step-body">
                           <strong>Team review</strong>
                           <p>Our team will contact you to confirm and arrange payment.</p>
                         </div>
                       </li>
                       <li className="conf__step">
-                        <div className="conf__step-icon">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-                          </svg>
-                        </div>
+                        <div className="conf__step-num">3</div>
                         <div className="conf__step-body">
                           <strong>Dispatch &amp; delivery</strong>
                           <p>We dispatch and share live tracking details with you.</p>
@@ -282,8 +346,8 @@ export function OrderConfirmationPage() {
                       </li>
                       {payMethod === 'cod' && (
                         <li className="conf__step conf__step--cod">
-                          <div className="conf__step-icon conf__step-icon--gold">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <div className="conf__step-num conf__step-num--gold">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>
                             </svg>
                           </div>
@@ -299,7 +363,7 @@ export function OrderConfirmationPage() {
                   {/* Need help */}
                   <div className="conf__help-card">
                     <div className="conf__help-icon" aria-hidden="true">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
                       </svg>
                     </div>
@@ -316,13 +380,13 @@ export function OrderConfirmationPage() {
                     )}
                   </div>
 
-                  {/* Track order widget */}
+                  {/* Track order */}
                   <div className="conf__track-card">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ color: 'var(--rt-gold)', flexShrink: 0 }}>
                       <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                     </svg>
                     <div>
-                      <p className="conf__track-label">Track your order anytime using</p>
+                      <p className="conf__track-label">Track your order anytime</p>
                       <p className="conf__track-ref">{orderRef}</p>
                     </div>
                     <Link href="/track-order" className="btn btn--outline btn--sm">Track →</Link>
@@ -348,9 +412,9 @@ export function OrderConfirmationPage() {
                 </Link>
                 <Link href="/shop" className="btn btn--outline btn--lg">Continue Shopping</Link>
               </div>
-
             </div>
           </div>
+
         </main>
       </div>
     </>
