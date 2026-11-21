@@ -24,7 +24,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'tandoor-equipment',
     name: 'Tandoor Equipment',
     description: 'Traditional and modern tandoors in clay, drum, and stainless steel for restaurants, dhabas, and cloud kitchens.',
-    image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=700&h=280&fit=crop&q=75&auto=format',
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Clay Tandoor', 'Drum Tandoor', 'Stainless Steel Tandoor', 'Gas Tandoor',
       'Electric Tandoor', 'Charcoal Tandoor', 'Commercial Tandoor', 'Portable Tandoor',
@@ -35,7 +35,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'burners-gas-stoves',
     name: 'Burners & Gas Stoves',
     description: 'Single to multi-burner commercial gas stoves and high-pressure LPG burners built for heavy-duty kitchen use.',
-    image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&h=280&fit=crop&q=75&auto=format',
+    image: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Single Burner Gas Stove', 'Double Burner Gas Stove', 'Three Burner Gas Stove',
       'Four Burner Gas Stove', 'Heavy-Duty Gas Range', 'High-Pressure Burner',
@@ -58,7 +58,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'fryers-griddles',
     name: 'Fryers & Griddles',
     description: 'Gas and electric deep fryers, flat-top griddles, and charbroilers for QSR, fast-food, and food-court operations.',
-    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&h=280&fit=crop&q=75&auto=format',
+    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Gas Deep Fryer', 'Electric Deep Fryer', 'Single-Tank Fryer', 'Double-Tank Fryer',
       'Flat-Top Griddle', 'Commercial Hot Plate', 'Charbroiler',
@@ -69,7 +69,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'stainless-steel-fabrication',
     name: 'Stainless Steel Fabrication',
     description: 'Custom-fabricated work tables, sinks, shelves, and exhaust hoods in food-grade stainless steel to your specification.',
-    image: 'https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=700&h=280&fit=crop&q=75&auto=format',
+    image: 'https://images.unsplash.com/photo-1600267185393-e158a98703de?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Stainless Steel Work Table', 'Food Preparation Table', 'Wall Shelf', 'Storage Rack',
       'Storage Cabinet', 'Single-Bowl Sink', 'Double-Bowl Sink', 'Dish Landing Table',
@@ -80,7 +80,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'food-preparation-machines',
     name: 'Food Preparation Machines',
     description: 'Vegetable cutters, dough kneaders, planetary mixers, and grinders to streamline your commercial prep line.',
-    image: 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=700&h=280&fit=crop&q=75&auto=format',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Vegetable Cutting Machine', 'Potato Peeler', 'Dough Kneader', 'Planetary Mixer',
       'Wet Grinder', 'Food Processor', 'Meat Mincer', 'Commercial Slicer',
@@ -123,7 +123,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'kitchen-accessories-spare-parts',
     name: 'Kitchen Accessories & Spare Parts',
     description: 'Tandoor seekhs, gas regulators, cooking utensils, and genuine spare parts for all commercial kitchen equipment.',
-    image: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=700&h=280&fit=crop&q=75&auto=format',
+    image: 'https://images.unsplash.com/photo-1543353071-087092ec393a?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Tandoor Seekh / Skewer', 'Tandoor Cooking Tools', 'Commercial Cooking Pot',
       'Commercial Frying Pan', 'Kitchen Utensil Set', 'Burner Replacement Part',
@@ -135,7 +135,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'bakery-pizza-equipment',
     name: 'Bakery & Pizza Equipment',
     description: 'Pizza ovens, deck ovens, dough mixers, and proofers purpose-built for bakery and pizzeria operations.',
-    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=700&h=280&fit=crop&q=75&auto=format',
+    image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=700&h=280&fit=crop&q=75&auto=format',
     products: items([
       'Commercial Pizza Oven', 'Deck Oven', 'Convection Oven', 'Dough Mixer',
       'Dough Sheeter', 'Proofing Cabinet', 'Bakery Work Table', 'Baking Tray',
