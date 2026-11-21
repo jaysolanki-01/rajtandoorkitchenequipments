@@ -1,7 +1,6 @@
 'use client';
 import { seo } from '../config/site';
 import { TrustSection } from '../components/home/TrustSection';
-import { CategoryGrid } from '../components/home/CategoryGrid';
 import { CategoryShowcase } from '../components/home/CategoryShowcase';
 import { FeaturedProducts } from '../components/home/FeaturedProducts';
 import { CommercialSection } from '../components/home/CommercialSection';
@@ -58,7 +57,6 @@ export function HomePage() {
       <main id="main" tabIndex={-1}>
         <div id="raj-s0"><TandoorHero />{reduced && <StoryStatic />}</div>
         <div id="raj-s1"><TrustSection /></div>
-        <div id="raj-s2"><CategoryGrid /></div>
         <div id="raj-s2b"><CategoryShowcase /></div>
         <div id="raj-s3"><FeaturedProducts /></div>
         <div id="raj-s4"><BestSellersSection /></div>

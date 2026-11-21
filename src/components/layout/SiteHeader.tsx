@@ -20,6 +20,19 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<CategoryItem>(CATEGORIES[0]);
+  const [dbImages, setDbImages] = useState<Record<string, string | null>>({});
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(r => r.ok ? r.json() : null)
+      .then((json: { categories?: { slug: string; image: string | null }[] } | null) => {
+        if (!json?.categories) return;
+        const map: Record<string, string | null> = {};
+        for (const c of json.categories) map[c.slug] = c.image;
+        setDbImages(map);
+      })
+      .catch(() => {});
+  }, []);
   const { cartOpen, openCart, closeCart, loginOpen, openLogin, closeLogin } = useUI();
   const [mobileProdOpen, setMobileProdOpen] = useState(false);
   const megaTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -231,9 +244,9 @@ export function SiteHeader() {
                 <p className="sh-mega__detail-desc">{activeCat.description}</p>
               )}
               <div className="sh-mega__detail-visual" aria-hidden="true">
-                {activeCat.image && (
+                {(dbImages[activeCat.slug] !== undefined ? dbImages[activeCat.slug] : activeCat.image) && (
                   <img
-                    src={activeCat.image}
+                    src={(dbImages[activeCat.slug] !== undefined ? dbImages[activeCat.slug] : activeCat.image) as string}
                     alt=""
                     className="sh-mega__detail-visual-img"
                     loading="lazy"
