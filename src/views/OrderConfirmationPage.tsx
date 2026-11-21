@@ -16,6 +16,7 @@ interface ConfirmationState {
   couponDiscount: number;
   finalTotal: number | null;
   payMethod: string;
+  createdAt?: string;
 }
 
 const PAY_LABEL: Record<string, string> = {
@@ -79,7 +80,7 @@ function IconCheck() {
   );
 }
 
-export function OrderConfirmationPage() {
+export function OrderConfirmationPage({ orderNumber }: { orderNumber?: string }) {
   const router = useRouter();
   const [state, setState] = useState<ConfirmationState | null>(null);
   const [ready, setReady] = useState(false);
@@ -91,15 +92,57 @@ export function OrderConfirmationPage() {
   }, []);
 
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(SESSION_KEY);
-      if (raw) {
-        setState(JSON.parse(raw) as ConfirmationState);
-        sessionStorage.removeItem(SESSION_KEY);
-      }
-    } catch { /* sessionStorage blocked */ }
-    setReady(true);
-  }, []);
+    if (orderNumber) {
+      // Fetch real order data from DB (logged-in user path)
+      fetch(`/api/orders/by-number/${encodeURIComponent(orderNumber)}`)
+        .then(async r => {
+          if (!r.ok) {
+            if (r.status === 401) router.push('/');
+            else router.push('/shop');
+            return null;
+          }
+          return r.json() as Promise<{ order: Record<string, unknown> }>;
+        })
+        .then(data => {
+          if (!data) return;
+          const o = data.order;
+          const addr = (o.address ?? {}) as Record<string, string>;
+          const addressStr = [addr.address, addr.city, addr.state, addr.pinCode].filter(Boolean).join(', ');
+          const rawItems = (o.items ?? []) as Array<{ name?: string; qty?: number; quantity?: number; price?: number | null; slug?: string | null }>;
+          setState({
+            orderRef: o.order_number as string,
+            isGuest: false,
+            customerName: o.customer_name as string,
+            email: o.email as string,
+            address: addressStr,
+            items: rawItems.map(item => ({
+              name: item.name ?? '',
+              qty: item.qty ?? item.quantity ?? 1,
+              price: item.price ?? null,
+              slug: item.slug ?? '',
+            })),
+            subtotal: o.subtotal as number | null,
+            shippingCharge: (o.shipping as number) ?? 0,
+            couponDiscount: (o.coupon_discount as number) ?? 0,
+            finalTotal: o.total as number | null,
+            payMethod: o.payment_method as string,
+            createdAt: o.created_at as string,
+          });
+          setReady(true);
+        })
+        .catch(() => { router.push('/shop'); });
+    } else {
+      // sessionStorage fallback (guest checkout or old static route)
+      try {
+        const raw = sessionStorage.getItem(SESSION_KEY);
+        if (raw) {
+          setState(JSON.parse(raw) as ConfirmationState);
+          sessionStorage.removeItem(SESSION_KEY);
+        }
+      } catch { /* sessionStorage blocked */ }
+      setReady(true);
+    }
+  }, [orderNumber]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!ready) return null;
 
@@ -126,7 +169,7 @@ export function OrderConfirmationPage() {
     ? `https://wa.me/${waNum.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi Raj Tandoor! I placed an order. Reference: ${orderRef}`)}`
     : '/contact';
 
-  const dateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  const dateStr = new Date(state.createdAt ?? Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 
   return (
     <>

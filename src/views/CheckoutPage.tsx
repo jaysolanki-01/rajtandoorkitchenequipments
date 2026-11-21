@@ -494,6 +494,7 @@ export function CheckoutPage() {
   // ── Place Order ──────────────────────────────────────────────────────────────
 
   async function placeOrder() {
+    if (submitted.current || submitting) return;
     setGlobalError('');
     setSubmitting(true);
     try {
@@ -613,8 +614,8 @@ export function CheckoutPage() {
       } catch { /* sessionStorage blocked (private mode) — confirmation page will redirect */ }
 
       submitted.current = true;
-      router.push('/checkout/confirmation');
       clearCart();
+      router.push(isLoggedIn ? `/checkout/confirmation/${orderRef}` : '/checkout/confirmation');
     } catch (err) {
       setGlobalError(
         err instanceof Error
