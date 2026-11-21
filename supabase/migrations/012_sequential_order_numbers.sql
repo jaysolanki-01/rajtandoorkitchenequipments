@@ -38,11 +38,16 @@ $$;
 -- Grant execute to authenticated users (they hit this via the orders insert default)
 grant execute on function public.generate_order_number() to authenticated;
 
--- 3. Replace the random default on orders.order_number with the new generator
---    Drop identity first (identity columns reject SET DEFAULT directly)
+-- 3. Replace the bigint identity column with a text column using the new generator
+--    Step A: drop the identity so we can alter the type
 alter table public.orders
   alter column order_number drop identity if exists;
 
+--    Step B: cast the existing bigint values to text (preserves any existing rows)
+alter table public.orders
+  alter column order_number type text using order_number::text;
+
+--    Step C: set the new sequential text default
 alter table public.orders
   alter column order_number set default public.generate_order_number();
 
