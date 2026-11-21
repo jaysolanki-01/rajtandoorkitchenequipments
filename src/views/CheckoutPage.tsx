@@ -540,6 +540,8 @@ export function CheckoutPage() {
           items: items.map(i => ({
             id: i.product.id,
             name: i.product.name,
+            slug: i.product.slug ?? null,
+            image: i.product.image ?? null,
             qty: i.quantity,
             price: i.product.price,
           })),
@@ -551,6 +553,21 @@ export function CheckoutPage() {
           notes: deliveryNotes || undefined,
         });
         orderRef = result.orderNumber;
+
+        // Send confirmation email (best-effort — doesn't block the order)
+        fetch('/api/orders/send-confirmation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderNumber: orderRef,
+            customerName: info.name,
+            email: info.email.trim().toLowerCase(),
+            items: items.map(i => ({ name: i.product.name, qty: i.quantity, price: i.product.price })),
+            total: finalTotal,
+            payMethod,
+            address: [addr.houseFlatBuilding, addr.streetArea, addr.city, addr.state, addr.pinCode].filter(Boolean).join(', '),
+          }),
+        }).catch(() => { /* fire-and-forget */ });
       } else {
         // Guest checkout — store as a quote enquiry
         orderRef = `REF-${Date.now().toString(36).toUpperCase()}`;

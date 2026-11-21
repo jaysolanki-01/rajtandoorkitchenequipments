@@ -5,7 +5,36 @@ import { useParams, useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useAuth } from '../store/AuthContext';
 import { AccountNav } from '../components/account/AccountNav';
-import { fetchUserOrder, type UserOrder } from '../lib/supabase/db';
+import { fetchUserOrder, requestOrderCancellation, type UserOrder, type OrderItem } from '../lib/supabase/db';
+
+const PAY_LABEL: Record<string, string> = {
+  upi: 'UPI',
+  card: 'Credit / Debit Card',
+  netbanking: 'Net Banking',
+  wallet: 'Wallet',
+  cod: 'Cash on Delivery',
+};
+
+const STATUS_COLOR: Record<string, { bg: string; text: string; border: string }> = {
+  pending:    { bg: '#fef9ec', text: '#92400e', border: '#fde68a' },
+  confirmed:  { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
+  processing: { bg: '#f5f3ff', text: '#6d28d9', border: '#ddd6fe' },
+  shipped:    { bg: '#ecfeff', text: '#0e7490', border: '#a5f3fc' },
+  delivered:  { bg: '#f0fdf4', text: '#15803d', border: '#86efac' },
+  cancelled:  { bg: '#fef2f2', text: '#b91c1c', border: '#fca5a5' },
+};
+
+function itemQty(item: OrderItem): number { return item.qty ?? item.quantity ?? 1; }
+
+function ProductPlaceholder() {
+  return (
+    <div className="od-item__img-ph" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 9 6 6m0-6-6 6"/>
+      </svg>
+    </div>
+  );
+}
 
 export function AccountOrderDetailPage() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
@@ -14,16 +43,46 @@ export function AccountOrderDetailPage() {
   const [order, setOrder] = useState<UserOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState('');
+  const [cancelled, setCancelled] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn || !orderNumber || !user) return;
     fetchUserOrder(user.id, orderNumber)
       .then(data => { if (data) setOrder(data); else setError('Order not found.'); })
-      .catch(() => setError('Could not load order.'))
+      .catch(() => setError('Could not load order. Please try again.'))
       .finally(() => setLoading(false));
   }, [isLoggedIn, orderNumber, user]);
 
-  if (!isLoading && !isLoggedIn) router.push('/'); return null;
+  async function handleCancel() {
+    if (!order || cancelling) return;
+    if (!window.confirm(`Cancel order ${order.order_number}? This cannot be undone.`)) return;
+    setCancelling(true);
+    setCancelError('');
+    try {
+      await requestOrderCancellation(order.order_number);
+      setOrder(o => o ? { ...o, status: 'cancelled' } : o);
+      setCancelled(true);
+    } catch (err: unknown) {
+      setCancelError(err instanceof Error ? err.message : 'Could not cancel order.');
+    } finally {
+      setCancelling(false);
+    }
+  }
+
+  if (isLoading) return (
+    <main className="page-main">
+      <div className="container" style={{ padding: '5rem 0', textAlign: 'center' }}>
+        <p style={{ color: 'var(--rt-text2)' }}>Loading…</p>
+      </div>
+    </main>
+  );
+  if (!isLoggedIn) { router.push('/'); return null; }
+
+  const currentStatus = order?.status ?? '';
+  const statusStyle = STATUS_COLOR[currentStatus] ?? STATUS_COLOR.pending;
+  const canCancel = ['pending', 'confirmed'].includes(currentStatus) && !cancelled;
 
   return (
     <>
@@ -32,40 +91,193 @@ export function AccountOrderDetailPage() {
 
       <main id="main" tabIndex={-1} className="page-main">
         <div className="container">
-          <div className="account-layout">
+          <div className="acct-layout">
             <AccountNav />
-            <div className="account-content">
-              <nav className="breadcrumb" aria-label="Breadcrumb" style={{ marginBottom: '1rem' }}>
-                <ol role="list"><li><Link href="/account/orders">My Orders</Link></li><li aria-current="page">{orderNumber}</li></ol>
-              </nav>
-              <h1 className="page-h1">Order {orderNumber}</h1>
+            <div className="acct-main">
 
-              {loading ? <p>Loading…</p> : error ? <p className="form-status form-status--error">{error}</p> : order && (
+              {/* Back + heading */}
+              <div className="acct-subhdr">
+                <Link href="/account/orders" className="acct-subhdr__back">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                  My Orders
+                </Link>
+                <h1 className="acct-subhdr__title">Order {orderNumber}</h1>
+              </div>
+
+              {loading ? (
+                <div className="acct-section"><p style={{ color: 'var(--rt-text2)' }}>Loading order…</p></div>
+              ) : error ? (
+                <div className="acct-section">
+                  <div className="form-status form-status--error" role="alert">{error}</div>
+                  <Link href="/account/orders" className="btn btn--outline btn--sm" style={{ marginTop: '1rem', display: 'inline-flex' }}>← Back to orders</Link>
+                </div>
+              ) : order && (
                 <>
-                  <div className="order-meta">
-                    <div><span>Date</span><strong>{new Date(order.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</strong></div>
-                    <div><span>Status</span><strong className={`order-status order-status--${order.status}`}>{order.status.replace(/_/g, ' ')}</strong></div>
-                    <div><span>Payment</span><strong>{order.payment_method}</strong></div>
+                  {/* ── Summary card ── */}
+                  <div className="od-summary-card">
+                    <div className="od-summary-card__row">
+                      <div>
+                        <p className="od-summary-card__label">Order ID</p>
+                        <p className="od-summary-card__val od-summary-card__val--mono">{order.order_number}</p>
+                      </div>
+                      <div>
+                        <p className="od-summary-card__label">Date Placed</p>
+                        <p className="od-summary-card__val">
+                          {new Date(order.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="od-summary-card__label">Payment</p>
+                        <p className="od-summary-card__val">{PAY_LABEL[order.payment_method] ?? order.payment_method}</p>
+                      </div>
+                      <div>
+                        <p className="od-summary-card__label">Status</p>
+                        <span
+                          className="od-status-pill"
+                          style={{ background: statusStyle.bg, color: statusStyle.text, borderColor: statusStyle.border }}
+                        >
+                          {currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1).replace(/_/g, ' ')}
+                        </span>
+                      </div>
+                      {order.total != null && order.total > 0 && (
+                        <div>
+                          <p className="od-summary-card__label">Total</p>
+                          <p className="od-summary-card__val od-summary-card__val--total">₹{order.total.toLocaleString('en-IN')}</p>
+                        </div>
+                      )}
+                    </div>
+                    {order.notes && (
+                      <div className="od-notes">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span>{order.notes}</span>
+                      </div>
+                    )}
                   </div>
 
-                  <h2 style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1.05rem', fontWeight: 700 }}>Items</h2>
-                  <table className="orders-table orders-table--full">
-                    <thead><tr><th>Product</th><th>Qty</th></tr></thead>
-                    <tbody>
-                      {(order.items ?? []).map((i, idx) => {
-                        const name = i.product?.name ?? i.name ?? 'Product';
-                        const slug = i.product?.slug ?? i.slug ?? '#';
-                        return (
-                          <tr key={idx}>
-                            <td><Link href={`/products/${slug}`}>{name}</Link></td>
-                            <td>{i.quantity}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                  {/* ── Items card ── */}
+                  <div className="acct-section">
+                    <h2 className="acct-section__title" style={{ marginBottom: '1rem' }}>Items Ordered</h2>
+                    {(order.items ?? []).length === 0 ? (
+                      <p style={{ color: 'var(--rt-text2)', fontSize: '0.875rem' }}>No items on this order.</p>
+                    ) : (
+                      <ul className="od-items" role="list">
+                        {(order.items ?? []).map((item, idx) => {
+                          const name = item.name ?? 'Product';
+                          const slug = item.slug ?? null;
+                          const qty = itemQty(item);
+                          const lineTotal = item.price != null ? item.price * qty : null;
 
-                  {order.notes && <p style={{ marginTop: '1.5rem', color: 'var(--rt-charcoal)', opacity: 0.7 }}><strong>Notes:</strong> {order.notes}</p>}
+                          return (
+                            <li key={idx} className="od-item">
+                              {/* Image / placeholder */}
+                              {item.image ? (
+                                slug ? (
+                                  <Link href={`/products/${slug}`} className="od-item__img-link" tabIndex={-1} aria-hidden="true">
+                                    <img src={item.image} alt={name} className="od-item__img" />
+                                  </Link>
+                                ) : (
+                                  <div className="od-item__img-wrap">
+                                    <img src={item.image} alt={name} className="od-item__img" />
+                                  </div>
+                                )
+                              ) : (
+                                slug ? (
+                                  <Link href={`/products/${slug}`} className="od-item__img-link" tabIndex={-1} aria-hidden="true">
+                                    <ProductPlaceholder />
+                                  </Link>
+                                ) : (
+                                  <ProductPlaceholder />
+                                )
+                              )}
+
+                              {/* Name + qty */}
+                              <div className="od-item__info">
+                                {slug ? (
+                                  <Link href={`/products/${slug}`} className="od-item__name">{name}</Link>
+                                ) : (
+                                  <span className="od-item__name">{name}</span>
+                                )}
+                                <span className="od-item__qty">Qty: {qty}</span>
+                              </div>
+
+                              {/* Price */}
+                              <div className="od-item__price-col">
+                                {item.price != null && (
+                                  <span className="od-item__unit-price">₹{item.price.toLocaleString('en-IN')} × {qty}</span>
+                                )}
+                                <span className="od-item__total">
+                                  {lineTotal != null ? `₹${lineTotal.toLocaleString('en-IN')}` : 'On request'}
+                                </span>
+                              </div>
+
+                              {/* View product link */}
+                              {slug && (
+                                <Link href={`/products/${slug}`} className="btn btn--outline btn--sm od-item__view-btn">
+                                  View →
+                                </Link>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+
+                    {/* Total row */}
+                    {order.total != null && order.total > 0 && (
+                      <div className="od-total-row">
+                        <span>Order Total <span style={{ fontWeight: 400, fontSize: '0.78rem', color: 'var(--rt-text2)' }}>(Incl. GST)</span></span>
+                        <strong>₹{order.total.toLocaleString('en-IN')}</strong>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ── Cancel order ── */}
+                  {(canCancel || currentStatus === 'cancelled') && (
+                    <div className="od-cancel-section">
+                      {currentStatus === 'cancelled' ? (
+                        <div className="od-cancel-notice">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                          </svg>
+                          This order has been cancelled.
+                        </div>
+                      ) : (
+                        <div className="od-cancel-wrap">
+                          <div className="od-cancel-info">
+                            <strong>Cancel this order?</strong>
+                            <p>You can cancel while the order is pending or confirmed. Once shipped, cancellation is not possible.</p>
+                          </div>
+                          {cancelError && (
+                            <div className="form-status form-status--error od-cancel-err" role="alert">{cancelError}</div>
+                          )}
+                          <button
+                            type="button"
+                            className="btn od-cancel-btn"
+                            onClick={handleCancel}
+                            disabled={cancelling}
+                          >
+                            {cancelling ? 'Cancelling…' : 'Cancel Order'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* ── Help banner ── */}
+                  <div className="acct-help-banner">
+                    <div className="acct-help-banner__icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                      </svg>
+                    </div>
+                    <div className="acct-help-banner__body">
+                      <strong>Issue with this order?</strong>
+                      <span>Contact our team and we'll help resolve it quickly.</span>
+                    </div>
+                    <Link href="/contact" className="btn btn--outline btn--sm acct-help-banner__cta">Get Help</Link>
+                  </div>
                 </>
               )}
             </div>

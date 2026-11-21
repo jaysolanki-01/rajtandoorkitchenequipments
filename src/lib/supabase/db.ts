@@ -90,6 +90,16 @@ export async function insertOrder(payload: OrderInsert): Promise<{ orderNumber: 
 
 // ── User orders ──────────────────────────────────────────────────────────────
 
+export type OrderItem = {
+  id?: string;
+  name?: string;
+  slug?: string | null;
+  image?: string | null;
+  qty?: number;
+  quantity?: number; // legacy alias
+  price?: number | null;
+};
+
 export type UserOrder = {
   order_number: string;
   status: string;
@@ -97,7 +107,7 @@ export type UserOrder = {
   total: number;
   payment_method: string;
   notes: string | null;
-  items: { product?: { name?: string; slug?: string }; name?: string; slug?: string; quantity: number; price?: number }[];
+  items: OrderItem[];
   address: Record<string, unknown>;
   customer_name: string;
   email: string;
@@ -124,6 +134,18 @@ export async function fetchUserOrder(userId: string, orderNumber: string): Promi
     .maybeSingle();
   if (error || !data) return null;
   return data as UserOrder;
+}
+
+// ── Cancel order (via server API route — needs service role) ─────────────────
+
+export async function requestOrderCancellation(orderNumber: string): Promise<void> {
+  const res = await fetch('/api/orders/cancel', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ orderNumber }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error ?? 'Could not cancel order.');
 }
 
 // ── Track order (no auth — match by order_number + email) ────────────────────
