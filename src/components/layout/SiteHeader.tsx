@@ -21,18 +21,6 @@ export function SiteHeader() {
   const [megaOpen, setMegaOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<CategoryItem>(CATEGORIES[0]);
   const [dbImages, setDbImages] = useState<Record<string, string | null>>({});
-
-  useEffect(() => {
-    fetch('/api/categories')
-      .then(r => r.ok ? r.json() : null)
-      .then((json: { categories?: { slug: string; image: string | null }[] } | null) => {
-        if (!json?.categories) return;
-        const map: Record<string, string | null> = {};
-        for (const c of json.categories) map[c.slug] = c.image;
-        setDbImages(map);
-      })
-      .catch(() => {});
-  }, []);
   const { cartOpen, openCart, closeCart, loginOpen, openLogin, closeLogin } = useUI();
   const [mobileProdOpen, setMobileProdOpen] = useState(false);
   const megaTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -45,6 +33,18 @@ export function SiteHeader() {
   const pathname = usePathname();
   const isHome = pathname === '/';
   const mobileNavRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(r => r.ok ? r.json() : null)
+      .then((json: { categories?: { slug: string; image: string | null }[] } | null) => {
+        if (!json?.categories) return;
+        const map: Record<string, string | null> = {};
+        for (const c of json.categories) map[c.slug] = c.image;
+        setDbImages(map);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
