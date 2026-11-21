@@ -4409,13 +4409,39 @@ body.is-checkout .sf { display: none !important; }
   justify-content: center;
   margin-top: 2.25rem;
 }
+.conf__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0 2rem;
+  height: 50px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(195,162,104,0.55);
+  color: var(--rt-gold);
+  background: rgba(195,162,104,0.08);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.18s, color 0.18s, background 0.18s, transform 0.14s;
+  white-space: nowrap;
+}
+.conf__cta-btn:hover {
+  border-color: var(--rt-gold);
+  background: rgba(195,162,104,0.16);
+  color: #f5d78a;
+  transform: translateY(-1px);
+}
+/* keep old outline-light in case anything else references it */
 .btn--outline-light {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   padding: 0 1.5rem;
   height: 48px;
-  border-radius: 8px;
+  border-radius: 100px;
   border: 1.5px solid rgba(255,255,255,0.28);
   color: rgba(255,255,255,0.82);
   background: transparent;

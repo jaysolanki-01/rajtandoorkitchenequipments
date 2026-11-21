@@ -171,11 +171,11 @@ export function OrderConfirmationPage({ orderNumber }: { orderNumber?: string })
 
               <div className="conf__simple-ctas">
                 {!isGuest && (
-                  <Link href="/account/orders" className="btn btn--gold btn--lg">
+                  <Link href="/account/orders" className="conf__cta-btn">
                     View My Orders
                   </Link>
                 )}
-                <Link href="/shop" className="btn btn--outline-light btn--lg">
+                <Link href="/shop" className="conf__cta-btn">
                   Continue Shopping
                 </Link>
               </div>
