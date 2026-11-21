@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '../../src/store/AuthContext';
+import { AdminAuthProvider, useAdminAuth } from '../../src/store/AdminAuthContext';
 import { useEffect } from 'react';
 
 const NAV = [
@@ -15,10 +15,10 @@ const NAV = [
   { href: '/admin/settings',     label: 'Settings',   icon: '⚙' },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAdmin, isLoading, logout, user } = useAuth();
+  const { isAdmin, isLoading, logout, user } = useAdminAuth();
 
   useEffect(() => {
     if (!isLoading && !isAdmin) router.replace('/admin/login');
@@ -226,5 +226,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <main className="admin-content">{children}</main>
       </div>
     </div>
+  );
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AdminAuthProvider>
+      <AdminShell>{children}</AdminShell>
+    </AdminAuthProvider>
   );
 }
