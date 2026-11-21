@@ -206,6 +206,28 @@ export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
   return Array.from(map.values()).sort((a, b) => b.order_count - a.order_count);
 }
 
+export async function fetchAdminOrderById(id: string): Promise<AdminOrder | null> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('orders')
+    .select('id, order_number, customer_name, email, phone, total, status, payment_method, created_at, items, address, notes')
+    .eq('id', id)
+    .single();
+  if (error || !data) return null;
+  return data as AdminOrder;
+}
+
+export async function fetchOrdersByEmail(email: string): Promise<AdminOrder[]> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('orders')
+    .select('id, order_number, customer_name, email, phone, total, status, payment_method, created_at, items, address, notes')
+    .ilike('email', email)
+    .order('created_at', { ascending: false });
+  if (error || !data) return [];
+  return data as AdminOrder[];
+}
+
 // ── Inventory (products with in_stock status) ─────────────────────────────────
 
 export type AdminInventoryItem = {
