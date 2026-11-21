@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NavLink } from '../NavLink';
 import { brand, nav } from '../../config/site';
-import { CATEGORIES } from '../../config/categories';
+import { CATEGORIES, type CategoryItem } from '../../config/categories';
 import { useCart } from '../../store/CartContext';
 import { useWishlist } from '../../store/WishlistContext';
 import { useSearch } from '../../store/SearchContext';
@@ -15,17 +15,11 @@ import { CartDrawer } from '../cart/CartDrawer';
 import { LoginModal } from '../auth/LoginModal';
 import { QuickViewModal } from '../product/QuickViewModal';
 
-const MEGA_COLS = [
-  CATEGORIES.slice(0, 4),
-  CATEGORIES.slice(4, 8),
-  CATEGORIES.slice(8, 12),
-  CATEGORIES.slice(12),
-];
-
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
+  const [activeCat, setActiveCat] = useState<CategoryItem>(CATEGORIES[0]);
   const { cartOpen, openCart, closeCart, loginOpen, openLogin, closeLogin } = useUI();
   const [mobileProdOpen, setMobileProdOpen] = useState(false);
   const megaTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -99,7 +93,7 @@ export function SiteHeader() {
                   aria-expanded={megaOpen}
                   aria-haspopup="true"
                 >
-                  Products
+                  Shop
                   <span className="sh__link-caret" aria-hidden="true">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="6 9 12 15 18 9" />
@@ -210,45 +204,46 @@ export function SiteHeader() {
           aria-hidden={!megaOpen}
         >
           <div className="sh-mega__inner container">
-            <div className="sh-mega__grid">
-              {MEGA_COLS.map((col, ci) => (
-                <div key={ci} className="sh-mega__col">
-                  {col.map(cat => (
-                    <div key={cat.slug} className="sh-mega__section">
-                      <Link
-                        href={`/shop?category=${cat.slug}`}
-                        className="sh-mega__title"
-                        onClick={() => setMegaOpen(false)}
-                      >
-                        {cat.name}
-                        <span className="sh-mega__arrow" aria-hidden="true">→</span>
-                      </Link>
-                      <ul className="sh-mega__list">
-                        {cat.products.slice(0, 4).map(p => (
-                          <li key={p.slug}>
-                            <Link
-                              href={`/products/${p.slug}`}
-                              className="sh-mega__item"
-                              onClick={() => setMegaOpen(false)}
-                            >
-                              {p.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                      {cat.products.length > 4 && (
-                        <Link
-                          href={`/shop?category=${cat.slug}`}
-                          className="sh-mega__more"
-                          onClick={() => setMegaOpen(false)}
-                        >
-                          +{cat.products.length - 4} more
-                        </Link>
-                      )}
-                    </div>
-                  ))}
-                </div>
+            {/* Left: category list */}
+            <div className="sh-mega__sidebar">
+              {CATEGORIES.map(cat => (
+                <Link
+                  key={cat.slug}
+                  href={`/shop?category=${cat.slug}`}
+                  className={`sh-mega__sitem${activeCat.slug === cat.slug ? ' sh-mega__sitem--active' : ''}`}
+                  onMouseEnter={() => setActiveCat(cat)}
+                  onClick={() => setMegaOpen(false)}
+                  tabIndex={megaOpen ? 0 : -1}
+                >
+                  <span className="sh-mega__sitem-name">{cat.name}</span>
+                  <svg className="sh-mega__sitem-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </Link>
               ))}
+            </div>
+
+            {/* Right: selected category detail */}
+            <div className="sh-mega__detail">
+              <p className="sh-mega__detail-label">Category</p>
+              <h2 className="sh-mega__detail-heading">{activeCat.name}</h2>
+              {activeCat.description && (
+                <p className="sh-mega__detail-desc">{activeCat.description}</p>
+              )}
+              <div className="sh-mega__detail-visual" aria-hidden="true">
+                <span className="sh-mega__detail-visual-label">{activeCat.name}</span>
+              </div>
+              <Link
+                href={`/shop?category=${activeCat.slug}`}
+                className="sh-mega__explore"
+                onClick={() => setMegaOpen(false)}
+                tabIndex={megaOpen ? 0 : -1}
+              >
+                Explore {activeCat.name}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                </svg>
+              </Link>
             </div>
           </div>
         </div>
@@ -286,7 +281,7 @@ export function SiteHeader() {
                   onClick={() => setMobileProdOpen(v => !v)}
                   aria-expanded={mobileProdOpen}
                 >
-                  Products
+                  Shop
                   <svg
                     className={`sh__mobile-prod-caret${mobileProdOpen ? ' sh__mobile-prod-caret--open' : ''}`}
                     width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"

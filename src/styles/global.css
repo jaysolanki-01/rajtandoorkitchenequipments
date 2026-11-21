@@ -6058,64 +6058,139 @@ body.is-checkout .sf { display: none !important; }
   transform: translateY(0);
   pointer-events: auto;
 }
-.sh-mega__inner { padding: 1.75rem 0 2rem; }
-.sh-mega__grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
+/* Sidebar layout */
+.sh-mega__inner {
+  padding: 0;
+  display: flex;
+  height: 420px;
+  overflow: hidden;
 }
-.sh-mega__col { display: flex; flex-direction: column; gap: 0; }
-.sh-mega__section { margin-bottom: 1.5rem; }
-.sh-mega__section:last-child { margin-bottom: 0; }
-.sh-mega__title {
+
+/* Left: scrollable category list */
+.sh-mega__sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(195,162,104,0.12);
+  overflow-y: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(195,162,104,0.3) transparent;
+}
+.sh-mega__sidebar::-webkit-scrollbar { width: 4px; }
+.sh-mega__sidebar::-webkit-scrollbar-track { background: transparent; }
+.sh-mega__sidebar::-webkit-scrollbar-thumb { background: rgba(195,162,104,0.3); border-radius: 2px; }
+
+.sh-mega__sitem {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 700;
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
+  width: 100%;
+  padding: 0.65rem 1.4rem;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.84rem;
+  font-weight: 500;
   text-decoration: none;
-  padding-bottom: 0.45rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  margin-bottom: 0.6rem;
-  transition: color 0.15s;
+  border-left: 2px solid transparent;
+  transition: color 0.15s, background 0.15s, border-left-color 0.15s;
+  gap: 0.5rem;
 }
-.sh-mega__title:hover { color: var(--rt-gold-lt); }
-.sh-mega__arrow {
-  font-size: 0.85rem;
+.sh-mega__sitem:hover,
+.sh-mega__sitem--active {
+  color: var(--rt-gold);
+  background: rgba(195,162,104,0.07);
+  border-left-color: var(--rt-gold);
+}
+.sh-mega__sitem-name { flex: 1; }
+.sh-mega__sitem-arrow {
   opacity: 0;
   transform: translateX(-4px);
   transition: opacity 0.15s, transform 0.15s;
   flex-shrink: 0;
-}
-.sh-mega__title:hover .sh-mega__arrow { opacity: 1; transform: translateX(0); }
-.sh-mega__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.18rem; }
-.sh-mega__item {
-  display: block;
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.68);
-  text-decoration: none;
-  padding: 0.24rem 0.4rem;
-  border-radius: 6px;
-  transition: color 0.15s, background 0.15s, padding-left 0.15s;
-}
-.sh-mega__item:hover {
-  color: var(--rt-gold-lt);
-  background: rgba(195,162,104,0.1);
-  padding-left: 0.7rem;
-}
-.sh-mega__more {
-  display: inline-block;
-  margin-top: 0.4rem;
-  font-size: 0.74rem;
   color: var(--rt-gold);
-  text-decoration: none;
-  font-weight: 600;
-  letter-spacing: 0.02em;
 }
-.sh-mega__more:hover { text-decoration: underline; }
+.sh-mega__sitem:hover .sh-mega__sitem-arrow,
+.sh-mega__sitem--active .sh-mega__sitem-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Right: detail panel */
+.sh-mega__detail {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  overflow: hidden;
+}
+.sh-mega__detail-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rt-gold);
+  font-weight: 700;
+  margin: 0;
+}
+.sh-mega__detail-heading {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.sh-mega__detail-desc {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 520px;
+}
+.sh-mega__detail-visual {
+  flex: 1;
+  margin: 0.5rem 0 0;
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(195,162,104,0.18) 0%, rgba(195,162,104,0.04) 100%);
+  border: 1px solid rgba(195,162,104,0.14);
+  display: flex;
+  align-items: flex-end;
+  padding: 1.25rem 1.5rem;
+  min-height: 100px;
+  position: relative;
+  overflow: hidden;
+}
+.sh-mega__detail-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(195,162,104,0.22) 0%, transparent 65%);
+  pointer-events: none;
+}
+.sh-mega__detail-visual-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(195,162,104,0.75);
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+}
+.sh-mega__explore {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--rt-gold);
+  font-size: 0.925rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: gap 0.18s, opacity 0.15s;
+  margin-top: 0.25rem;
+}
+.sh-mega__explore:hover {
+  opacity: 0.8;
+  gap: 0.75rem;
+}
 
 /* Mega trigger button reset */
 .sh__link--mega {
