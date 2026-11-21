@@ -3211,7 +3211,7 @@ a.od-item__name:hover { color: var(--rt-gold); text-decoration: underline; }
 .acct-order-row__num { font-weight: 700; font-size: 0.84rem; color: var(--rt-charcoal); font-family: monospace; letter-spacing: 0.03em; }
 .acct-order-row__date { font-size: 0.75rem; color: var(--rt-text2); margin-top: 0.1rem; }
 .acct-order-row__status {
-  font-size: 0.72rem; font-weight: 700; padding: 0.25em 0.75em; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 700; padding: 0.3em 0.9em; border-radius: 100px;
   border: 1px solid; white-space: nowrap; flex-shrink: 0;
 }
 .acct-order-row__price { font-weight: 800; font-size: 0.95rem; color: var(--rt-charcoal); flex-shrink: 0; min-width: 80px; text-align: right; }
@@ -3400,9 +3400,9 @@ a.od-item__name:hover { color: var(--rt-gold); text-decoration: underline; }
 
 /* Order status badges — square pill */
 .order-status {
-  display: inline-block; padding: 0.28em 0.75em;
-  border-radius: 5px; font-size: 0.75rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+  display: inline-block; padding: 0.3em 0.9em;
+  border-radius: 100px; font-size: 0.75rem; font-weight: 700;
+  text-transform: capitalize; letter-spacing: 0.02em; white-space: nowrap;
 }
 .order-status--pending    { background: #FFF4E5; color: #92400E; border: 1.5px solid #FDE68A; }
 .order-status--confirmed  { background: #D1FAE5; color: #065F46; border: 1.5px solid #6EE7B7; }
