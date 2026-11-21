@@ -1,9 +1,9 @@
-import { createBrowserClient } from '@supabase/ssr';
+import { createAdminClient } from './admin-client';
+import { fmtProductId, fmtCustomerId } from './db';
+export { fmtProductId, fmtCustomerId };
 
 function getClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
-  return createBrowserClient(url, key);
+  return createAdminClient();
 }
 
 export type AdminOrder = {
@@ -118,9 +118,31 @@ export type AdminProduct = {
   group_id: string | null;
   warranty: string | null;
   tags: string[] | null;
+  product_number: number | null;
   created_at: string;
   updated_at: string;
 };
+
+export type AdminCustomerRow = {
+  id: string;
+  customer_number: number;
+  email: string;
+  name: string | null;
+  phone: string | null;
+  user_id: string | null;
+  created_at: string;
+};
+
+export async function fetchCustomerByEmail(email: string): Promise<AdminCustomerRow | null> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('customers')
+    .select('id, customer_number, email, name, phone, user_id, created_at')
+    .ilike('email', email)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as AdminCustomerRow;
+}
 
 export async function fetchAdminProducts(): Promise<AdminProduct[]> {
   const sb = getClient();
@@ -174,19 +196,24 @@ export type AdminCustomer = {
   order_count: number;
   total_spent: number;
   last_order: string;
+  customer_number?: number | null;
 };
 
 export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
   const sb = getClient();
-  const { data, error } = await sb
-    .from('orders')
-    .select('email, customer_name, phone, total, created_at')
-    .order('created_at', { ascending: false });
-  if (error || !data) return [];
+  const [ordersRes, cusRes] = await Promise.all([
+    sb.from('orders').select('email, customer_name, phone, total, created_at').order('created_at', { ascending: false }),
+    sb.from('customers').select('email, customer_number'),
+  ]);
+  if (ordersRes.error || !ordersRes.data) return [];
 
-  // Aggregate by email
+  const cusNumMap = new Map<string, number>();
+  for (const c of cusRes.data ?? []) {
+    cusNumMap.set(c.email.toLowerCase(), c.customer_number);
+  }
+
   const map = new Map<string, AdminCustomer>();
-  for (const o of data) {
+  for (const o of ordersRes.data) {
     const key = o.email.toLowerCase();
     const existing = map.get(key);
     if (existing) {
@@ -200,10 +227,90 @@ export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
         order_count: 1,
         total_spent: o.total ?? 0,
         last_order: o.created_at,
+        customer_number: cusNumMap.get(key) ?? null,
       });
     }
   }
   return Array.from(map.values()).sort((a, b) => b.order_count - a.order_count);
+}
+
+export async function fetchAdminOrderById(id: string): Promise<AdminOrder | null> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('orders')
+    .select('id, order_number, customer_name, email, phone, total, status, payment_method, created_at, items, address, notes')
+    .eq('id', id)
+    .single();
+  if (error || !data) return null;
+  return data as AdminOrder;
+}
+
+export async function fetchOrdersByEmail(email: string): Promise<AdminOrder[]> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('orders')
+    .select('id, order_number, customer_name, email, phone, total, status, payment_method, created_at, items, address, notes')
+    .ilike('email', email)
+    .order('created_at', { ascending: false });
+  if (error || !data) return [];
+  return data as AdminOrder[];
+}
+
+// ── Category CRUD ─────────────────────────────────────────────────────────────
+
+export type AdminCategory = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  image: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export async function fetchAdminCategories(): Promise<AdminCategory[]> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('categories')
+    .select('*')
+    .order('sort_order');
+  if (error || !data) return [];
+  return data as AdminCategory[];
+}
+
+export async function createCategory(payload: Omit<AdminCategory, 'created_at' | 'updated_at'>): Promise<AdminCategory> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('categories')
+    .insert(payload)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as AdminCategory;
+}
+
+export async function updateCategory(id: string, payload: Partial<Omit<AdminCategory, 'id' | 'created_at' | 'updated_at'>>): Promise<void> {
+  const sb = getClient();
+  const { error } = await sb.from('categories').update(payload).eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteCategory(id: string): Promise<void> {
+  const sb = getClient();
+  const { error } = await sb.from('categories').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function uploadCategoryImage(file: File, categorySlug: string): Promise<string> {
+  const sb = getClient();
+  const ext = file.name.split('.').pop() ?? 'jpg';
+  const path = `${categorySlug}/${Date.now()}.${ext}`;
+  const { error } = await sb.storage.from('category-images').upload(path, file, { upsert: true });
+  if (error) throw new Error(error.message);
+  const { data: { publicUrl } } = sb.storage.from('category-images').getPublicUrl(path);
+  return publicUrl;
 }
 
 // ── Inventory (products with in_stock status) ─────────────────────────────────
