@@ -548,18 +548,26 @@ export function ProductDetailPage() {
                 </div>
               )}
 
-              {/* Key Features — numbered masonry grid */}
+              {/* Key Features — card grid */}
               {activeTab === 'features' && (
                 <div id="pdp3-tab-features" role="tabpanel" className="pdp3__tab-panel">
                   <div className="pdp3__feat-grid">
-                    {product.features.map((f, i) => (
-                      <div key={i} className="pdp3__feat-item">
-                        <div className="pdp3__feat-num-badge" aria-hidden="true">
-                          {String(i + 1).padStart(2, '0')}
+                    {product.features.map((f, i) => {
+                      const colonIdx = f.indexOf(':');
+                      const title = colonIdx > -1 ? f.slice(0, colonIdx).trim() : null;
+                      const desc = colonIdx > -1 ? f.slice(colonIdx + 1).trim() : f;
+                      return (
+                        <div key={i} className="pdp3__feat-item" data-num={String(i + 1).padStart(2, '0')}>
+                          <div className="pdp3__feat-item-top">
+                            <div className="pdp3__feat-num-badge" aria-hidden="true">
+                              {String(i + 1).padStart(2, '0')}
+                            </div>
+                            {title && <p className="pdp3__feat-title">{title}</p>}
+                          </div>
+                          <p className={title ? 'pdp3__feat-desc' : 'pdp3__feat-text'}>{desc}</p>
                         </div>
-                        <p className="pdp3__feat-text">{f}</p>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
