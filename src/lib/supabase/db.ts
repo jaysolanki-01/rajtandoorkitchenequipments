@@ -154,7 +154,6 @@ export async function fetchUserOrder(userId: string, orderNumber: string): Promi
 }
 
 // ── My customer number (CUS-XXXXXX) ─────────────────────────────────────────
-// Returns null if migration 009 hasn't been run yet (table may not exist)
 export async function fetchMyCustomerNumber(userId: string): Promise<number | null> {
   const sb = getClient();
   try {
@@ -193,8 +192,6 @@ export type OrderTrackStatus = {
 
 export async function fetchOrderStatus(orderNumber: string, email: string): Promise<OrderTrackStatus | null> {
   const sb = getClient();
-  // Use an RPC (SECURITY DEFINER function) so anonymous users can look up their
-  // own order by number + email without needing direct table read access.
   const { data, error } = await sb.rpc('track_order', {
     p_order_number: orderNumber.trim().toUpperCase(),
     p_email: email.trim().toLowerCase(),
