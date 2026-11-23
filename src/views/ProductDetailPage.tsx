@@ -502,48 +502,65 @@ export function ProductDetailPage() {
 
             <div className="pdp3__tab-content">
 
-              {/* Overview */}
+              {/* Overview — editorial layout: description + numbered highlights */}
               {activeTab === 'overview' && (
                 <div id="pdp3-tab-overview" role="tabpanel" className="pdp3__tab-panel pdp3__tab-overview">
-                  <div className="pdp3__overview-text">
-                    {product.description.split('\n\n').map((para, i) =>
-                      para.trim().startsWith('-') ? (
-                        <ul key={i}>
-                          {para.split('\n').filter((l) => l.startsWith('-')).map((l, j) => (
-                            <li key={j}>{l.replace(/^-\s*/, '')}</li>
+                  <div className="pdp3__ov-wrap">
+                    {/* Left: description with accent bar */}
+                    <div className="pdp3__ov-desc">
+                      <div className="pdp3__ov-accent" aria-hidden="true" />
+                      <div className="pdp3__ov-text">
+                        {product.description.split('\n\n').map((para, i) =>
+                          para.trim().startsWith('-') ? (
+                            <ul key={i}>
+                              {para.split('\n').filter((l) => l.startsWith('-')).map((l, j) => (
+                                <li key={j}>{l.replace(/^-\s*/, '')}</li>
+                              ))}
+                            </ul>
+                          ) : para.trim() ? (
+                            <p key={i}>{para.trim()}</p>
+                          ) : null
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Right: numbered highlight snapshot */}
+                    {product.features.length > 0 && (
+                      <div className="pdp3__ov-snapshot">
+                        <p className="pdp3__ov-eyebrow">Key Highlights</p>
+                        <div className="pdp3__ov-cards">
+                          {product.features.slice(0, 4).map((f, i) => (
+                            <div key={i} className="pdp3__ov-card">
+                              <span className="pdp3__ov-num">{String(i + 1).padStart(2, '0')}</span>
+                              <span className="pdp3__ov-feat">{f}</span>
+                            </div>
                           ))}
-                        </ul>
-                      ) : para.trim() ? (
-                        <p key={i}>{para.trim()}</p>
-                      ) : null
+                        </div>
+                        {product.features.length > 4 && (
+                          <button type="button" className="pdp3__ov-viewall" onClick={() => setActiveTab('features')}>
+                            View all {product.features.length} features
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
-                  {product.features.length > 0 && (
-                    <div className="pdp3__highlights-grid">
-                      {product.features.slice(0, 6).map((f, i) => (
-                        <div key={i} className="pdp3__highlight-card">
-                          <span className="pdp3__highlight-icon" aria-hidden="true">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                          </span>
-                          <span>{f}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               )}
 
-              {/* Key Features */}
+              {/* Key Features — numbered masonry grid */}
               {activeTab === 'features' && (
                 <div id="pdp3-tab-features" role="tabpanel" className="pdp3__tab-panel">
-                  <ul className="pdp3__features-list">
+                  <div className="pdp3__feat-grid">
                     {product.features.map((f, i) => (
-                      <li key={i}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                        {f}
-                      </li>
+                      <div key={i} className="pdp3__feat-item">
+                        <div className="pdp3__feat-num-badge" aria-hidden="true">
+                          {String(i + 1).padStart(2, '0')}
+                        </div>
+                        <p className="pdp3__feat-text">{f}</p>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
 
