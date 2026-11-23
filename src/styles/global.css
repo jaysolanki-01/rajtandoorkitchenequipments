@@ -1,4 +1,4 @@
-/* ── Mont font family ─────────────────────────────────────────────────────── */
+[Resource from github at repo://jaysolanki-01/rajtandoorkitchenequipments/sha/c67a24323d380a3f4fc571432b4e55eab886a04b/contents/src/styles/global.css] /* ── Mont font family ─────────────────────────────────────────────────────── */
 @font-face {
   font-family: 'Mont';
   src: url('/fonts/Mont-Thin.ttf') format('truetype');
@@ -2119,22 +2119,32 @@ a { color: inherit; }
 .pdp3__empty a { color: var(--rt-gold); }
 
 /* Overview tab: two-col */
-.pdp3__tab-overview { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
-@media (max-width: 700px) { .pdp3__tab-overview { grid-template-columns: 1fr; } }
-.pdp3__overview-text p { font-size: 0.93rem; color: var(--rt-text2); line-height: 1.72; margin-bottom: 1rem; }
-.pdp3__overview-text ul { font-size: 0.93rem; color: var(--rt-text2); line-height: 1.65; margin-bottom: 1rem; padding-left: 1.25rem; }
-.pdp3__overview-text li { margin-bottom: 0.4rem; }
-
-/* Key highlights grid */
-.pdp3__highlights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-@media (max-width: 500px) { .pdp3__highlights-grid { grid-template-columns: 1fr; } }
-.pdp3__highlight-card { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.7rem; background: var(--rt-bg2); border: 1px solid var(--rt-border); border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 500; color: var(--rt-charcoal); line-height: 1.4; }
-.pdp3__highlight-icon { flex-shrink: 0; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; background: rgba(195,162,104,0.12); border-radius: 6px; color: var(--rt-gold); }
-
-/* Features list */
-.pdp3__features-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.6rem; list-style: none; padding: 0; margin: 0; }
-.pdp3__features-list li { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.9rem; color: var(--rt-charcoal); line-height: 1.5; }
-.pdp3__features-list svg { flex-shrink: 0; color: var(--rt-gold); margin-top: 2px; }
+.pdp3__tab-overview { display: block; }
+/* Overview: editorial two-column layout */
+.pdp3__ov-wrap { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 2.5rem; align-items: start; }
+@media (max-width: 720px) { .pdp3__ov-wrap { grid-template-columns: 1fr; gap: 1.75rem; } }
+.pdp3__ov-desc { display: flex; gap: 1rem; }
+.pdp3__ov-accent { flex-shrink: 0; width: 3px; border-radius: 2px; background: linear-gradient(to bottom, var(--rt-gold) 0%, rgba(195,162,104,0) 100%); align-self: stretch; }
+.pdp3__ov-text p { font-size: 0.94rem; color: var(--rt-text2); line-height: 1.78; margin: 0 0 1rem; }
+.pdp3__ov-text p:first-child { font-size: 1rem; color: var(--rt-charcoal); font-weight: 500; }
+.pdp3__ov-text ul { font-size: 0.93rem; color: var(--rt-text2); line-height: 1.65; padding-left: 1.25rem; margin: 0 0 1rem; }
+.pdp3__ov-text li { margin-bottom: 0.4rem; }
+.pdp3__ov-snapshot { display: flex; flex-direction: column; gap: 0.85rem; }
+.pdp3__ov-eyebrow { font-size: 0.67rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rt-gold); margin: 0; }
+.pdp3__ov-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+@media (max-width: 480px) { .pdp3__ov-cards { grid-template-columns: 1fr; } }
+.pdp3__ov-card { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem; background: var(--rt-bg2); border: 1px solid var(--rt-border); border-left: 3px solid var(--rt-gold); border-radius: var(--radius-md); transition: box-shadow 0.2s, transform 0.2s; }
+.pdp3__ov-card:hover { box-shadow: 0 4px 18px rgba(195,162,104,0.14); transform: translateY(-1px); }
+.pdp3__ov-num { font-size: 1.5rem; font-weight: 900; color: rgba(195,162,104,0.22); line-height: 1; font-variant-numeric: tabular-nums; }
+.pdp3__ov-feat { font-size: 0.8rem; font-weight: 500; color: var(--rt-charcoal); line-height: 1.45; }
+.pdp3__ov-viewall { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; font-weight: 600; color: var(--rt-gold); background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 3px; transition: opacity 0.2s; }
+.pdp3__ov-viewall:hover { opacity: 0.72; }
+/* Features: numbered masonry grid */
+.pdp3__feat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1px; border: 1px solid var(--rt-border); border-radius: var(--radius-lg); overflow: hidden; background: var(--rt-border); }
+.pdp3__feat-item { display: flex; gap: 1rem; padding: 1.1rem 1.25rem; background: var(--rt-bg); align-items: flex-start; transition: background 0.2s; }
+.pdp3__feat-item:hover { background: var(--rt-bg2); }
+.pdp3__feat-num-badge { flex-shrink: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(195,162,104,0.1); border: 1.5px solid rgba(195,162,104,0.3); border-radius: 8px; font-size: 0.74rem; font-weight: 800; color: var(--rt-gold); letter-spacing: 0.02em; }
+.pdp3__feat-text { font-size: 0.88rem; font-weight: 500; color: var(--rt-charcoal); line-height: 1.55; margin: 0; padding-top: 0.4rem; }
 
 /* Specs table */
 .pdp3__specs-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
