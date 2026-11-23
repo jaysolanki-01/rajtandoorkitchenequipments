@@ -244,9 +244,9 @@ export function SiteHeader() {
                 <p className="sh-mega__detail-desc">{activeCat.description}</p>
               )}
               <div className="sh-mega__detail-visual" aria-hidden="true">
-                {(dbImages[activeCat.slug] !== undefined ? dbImages[activeCat.slug] : activeCat.image) && (
+                {(dbImages[activeCat.slug] || activeCat.image) && (
                   <img
-                    src={(dbImages[activeCat.slug] !== undefined ? dbImages[activeCat.slug] : activeCat.image) as string}
+                    src={(dbImages[activeCat.slug] || activeCat.image) as string}
                     alt=""
                     className="sh-mega__detail-visual-img"
                     loading="lazy"
