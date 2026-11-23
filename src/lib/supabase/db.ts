@@ -258,3 +258,24 @@ export async function deleteUserAddress(id: string): Promise<void> {
   });
   if (error) throw new Error(error.message);
 }
+
+// ── Public categories ────────────────────────────────────────────────────────
+
+export type PublicCategory = {
+  slug: string;
+  label: string;
+  description: string | null;
+  image: string | null;
+};
+
+export async function fetchCategories(): Promise<PublicCategory[]> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('categories')
+    .select('slug, name, description, image')
+    .eq('is_active', true)
+    .order('sort_order');
+  if (error || !data?.length) return [];
+  return (data as { slug: string; name: string; description: string | null; image: string | null }[])
+    .map(c => ({ slug: c.slug, label: c.name, description: c.description, image: c.image }));
+}

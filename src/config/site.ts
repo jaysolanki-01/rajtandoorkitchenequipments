@@ -104,6 +104,8 @@ export const footerColumns = [
     links: [
       { label: 'About Us', href: '/about' },
       { label: 'B2B & Bulk Supply', href: '/b2b' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'Product Brochures', href: '/brochure' },
     ],
   },
 ] as const;

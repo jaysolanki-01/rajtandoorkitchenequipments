@@ -29,7 +29,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'tandoor-equipment',
     name: 'Tandoor Equipment',
     description: 'Traditional and modern tandoors in clay, drum, and stainless steel for restaurants, dhabas, and cloud kitchens.',
-    image: px(39556646),
+    image: '/images/tandoor-equipment-hero.webp',
     products: items([
       'Clay Tandoor', 'Drum Tandoor', 'Stainless Steel Tandoor', 'Gas Tandoor',
       'Electric Tandoor', 'Charcoal Tandoor', 'Commercial Tandoor', 'Portable Tandoor',
