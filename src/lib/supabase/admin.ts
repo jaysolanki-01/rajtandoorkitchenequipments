@@ -156,16 +156,10 @@ export async function fetchAdminProducts(): Promise<AdminProduct[]> {
 
 export async function createProduct(payload: Omit<AdminProduct, 'created_at' | 'updated_at'>): Promise<AdminProduct> {
   const sb = getClient();
-  const finalPayload = { ...payload };
-  if (finalPayload.product_number == null) {
-    const { data: maxRow } = await sb
-      .from('products')
-      .select('product_number')
-      .order('product_number', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    finalPayload.product_number = (maxRow?.product_number ?? 0) + 1;
-  }
+  // product_number is bigserial — omitting it lets the DB sequence assign the next value.
+  // Sending null explicitly overrides the sequence and triggers a NOT NULL violation.
+  const { product_number, ...rest } = payload;
+  const finalPayload = product_number != null ? { ...rest, product_number } : rest;
   const { data, error } = await sb
     .from('products')
     .insert(finalPayload)
