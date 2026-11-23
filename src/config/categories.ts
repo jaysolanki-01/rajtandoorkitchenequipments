@@ -40,7 +40,7 @@ export const CATEGORIES: CategoryItem[] = [
     slug: 'burners-gas-stoves',
     name: 'Burners & Gas Stoves',
     description: 'Single to multi-burner commercial gas stoves and high-pressure LPG burners built for heavy-duty kitchen use.',
-    image: px(17303438),
+    image: '/images/burners-gas-stoves-hero.webp',
     products: items([
       'Single Burner Gas Stove', 'Double Burner Gas Stove', 'Three Burner Gas Stove',
       'Four Burner Gas Stove', 'Heavy-Duty Gas Range', 'High-Pressure Burner',
