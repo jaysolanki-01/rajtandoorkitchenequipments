@@ -109,7 +109,7 @@ export type OrderItem = {
   slug?: string | null;
   image?: string | null;
   qty?: number;
-  quantity?: number; // legacy alias
+  quantity?: number;
   price?: number | null;
 };
 

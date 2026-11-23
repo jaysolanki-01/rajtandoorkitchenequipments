@@ -96,7 +96,7 @@ export async function updateQuoteStatus(id: string, status: string, notes?: stri
   if (error) throw new Error(error.message);
 }
 
-// ── Product CRUD ──────────────────────────────────────────────────────────────
+// ── Product CRUD ─────────────────────────────────────────────────────────────────────────
 
 export type AdminProduct = {
   id: string;
@@ -156,9 +156,13 @@ export async function fetchAdminProducts(): Promise<AdminProduct[]> {
 
 export async function createProduct(payload: Omit<AdminProduct, 'created_at' | 'updated_at'>): Promise<AdminProduct> {
   const sb = getClient();
+  // product_number is bigserial — omitting it lets the DB sequence assign the next value.
+  // Sending null explicitly overrides the sequence and triggers a NOT NULL violation.
+  const { product_number, ...rest } = payload;
+  const finalPayload = product_number != null ? { ...rest, product_number } : rest;
   const { data, error } = await sb
     .from('products')
-    .insert(payload)
+    .insert(finalPayload)
     .select()
     .single();
   if (error) throw new Error(error.message);
@@ -187,7 +191,7 @@ export async function uploadProductImage(file: File, productId: string): Promise
   return publicUrl;
 }
 
-// ── Customers (derived from orders) ──────────────────────────────────────────
+// ── Customers (derived from orders) ──────────────────────────────────────────────
 
 export type AdminCustomer = {
   email: string;
@@ -256,7 +260,7 @@ export async function fetchOrdersByEmail(email: string): Promise<AdminOrder[]> {
   return data as AdminOrder[];
 }
 
-// ── Category CRUD ─────────────────────────────────────────────────────────────
+// ── Category CRUD ────────────────────────────────────────────────────────────────────────
 
 export type AdminCategory = {
   id: string;
@@ -313,7 +317,7 @@ export async function uploadCategoryImage(file: File, categorySlug: string): Pro
   return publicUrl;
 }
 
-// ── Inventory (products with in_stock status) ─────────────────────────────────
+// ── Inventory (products with in_stock status) ─────────────────────────────────────────────
 
 export type AdminInventoryItem = {
   id: string;

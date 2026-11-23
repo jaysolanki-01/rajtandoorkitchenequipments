@@ -10,7 +10,6 @@ const config: NextConfig = {
         hostname: 'fyxhfsrzqhlbbbahmijx.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
-      // Allow any https image (for products loaded from other CDNs)
       {
         protocol: 'https',
         hostname: '**',

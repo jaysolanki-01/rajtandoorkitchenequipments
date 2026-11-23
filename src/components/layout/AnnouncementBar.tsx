@@ -26,11 +26,18 @@ const MESSAGES = [
 ];
 
 export function AnnouncementBar() {
-  const [dismissed, setDismissed] = useState(() => {
-    try { return sessionStorage.getItem('ann-dismissed') === '1'; } catch { return false; }
-  });
+  // Always start false on both server and client to avoid hydration mismatch.
+  // A useEffect reads sessionStorage after mount to hide if previously dismissed.
+  const [dismissed, setDismissed] = useState(false);
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
+
+  // Read dismissal state from sessionStorage after mount (client-only)
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem('ann-dismissed') === '1') setDismissed(true);
+    } catch { /* noop */ }
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
