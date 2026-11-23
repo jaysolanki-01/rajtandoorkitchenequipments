@@ -77,7 +77,8 @@ export default function AdminProductsPage() {
   );
 
   function openNew() {
-    setEditing({ ...EMPTY, id: crypto.randomUUID() });
+    const nextNum = products.reduce((max, p) => Math.max(max, p.product_number ?? 0), 0) + 1;
+    setEditing({ ...EMPTY, id: crypto.randomUUID(), product_number: nextNum });
     setIsNew(true);
     setError('');
   }
@@ -282,6 +283,9 @@ export default function AdminProductsPage() {
             </FieldRow>
             <FieldRow label="Slug *">
               <input style={inp} value={editing.slug ?? ''} onChange={e => set('slug', slugify(e.target.value))} placeholder="auto-generated" />
+            </FieldRow>
+            <FieldRow label="Product Number *">
+              <input style={inp} type="number" min={1} value={editing.product_number ?? ''} onChange={e => set('product_number', e.target.value === '' ? null : Number(e.target.value))} placeholder="Auto-assigned" />
             </FieldRow>
             <FieldRow label="Category *">
               <select
