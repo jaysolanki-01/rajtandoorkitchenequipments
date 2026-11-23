@@ -99,6 +99,19 @@ export function ProductDetailPage() {
 
   const product = products.find((p) => p.slug === (slug ?? ''));
 
+  // Must be declared before any early return to satisfy React Rules of Hooks.
+  // The guard inside prevents it from running when product is not yet loaded.
+  useEffect(() => {
+    if (!product) return;
+    pushHistoryItem({
+      slug: product.slug,
+      name: product.name,
+      image: product.image ?? null,
+      price: product.price ?? null,
+      category_label: product.categoryLabel ?? product.category ?? '',
+    });
+  }, [product?.slug]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!product && loading) {
     return (
       <main id="main" className="page-main" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -111,19 +124,6 @@ export function ProductDetailPage() {
     router.push('/shop');
     return null;
   }
-
-  // Track this view in browsing history (client-side only)
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    pushHistoryItem({
-      slug: product.slug,
-      name: product.name,
-      image: product.image ?? null,
-      price: product.price ?? null,
-      category_label: product.categoryLabel ?? product.category ?? '',
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product.slug]);
 
   const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 6);
   const sizeVariants = product.sizeGroup
