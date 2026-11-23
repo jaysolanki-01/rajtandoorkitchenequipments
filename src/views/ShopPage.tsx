@@ -3,8 +3,8 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { seo } from '../config/site';
-import { categories } from '../config/products';
 import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
 import { ProductCard } from '../components/product/ProductCard';
 
 type SortKey = 'default' | 'price-asc' | 'price-desc' | 'name-asc';
@@ -21,6 +21,7 @@ export function ShopPage() {
   const catFilter = params.get('category') ?? '';
   const [sort, setSort] = useState<SortKey>('default');
   const { products } = useProducts();
+  const { categories } = useCategories();
 
   const filtered = useMemo(() => {
     let list = catFilter ? products.filter((p) => p.category === catFilter) : [...products];

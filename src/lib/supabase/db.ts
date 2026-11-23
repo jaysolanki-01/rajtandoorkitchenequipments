@@ -154,7 +154,6 @@ export async function fetchUserOrder(userId: string, orderNumber: string): Promi
 }
 
 // ── My customer number (CUS-XXXXXX) ─────────────────────────────────────────
-// Returns null if migration 009 hasn't been run yet (table may not exist)
 export async function fetchMyCustomerNumber(userId: string): Promise<number | null> {
   const sb = getClient();
   try {
@@ -193,8 +192,6 @@ export type OrderTrackStatus = {
 
 export async function fetchOrderStatus(orderNumber: string, email: string): Promise<OrderTrackStatus | null> {
   const sb = getClient();
-  // Use an RPC (SECURITY DEFINER function) so anonymous users can look up their
-  // own order by number + email without needing direct table read access.
   const { data, error } = await sb.rpc('track_order', {
     p_order_number: orderNumber.trim().toUpperCase(),
     p_email: email.trim().toLowerCase(),
@@ -260,4 +257,25 @@ export async function deleteUserAddress(id: string): Promise<void> {
     data: { addresses: existing.filter(a => a.id !== id) },
   });
   if (error) throw new Error(error.message);
+}
+
+// ── Public categories ────────────────────────────────────────────────────────
+
+export type PublicCategory = {
+  slug: string;
+  label: string;
+  description: string | null;
+  image: string | null;
+};
+
+export async function fetchCategories(): Promise<PublicCategory[]> {
+  const sb = getClient();
+  const { data, error } = await sb
+    .from('categories')
+    .select('slug, name, description, image')
+    .eq('is_active', true)
+    .order('sort_order');
+  if (error || !data?.length) return [];
+  return (data as { slug: string; name: string; description: string | null; image: string | null }[])
+    .map(c => ({ slug: c.slug, label: c.name, description: c.description, image: c.image }));
 }
