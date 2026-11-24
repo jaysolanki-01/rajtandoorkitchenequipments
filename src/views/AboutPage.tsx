@@ -225,14 +225,6 @@ export function AboutPage() {
               </Link>
               <Link href="/contact" className="btn btn--outline ab-hero__btn-secondary">Get in Touch</Link>
             </div>
-
-            {/* Scroll indicator */}
-            <div className="ab-hero__scroll" aria-hidden="true">
-              <span className="ab-hero__scroll-label">Scroll to explore</span>
-              <div className="ab-hero__scroll-track">
-                <div className="ab-hero__scroll-thumb" />
-              </div>
-            </div>
           </div>
           {/* Stats bar */}
           <div className="ab-stats-bar">
