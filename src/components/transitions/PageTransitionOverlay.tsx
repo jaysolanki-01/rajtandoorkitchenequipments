@@ -19,6 +19,27 @@ export function PageTransitionOverlay() {
   const webgl = hasWebGL();
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Intercept internal link clicks — show overlay immediately so the
+  // scroll-to-top reset happens while the overlay covers the screen.
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const anchor = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null;
+      if (!anchor) return;
+      const href = anchor.getAttribute('href') ?? '';
+      // Only intercept internal same-origin navigations (not anchors, external, mailto etc.)
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+
+      const overlay = overlayRef.current;
+      if (!overlay) return;
+      overlay.style.opacity = '1';
+      overlay.style.pointerEvents = 'all';
+      // Scroll to top immediately so it happens under the overlay
+      window.scrollTo(0, 0);
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+
   useEffect(() => {
     // Fire on every route change (but not on initial mount)
     if (pathname === prevPathRef.current) return;
