@@ -1,33 +1,36 @@
 'use client';
 import { useState } from 'react';
 
-type Brand = { name: string; logo: string };
+type Brand = { name: string; logo?: string };
+
+const WP = (file: string) =>
+  `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}`;
 
 const categories: { label: string; brands: Brand[] }[] = [
   {
     label: 'Retail',
     brands: [
-      { name: 'Easyday',            logo: 'https://logo.clearbit.com/bhartiretail.com' },
-      { name: 'Reliance Fresh',     logo: 'https://logo.clearbit.com/reliancefresh.com' },
-      { name: "Spencer's",          logo: 'https://logo.clearbit.com/spencers.in' },
-      { name: "Nature's Basket",    logo: 'https://logo.clearbit.com/naturesbasket.co.in' },
-      { name: 'Aditya Birla Retail',logo: '/logos/aditya-birla.webp' },
-      { name: 'Foodworld',          logo: 'https://logo.clearbit.com/foodworld.in' },
+      { name: 'Easyday' },
+      { name: 'Reliance Fresh' },
+      { name: "Spencer's" },
+      { name: "Nature's Basket" },
+      { name: 'Aditya Birla Retail', logo: '/logos/aditya-birla.webp' },
+      { name: 'Foodworld' },
     ],
   },
   {
     label: 'Hotels & Restaurants',
     brands: [
-      { name: 'Holiday Inn',            logo: 'https://logo.clearbit.com/holidayinn.com' },
-      { name: 'The Claridges',          logo: 'https://logo.clearbit.com/claridges.in' },
-      { name: 'Hilton',                 logo: 'https://logo.clearbit.com/hilton.com' },
-      { name: 'ibis',                   logo: 'https://logo.clearbit.com/ibis.com' },
-      { name: 'Ramada',                 logo: 'https://logo.clearbit.com/ramada.com' },
-      { name: 'Mövenpick',              logo: 'https://logo.clearbit.com/movenpick.com' },
-      { name: 'Courtyard by Marriott',  logo: 'https://logo.clearbit.com/marriott.com' },
-      { name: 'Honest',                 logo: 'https://logo.clearbit.com/honest.com' },
-      { name: 'MahaMahel',              logo: 'https://logo.clearbit.com/mahamahel.com' },
-      { name: 'Salwa Family Restaurant',logo: 'https://logo.clearbit.com/salwarestaurant.com' },
+      { name: 'Holiday Inn',           logo: WP('Holiday_Inn_Logo.svg') },
+      { name: 'The Claridges' },
+      { name: 'Hilton',                logo: WP('Hilton_Hotels_&_Resorts_logo.svg') },
+      { name: 'ibis',                  logo: WP('Ibis_hotels_logo.svg') },
+      { name: 'Ramada',                logo: WP('Ramada_Logo.svg') },
+      { name: 'Mövenpick',             logo: WP('Movenpick_Hotels_Resorts.svg') },
+      { name: 'Courtyard by Marriott', logo: WP('Courtyard_by_Marriott_Logo.svg') },
+      { name: 'Honest' },
+      { name: 'MahaMahel' },
+      { name: 'Salwa Family Restaurant' },
     ],
   },
   {
@@ -36,32 +39,33 @@ const categories: { label: string; brands: Brand[] }[] = [
       { name: 'Baskin Robbins', logo: '/logos/baskin-robbins.webp' },
       { name: 'Arun Icecreams', logo: '/logos/arun-icecreams.png' },
       { name: 'Amul',           logo: '/logos/amul.webp' },
-      { name: "Dinshaw's",      logo: 'https://logo.clearbit.com/dinshaws.com' },
-      { name: 'Vadilal',        logo: 'https://logo.clearbit.com/vadilal.com' },
-      { name: "Nirula's",       logo: 'https://logo.clearbit.com/nirulas.com' },
-      { name: 'Häagen-Dazs',    logo: 'https://logo.clearbit.com/haagen-dazs.com' },
-      { name: 'Ranbaxy',        logo: 'https://logo.clearbit.com/ranbaxy.com' },
+      { name: "Dinshaw's" },
+      { name: 'Vadilal' },
+      { name: "Nirula's" },
+      { name: 'Häagen-Dazs',    logo: WP('Haagen-Dazs_logo.svg') },
+      { name: 'Ranbaxy' },
     ],
   },
   {
     label: 'Corporate & Entertainment',
     brands: [
-      { name: 'Torrent',          logo: 'https://logo.clearbit.com/torrentpower.com' },
-      { name: 'Pepsi',            logo: 'https://logo.clearbit.com/pepsi.com' },
-      { name: 'Cremica',          logo: 'https://logo.clearbit.com/cremica.com' },
-      { name: 'Infosys',          logo: 'https://logo.clearbit.com/infosys.com' },
-      { name: 'Bharat Petroleum', logo: 'https://logo.clearbit.com/bharatpetroleum.in' },
+      { name: 'Torrent' },
+      { name: 'Pepsi',            logo: WP('Pepsi_logo_2014.svg') },
+      { name: 'Cremica' },
+      { name: 'Infosys',          logo: WP('Infosys_logo.svg') },
+      { name: 'Bharat Petroleum', logo: WP('BPCL_Logo.svg') },
       { name: 'Adlabs',           logo: '/logos/adlabs.png' },
-      { name: 'PVR Cinemas',      logo: 'https://logo.clearbit.com/pvrcinemas.com' },
+      { name: 'PVR Cinemas',      logo: WP('PVR_Cinemas_logo.svg') },
     ],
   },
 ];
 
 function BrandPill({ brand }: { brand: Brand }) {
   const [failed, setFailed] = useState(false);
+  const showLogo = brand.logo && !failed;
   return (
     <div className="cust__pill">
-      {!failed ? (
+      {showLogo ? (
         <img
           src={brand.logo}
           alt={brand.name}
