@@ -58,7 +58,6 @@ html.has-ann { --ann-h: 44px; }
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
-  scroll-behavior: smooth;
   overflow-x: clip;
 }
 
