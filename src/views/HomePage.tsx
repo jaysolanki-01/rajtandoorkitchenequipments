@@ -59,11 +59,11 @@ export function HomePage() {
         <div id="raj-s0"><TandoorHero />{reduced && <StoryStatic />}</div>
         <div id="raj-s1"><TrustSection /></div>
         <div id="raj-s2b"><CategoryShowcase /></div>
+        <div id="raj-s2c"><CustomersSection /></div>
         <div id="raj-s3"><FeaturedProducts /></div>
         <div id="raj-s4"><BestSellersSection /></div>
         <div id="raj-s5"><CommercialSection /></div>
-        <div id="raj-s5b"><CustomersSection /></div>
-        <div id="raj-s6"><BusinessTypeSection /></div>
+<div id="raj-s6"><BusinessTypeSection /></div>
         <div id="raj-s7"><ChooseTandoorGuide /></div>
         <div id="raj-s8"><FAQAccordion /></div>
         <div id="raj-s9"><ContactSection /></div>

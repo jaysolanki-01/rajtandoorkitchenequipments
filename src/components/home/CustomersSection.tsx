@@ -37,16 +37,19 @@ function BrandPill({ name, domain }: { name: string; domain: string }) {
 
   return (
     <div className="cust__pill">
-      {!imgFailed && (
-        <img
-          src={logoUrl}
-          alt=""
-          className="cust__logo"
-          onError={() => setImgFailed(true)}
-          loading="lazy"
-        />
-      )}
-      <span className={`cust__name${imgFailed ? '' : ' cust__name--hidden'}`}>{name}</span>
+      <div className="cust__logo-box">
+        {!imgFailed ? (
+          <img
+            src={logoUrl}
+            alt=""
+            className="cust__logo"
+            onError={() => setImgFailed(true)}
+            loading="lazy"
+          />
+        ) : (
+          <span className="cust__name">{name}</span>
+        )}
+      </div>
     </div>
   );
 }
@@ -68,8 +71,7 @@ export function CustomersSection() {
   return (
     <section className="cust" aria-labelledby="cust-heading">
       <div className="cust__header container">
-        <p className="eyebrow">Trusted By</p>
-        <h2 id="cust-heading" className="cust__h2">Brands That Run on<br />Raj Tandoor Equipment</h2>
+        <h2 id="cust-heading" className="cust__h2">Trusted by Our Customers</h2>
         <p className="cust__sub">From 5-star hotel chains to national retail networks — our equipment powers commercial kitchens across India.</p>
       </div>
       <div className="cust__marquee" aria-hidden="true">
