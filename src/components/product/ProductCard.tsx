@@ -19,14 +19,16 @@ export function ProductCard({ product }: ProductCardProps) {
   const discountPct = product.price != null && originalPrice != null
     ? Math.round((1 - product.price / originalPrice) * 100)
     : null;
+  const savedAmount = product.price != null && originalPrice != null
+    ? originalPrice - product.price
+    : null;
 
   return (
     <article className={`pc ${product.isDemo ? 'pc--demo' : ''}`} aria-label={product.name}>
+
       {/* Demo badge */}
       {product.isDemo && (
-        <div className="pc__demo-badge" role="note" aria-label="Demo product — details coming soon">
-          Coming Soon
-        </div>
+        <div className="pc__demo-badge" role="note">Coming Soon</div>
       )}
 
       {/* Discount badge */}
@@ -39,7 +41,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Wishlist */}
       <WishlistButton productId={product.id} productName={product.name} className="pc__wishlist" />
 
-      {/* Image + hover overlay */}
+      {/* Image */}
       <div className="pc__img-wrap">
         <Link href={`/products/${product.slug}`} aria-label={`View ${product.name}`} className="pc__img-link">
           <img
@@ -58,18 +60,23 @@ export function ProductCard({ product }: ProductCardProps) {
           aria-label={`Quick view ${product.name}`}
         >
           <span className="pc__img-overlay-label">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             Quick View
           </span>
         </button>
       </div>
 
-      {/* Info */}
+      {/* Body */}
       <div className="pc__body">
         <span className="pc__cat">{product.categoryLabel}</span>
+
         <h3 className="pc__name">
           <Link href={`/products/${product.slug}`}>{product.name}</Link>
         </h3>
+
+        {product.shortDescription && (
+          <p className="pc__desc">{product.shortDescription}</p>
+        )}
 
         <div className="pc__price">
           {product.price !== null ? (
@@ -80,8 +87,8 @@ export function ProductCard({ product }: ProductCardProps) {
                 )}
                 <span className="pc__price-val">₹{product.price.toLocaleString('en-IN')}</span>
               </div>
-              {originalPrice != null && (
-                <span className="pc__price-save">Save ₹{(originalPrice - product.price).toLocaleString('en-IN')}</span>
+              {savedAmount != null && (
+                <span className="pc__price-save">Save ₹{savedAmount.toLocaleString('en-IN')}</span>
               )}
             </>
           ) : (
@@ -89,7 +96,6 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Actions: full-width dark CTA + gold view link */}
         <div className="pc__actions">
           {!product.isDemo ? (
             product.price !== null ? (
