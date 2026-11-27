@@ -1,6 +1,146 @@
 'use client';
 import { useEffect, useState, useMemo } from 'react';
-import { fetchAdminInventory, updateInventoryStock, type AdminInventoryItem } from '../../../src/lib/supabase/admin';
+import { fetchAdminInventory, updateInventoryStock, updateProduct, type AdminInventoryItem } from '../../../src/lib/supabase/admin';
+
+function fmt(n: number) {
+  return `₹${n.toLocaleString('en-IN')}`;
+}
+
+type SortKey = 'name' | 'price' | 'category';
+
+type EditDraft = {
+  id: string;
+  name: string;
+  short_description: string;
+  price: string;
+  price_label: string;
+  in_stock: boolean;
+  is_demo: boolean;
+  warranty: string;
+  tags: string;
+};
+
+function EditModal({ item, onClose, onSave }: {
+  item: AdminInventoryItem;
+  onClose: () => void;
+  onSave: (updated: AdminInventoryItem) => void;
+}) {
+  const [draft, setDraft] = useState<EditDraft>({
+    id: item.id,
+    name: item.name,
+    short_description: item.short_description ?? '',
+    price: item.price != null ? String(item.price) : '',
+    price_label: item.price_label ?? '',
+    in_stock: item.in_stock,
+    is_demo: item.is_demo,
+    warranty: item.warranty ?? '',
+    tags: (item.tags ?? []).join(', '),
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  async function save() {
+    setSaving(true);
+    setError('');
+    try {
+      const priceNum = draft.price.trim() ? parseFloat(draft.price) : null;
+      if (draft.price.trim() && (isNaN(priceNum!) || priceNum! < 0)) {
+        throw new Error('Invalid price value.');
+      }
+      const payload = {
+        name: draft.name.trim(),
+        short_description: draft.short_description.trim(),
+        price: priceNum,
+        price_label: draft.price_label.trim() || null,
+        in_stock: draft.in_stock,
+        is_demo: draft.is_demo,
+        warranty: draft.warranty.trim() || null,
+        tags: draft.tags ? draft.tags.split(',').map(t => t.trim()).filter(Boolean) : null,
+      };
+      await updateProduct(item.id, payload);
+      onSave({ ...item, ...payload });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Save failed.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const field = (label: string, el: React.ReactNode) => (
+    <div style={{ marginBottom: 16 }}>
+      <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--admin-fg-muted)', marginBottom: 5 }}>
+        {label}
+      </label>
+      {el}
+    </div>
+  );
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid var(--admin-border)',
+    background: 'var(--admin-bg)', color: 'var(--admin-fg)', fontSize: 13, boxSizing: 'border-box',
+  };
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+    }} onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{
+        background: 'var(--admin-card)', borderRadius: 12, width: '100%', maxWidth: 520,
+        maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+      }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--admin-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h2 style={{ fontSize: 15, fontWeight: 700, margin: 0, color: 'var(--admin-fg)' }}>Edit Product</h2>
+            <p style={{ fontSize: 11, color: 'var(--admin-fg-muted)', margin: '3px 0 0', fontFamily: 'monospace' }}>{item.slug}</p>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--admin-fg-muted)', lineHeight: 1 }}>✕</button>
+        </div>
+
+        <div style={{ padding: '20px 24px' }}>
+          {field('Product Name', <input style={inputStyle} value={draft.name} onChange={e => setDraft(d => ({ ...d, name: e.target.value }))} />)}
+          {field('Short Description', <input style={inputStyle} value={draft.short_description} onChange={e => setDraft(d => ({ ...d, short_description: e.target.value }))} placeholder="One-line summary" />)}
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+            <div>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--admin-fg-muted)', marginBottom: 5 }}>Price (₹)</label>
+              <input style={inputStyle} type="number" min="0" value={draft.price} onChange={e => setDraft(d => ({ ...d, price: e.target.value }))} placeholder="Leave blank for on-request" />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--admin-fg-muted)', marginBottom: 5 }}>Price Label</label>
+              <input style={inputStyle} value={draft.price_label} onChange={e => setDraft(d => ({ ...d, price_label: e.target.value }))} placeholder="e.g. Starting from ₹X" />
+            </div>
+          </div>
+
+          {field('Warranty', <input style={inputStyle} value={draft.warranty} onChange={e => setDraft(d => ({ ...d, warranty: e.target.value }))} placeholder="e.g. 1 year" />)}
+          {field('Tags (comma-separated)', <input style={inputStyle} value={draft.tags} onChange={e => setDraft(d => ({ ...d, tags: e.target.value }))} placeholder="e.g. commercial, gas, stainless steel" />)}
+
+          <div style={{ display: 'flex', gap: 24, marginBottom: 20 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: 'var(--admin-fg)' }}>
+              <input type="checkbox" checked={draft.in_stock} onChange={e => setDraft(d => ({ ...d, in_stock: e.target.checked }))} />
+              In Stock
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: 'var(--admin-fg)' }}>
+              <input type="checkbox" checked={draft.is_demo} onChange={e => setDraft(d => ({ ...d, is_demo: e.target.checked }))} />
+              Demo only (hidden from shop)
+            </label>
+          </div>
+
+          {error && <p style={{ fontSize: 12, color: 'var(--admin-red)', marginBottom: 12 }}>{error}</p>}
+
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <button onClick={onClose} style={{ padding: '9px 20px', borderRadius: 6, border: '1px solid var(--admin-border)', background: 'none', color: 'var(--admin-fg)', fontSize: 13, cursor: 'pointer' }}>
+              Cancel
+            </button>
+            <button onClick={save} disabled={saving} style={{ padding: '9px 20px', borderRadius: 6, border: 'none', background: 'var(--admin-accent)', color: '#fff', fontSize: 13, fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+              {saving ? 'Saving…' : 'Save Changes'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function fmt(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
@@ -12,6 +152,7 @@ export default function AdminInventoryPage() {
   const [items, setItems] = useState<AdminInventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [editing, setEditing] = useState<AdminInventoryItem | null>(null);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'in_stock' | 'out_of_stock' | 'demo' | 'live'>('all');
   const [sort, setSort] = useState<SortKey>('category');
@@ -92,9 +233,22 @@ export default function AdminInventoryPage() {
   const avgPrice = pricedItems.length ? Math.round(pricedItems.reduce((s, i) => s + i.price!, 0) / pricedItems.length) : 0;
   const stockPct = items.length ? Math.round((inStockCount / items.length) * 100) : 0;
 
+  function handleSaved(updated: AdminInventoryItem) {
+    setItems(prev => prev.map(i => i.id === updated.id ? updated : i));
+    setEditing(null);
+  }
+
   return (
     <div>
       <title>Inventory | Admin</title>
+
+      {editing && (
+        <EditModal
+          item={editing}
+          onClose={() => setEditing(null)}
+          onSave={handleSaved}
+        />
+      )}
 
       {/* Stats Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 14, marginBottom: 24 }}>
@@ -240,7 +394,8 @@ export default function AdminInventoryPage() {
                         <th>Tags / Warranty</th>
                         <th style={{ textAlign: 'center' }}>Visibility</th>
                         <th style={{ textAlign: 'center' }}>Stock</th>
-                        <th style={{ textAlign: 'center' }}>Action</th>
+                        <th style={{ textAlign: 'center' }}>Stock Toggle</th>
+                        <th style={{ textAlign: 'center' }}>Edit</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -308,6 +463,18 @@ export default function AdminInventoryPage() {
                               {updating === i.id ? '…' : i.in_stock ? 'Mark Out' : 'Mark In'}
                             </button>
                           </td>
+                          <td style={{ textAlign: 'center' }}>
+                            <button
+                              onClick={() => setEditing(i)}
+                              style={{
+                                padding: '5px 14px', borderRadius: 5, border: '1px solid var(--admin-border)',
+                                background: 'none', color: 'var(--admin-accent)',
+                                fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
+                              }}
+                            >
+                              Edit
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -329,7 +496,8 @@ export default function AdminInventoryPage() {
                 <th>Tags / Warranty</th>
                 <th style={{ textAlign: 'center' }}>Visibility</th>
                 <th style={{ textAlign: 'center' }}>Stock</th>
-                <th style={{ textAlign: 'center' }}>Action</th>
+                <th style={{ textAlign: 'center' }}>Stock Toggle</th>
+                <th style={{ textAlign: 'center' }}>Edit</th>
               </tr>
             </thead>
             <tbody>
@@ -396,6 +564,18 @@ export default function AdminInventoryPage() {
                       }}
                     >
                       {updating === i.id ? '…' : i.in_stock ? 'Mark Out' : 'Mark In'}
+                    </button>
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    <button
+                      onClick={() => setEditing(i)}
+                      style={{
+                        padding: '5px 14px', borderRadius: 5, border: '1px solid var(--admin-border)',
+                        background: 'none', color: 'var(--admin-accent)',
+                        fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
+                      }}
+                    >
+                      Edit
                     </button>
                   </td>
                 </tr>
