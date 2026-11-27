@@ -107,7 +107,7 @@ export function BlogPage() {
             <span className="blog-hero__tag">Knowledge Base</span>
             <h1 className="blog-hero__title">Kitchen & Tandoor Insights</h1>
             <p className="blog-hero__sub">
-              Expert tips on equipment care, buying guides, and commercial kitchen best practices — straight from Raj Tandoor.
+              Expert tips on equipment care, buying guides, and commercial kitchen best practices, straight from Raj Tandoor.
             </p>
           </div>
           <div className="blog-hero__accent" aria-hidden="true" />

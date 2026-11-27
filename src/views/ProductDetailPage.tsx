@@ -37,7 +37,7 @@ const GENERAL_FAQ = [
   },
   {
     q: 'How do I clean and maintain the tandoor?',
-    a: 'Allow the tandoor to cool completely before cleaning. Brush out ash from the firebox. Wipe the stainless steel exterior with a damp cloth. The clay lining should not be scrubbed — light residue is normal and aids seasoning.',
+    a: 'Allow the tandoor to cool completely before cleaning. Brush out ash from the firebox. Wipe the stainless steel exterior with a damp cloth. The clay lining should not be scrubbed; light residue is normal and aids seasoning.',
   },
   {
     q: 'Can I customise the size or finish?',
@@ -183,7 +183,7 @@ export function ProductDetailPage() {
           businessName: raw.business,
           enquiryType: 'Bulk order enquiry',
           productInterest: product.name,
-          message: `Bulk order request — Qty: ${raw.quantity}. Requirements: ${raw.requirements ?? 'Not specified'}`,
+          message: `Bulk order request - Qty: ${raw.quantity}. Requirements: ${raw.requirements ?? 'Not specified'}`,
         }),
       });
       const json = await res.json();
@@ -271,7 +271,7 @@ export function ProductDetailPage() {
                 </span>
 
                 {product.isDemo && (
-                  <div className="pdp3__demo-banner" role="note">Demo — full details coming soon</div>
+                  <div className="pdp3__demo-banner" role="note">Demo: full details coming soon</div>
                 )}
               </div>
 
@@ -323,7 +323,7 @@ export function ProductDetailPage() {
                     </span>
                   </>
                 ) : (
-                  <span className="pdp3__stock pdp3__stock--out">Out of Stock — Contact Us</span>
+                  <span className="pdp3__stock pdp3__stock--out">Out of Stock. Contact Us</span>
                 )}
               </div>
 
@@ -344,7 +344,7 @@ export function ProductDetailPage() {
                 <div className="pdp3__size-row">
                   <p className="pdp3__size-label">
                     Size: <strong>{product.sizeLabel}</strong>
-                    {product.price !== null && <span className="pdp3__size-price"> — ₹{product.price.toLocaleString('en-IN')}</span>}
+                    {product.price !== null && <span className="pdp3__size-price"> - ₹{product.price.toLocaleString('en-IN')}</span>}
                   </p>
                   <div className="pdp3__size-chips">
                     {sizeVariants.map((v) => (

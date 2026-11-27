@@ -30,7 +30,7 @@ export function MapSection() {
       <div className="map-section__embed">
         <iframe
           src={contact.mapEmbedUrl}
-          title="Raj Tandoor & Kitchen Equipment — showroom location"
+          title="Raj Tandoor & Kitchen Equipment showroom location"
           className="map-section__iframe"
           allowFullScreen
           loading="lazy"

@@ -296,7 +296,7 @@ export default function AdminProductsPage() {
                   setEditing(prev => prev ? { ...prev, category: cat?.slug ?? '', category_label: cat?.name ?? '' } : prev);
                 }}
               >
-                <option value="">— Select a category —</option>
+                <option value="">Select a category</option>
                 {CATEGORIES.map(cat => (
                   <option key={cat.slug} value={cat.slug}>{cat.name}</option>
                 ))}

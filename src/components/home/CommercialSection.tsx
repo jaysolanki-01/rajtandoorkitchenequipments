@@ -64,7 +64,7 @@ export function CommercialSection() {
           <p className="eyebrow">For Commercial Buyers</p>
           <h2 id="cs-heading" className="cs__h2">Equipping a<br />Commercial Kitchen?</h2>
           <p className="cs__sub">
-            From a single restaurant to a full catering fleet — our team helps you pick the right equipment and arrange bulk pricing.
+            From a single restaurant to a full catering fleet, our team helps you pick the right equipment and arrange bulk pricing.
           </p>
         </header>
 

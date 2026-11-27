@@ -40,7 +40,7 @@ export function TermsPage() {
 
           <section>
             <h2>Intellectual Property</h2>
-            <p>All content on this website — including text, images, logos, and design — is the property of Raj Tandoor &amp; Kitchen Equipment or its licensors and is protected by applicable intellectual property laws. You may not reproduce or distribute any content without prior written permission.</p>
+            <p>All content on this website (including text, images, logos, and design) is the property of Raj Tandoor &amp; Kitchen Equipment or its licensors and is protected by applicable intellectual property laws. You may not reproduce or distribute any content without prior written permission.</p>
           </section>
 
           <section>

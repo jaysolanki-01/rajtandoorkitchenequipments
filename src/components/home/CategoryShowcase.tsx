@@ -35,7 +35,7 @@ export function CategoryShowcase() {
           <span className="eyebrow">What We Offer</span>
           <h2 id="cshow-heading" className="section-title">Browse All Categories</h2>
           <p className="section-subtitle">
-            From authentic clay tandoors to full commercial kitchen setups — everything under one roof.
+            From authentic clay tandoors to full commercial kitchen setups, everything under one roof.
           </p>
         </div>
         <Link href="/shop" className="cshow__header-link" aria-label="View all categories">

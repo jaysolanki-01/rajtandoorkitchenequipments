@@ -60,13 +60,13 @@ export const products: Product[] = [
   {
     id: 'ss-tandoor-mini',
     slug: 'stainless-steel-tandoor-mini',
-    name: 'Stainless Steel Tandoor — Mini',
+    name: 'Stainless Steel Tandoor - Mini',
     sizeGroup: 'ss-tandoor',
     sizeLabel: 'Mini',
     category: 'tandoors',
     categoryLabel: 'Tandoors',
     shortDescription: 'Compact stainless-steel tandoor ideal for small restaurants, home caterers, and food stalls. Clay-lined chamber, solid-fuel operation.',
-    description: `The Mini Stainless Steel Tandoor from Raj Tandoor is built for compact commercial use — perfect for small restaurants, cloud kitchens, and food stalls.
+    description: `The Mini Stainless Steel Tandoor from Raj Tandoor is built for compact commercial use, perfect for small restaurants, cloud kitchens, and food stalls.
 
 Features a clay-lined cooking chamber, removable lid, side carrying handles, and a front firebox for solid-fuel or gas operation. Stainless-steel body ensures durability and easy cleaning.
 
@@ -98,15 +98,15 @@ Contact us for bulk pricing and customisation options.`,
       'Removable lid with handle',
     ],
     faq: [
-      { q: 'What fuel can I use with this tandoor?', a: 'This model is designed for solid fuel (wood or charcoal). An optional gas burner attachment is available — contact us for details.' },
+      { q: 'What fuel can I use with this tandoor?', a: 'This model is designed for solid fuel (wood or charcoal). An optional gas burner attachment is available. Contact us for details.' },
       { q: 'Is the clay lining replaceable?', a: 'Yes, the clay lining can be replaced. Contact us for guidance on re-lining your tandoor.' },
-      { q: 'Is professional installation required?', a: 'No — solid-fuel tandoors are ready to use once placed and seasoned. Season the tandoor with coal for 2–3 cycles before first use.' },
+      { q: 'Is professional installation required?', a: 'No, solid-fuel tandoors are ready to use once placed and seasoned. Season the tandoor with coal for 2-3 cycles before first use.' },
     ],
   },
   {
     id: 'ss-tandoor-medium',
     slug: 'stainless-steel-tandoor-medium',
-    name: 'Stainless Steel Tandoor — Medium',
+    name: 'Stainless Steel Tandoor - Medium',
     sizeGroup: 'ss-tandoor',
     sizeLabel: 'Medium',
     category: 'tandoors',
@@ -146,7 +146,7 @@ Available in gas-burner and solid-fuel variants. Contact us for specifications a
       'Dual side handles',
     ],
     faq: [
-      { q: 'Is this model compatible with a gas burner?', a: 'Yes — this model supports both solid fuel and an optional gas burner attachment. Contact us to add a gas burner to your order.' },
+      { q: 'Is this model compatible with a gas burner?', a: 'Yes, this model supports both solid fuel and an optional gas burner attachment. Contact us to add a gas burner to your order.' },
       { q: 'How much can this tandoor cook at once?', a: 'The medium chamber fits multiple naan or several skewers simultaneously. Exact capacity depends on the size of items being prepared.' },
       { q: 'How long does delivery take?', a: 'We typically dispatch within 3–5 business days. Delivery time to your location is confirmed at order placement.' },
     ],
@@ -154,13 +154,13 @@ Available in gas-burner and solid-fuel variants. Contact us for specifications a
   {
     id: 'ss-tandoor-large',
     slug: 'stainless-steel-tandoor-large',
-    name: 'Stainless Steel Tandoor — Large',
+    name: 'Stainless Steel Tandoor - Large',
     sizeGroup: 'ss-tandoor',
     sizeLabel: 'Large',
     category: 'tandoors',
     categoryLabel: 'Tandoors',
     shortDescription: 'Large-capacity commercial tandoor for high-volume restaurants, banquet halls, and catering operations.',
-    description: `The Large Stainless Steel Tandoor is engineered for high-volume commercial cooking — banquet kitchens, large restaurants, and outdoor catering setups.
+    description: `The Large Stainless Steel Tandoor is engineered for high-volume commercial cooking: banquet kitchens, large restaurants, and outdoor catering setups.
 
 Wide mouth opening allows simultaneous cooking of multiple naan and skewer batches. Reinforced SS 304 body with extra-thick clay lining maintains consistent temperatures during extended cooking sessions.
 
@@ -200,7 +200,7 @@ Comes with professional stabilising frame for countertop or floor installation.`
     category: 'tandoors',
     categoryLabel: 'Tandoors',
     shortDescription: 'Premium decorative tandoor with copper finish exterior. Ideal for open-kitchen restaurants and live cooking stations.',
-    description: `The Copper Finish Tandoor combines authentic cooking performance with a striking decorative exterior — perfect for open kitchens, live counters, and premium dining setups.
+    description: `The Copper Finish Tandoor combines authentic cooking performance with a striking decorative exterior, perfect for open kitchens, live counters, and premium dining setups.
 
 Stainless steel construction with a hand-applied copper finish. Clay-lined chamber delivers authentic tandoori flavour. This model is frequently used as a centrepiece in premium restaurant interiors.
 
@@ -229,14 +229,14 @@ Available in mini, medium, and large sizes. Contact us for custom finishes and s
     badge: 'Premium',
     sku: 'RT-CPT-01',
     faq: [
-      { q: 'Is this tandoor suitable for outdoor use?', a: 'Yes — the copper finish is designed to withstand commercial kitchen conditions. Outdoor use is possible in covered areas. Avoid prolonged exposure to direct rain.' },
+      { q: 'Is this tandoor suitable for outdoor use?', a: 'Yes, the copper finish is designed to withstand commercial kitchen conditions. Outdoor use is possible in covered areas. Avoid prolonged exposure to direct rain.' },
       { q: 'Can I customise the finish or size?', a: 'Yes, Raj Tandoor offers custom finishes and sizes. Contact us with your requirements.' },
     ],
   },
   {
     id: 'gas-tandoor-compact',
     slug: 'gas-tandoor-compact',
-    name: 'Gas Tandoor — Compact',
+    name: 'Gas Tandoor - Compact',
     sizeGroup: 'gas-tandoor',
     sizeLabel: 'Compact',
     category: 'tandoors',
@@ -272,10 +272,10 @@ Comes with gas regulator fitting (LPG cylinder not included). Professional insta
     included: [
       'Compact gas tandoor with clay-lined chamber',
       'Gas regulator fitting',
-      '(LPG cylinder not included — source locally)',
+      '(LPG cylinder not included, source locally)',
     ],
     faq: [
-      { q: 'Does this come with an LPG cylinder?', a: 'No — the LPG cylinder is not included and must be sourced locally. The tandoor includes a gas regulator fitting.' },
+      { q: 'Does this come with an LPG cylinder?', a: 'No, the LPG cylinder is not included and must be sourced locally. The tandoor includes a gas regulator fitting.' },
       { q: 'Is professional installation required?', a: 'Professional gas fitting is strongly recommended. The gas regulator fitting is included; a certified gas plumber should connect the appliance to your supply.' },
       { q: 'What is the heat-up time?', a: 'Gas tandoors typically reach cooking temperature faster than solid-fuel models. Exact heat-up time depends on gas pressure and ambient conditions.' },
     ],
@@ -283,7 +283,7 @@ Comes with gas regulator fitting (LPG cylinder not included). Professional insta
   {
     id: 'gas-tandoor-commercial',
     slug: 'gas-tandoor-commercial',
-    name: 'Gas Tandoor — Commercial',
+    name: 'Gas Tandoor - Commercial',
     sizeGroup: 'gas-tandoor',
     sizeLabel: 'Commercial',
     category: 'tandoors',
@@ -320,7 +320,7 @@ Includes gas regulator and fitting kit. LPG cylinder not included. Professional 
       'Commercial gas tandoor with extra-thick clay lining',
       'Gas regulator',
       'Fitting kit',
-      '(LPG cylinder not included — source locally)',
+      '(LPG cylinder not included, source locally)',
     ],
   },
 
@@ -332,7 +332,7 @@ Includes gas regulator and fitting kit. LPG cylinder not included. Professional 
     category: 'kitchen-equipment',
     categoryLabel: 'Kitchen Equipment',
     shortDescription: 'Electric commercial roti maker for consistent, uniform rotis. Suitable for restaurants, canteens, and catering operations.',
-    description: `The Commercial Roti Maker from Raj Tandoor produces uniform, consistent rotis at scale — ideal for restaurants, school canteens, corporate cafeterias, and catering operations.
+    description: `The Commercial Roti Maker from Raj Tandoor produces uniform, consistent rotis at scale, ideal for restaurants, school canteens, corporate cafeterias, and catering operations.
 
 Non-stick heated plates press and cook rotis simultaneously, reducing preparation time significantly compared to hand-rolling. Adjustable pressure and temperature settings accommodate different dough types.
 
@@ -369,7 +369,7 @@ Capacity and power specifications available on request. Contact us for volume pr
 
 Cast iron and stainless steel construction ensures longevity. The lever mechanism delivers even pressure across the dough ball, producing perfectly round chapatis of uniform thickness every time.
 
-No electricity required — suitable for kitchens with limited electrical capacity.`,
+No electricity required, suitable for kitchens with limited electrical capacity.`,
     image: '/images/raj-tandoor-product.webp',
     images: ['/images/raj-tandoor-product.webp'],
     price: 4500,
@@ -382,7 +382,7 @@ No electricity required — suitable for kitchens with limited electrical capaci
     ],
     features: [
       'Heavy-duty cast iron and stainless steel',
-      'Manual lever press — no electricity needed',
+      'Manual lever press, no electricity needed',
       'Consistent round shape and thickness',
       'Easy to operate and clean',
       'Durable for daily commercial use',
@@ -394,7 +394,7 @@ No electricity required — suitable for kitchens with limited electrical capaci
   {
     id: 'commercial-dough-mixer',
     slug: 'commercial-dough-mixer',
-    name: 'Commercial Dough Mixer — 10 kg',
+    name: 'Commercial Dough Mixer - 10 kg',
     category: 'kitchen-equipment',
     categoryLabel: 'Kitchen Equipment',
     shortDescription: '10 kg capacity spiral dough mixer for commercial bread, roti, and naan production. Heavy-duty motor, stainless steel bowl.',
@@ -466,7 +466,7 @@ Compatible with all Raj Tandoor models.`,
     category: 'accessories',
     categoryLabel: 'Accessories',
     shortDescription: 'Complete cleaning kit for stainless-steel tandoors. Includes ash tray, wire brush, and cleaning cloth.',
-    description: `Keep your tandoor in top condition with the Raj Tandoor Cleaning Kit — everything you need for regular maintenance and deep cleaning.
+    description: `Keep your tandoor in top condition with the Raj Tandoor Cleaning Kit, everything you need for regular maintenance and deep cleaning.
 
 Includes: 1× ash tray insert, 1× long-handled wire brush for the clay chamber, 1× stainless steel exterior polish cloth.
 
@@ -549,7 +549,7 @@ export const categories: Category[] = [
     href: '/kitchen-equipment',
     image: '/images/raj-tandoor-product.webp',
     isDemo: true,
-    demoNote: 'Product details coming soon — contact us to enquire.',
+    demoNote: 'Product details coming soon. Contact us to enquire.',
   },
   {
     slug: 'accessories',
@@ -558,7 +558,7 @@ export const categories: Category[] = [
     href: '/shop?category=accessories',
     image: '/images/raj-tandoor-product.webp',
     isDemo: true,
-    demoNote: 'Product details coming soon — contact us to enquire.',
+    demoNote: 'Product details coming soon. Contact us to enquire.',
   },
 ];
 

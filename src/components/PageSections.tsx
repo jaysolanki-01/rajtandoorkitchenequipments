@@ -54,7 +54,7 @@ export function ProductCollection() {
             </div>
             <div className="product-card__body">
               <h3>Stainless-Steel Commercial Tandoor</h3>
-              <p>A fully welded stainless-steel body with an authentic refractory-clay cooking chamber — built to perform in demanding professional kitchens day after day.</p>
+              <p>A fully welded stainless-steel body with an authentic refractory-clay cooking chamber, built to perform in demanding professional kitchens day after day.</p>
               <ul className="tick-list">
                 {productFeatures.map((f) => (
                   <li key={f}>{f}</li>
@@ -102,7 +102,7 @@ export function AboutSection() {
         <div>
           <h2 id="about-title" className="section__title--sm">{brand.fullName}</h2>
           <p className="about__lead">
-            We specialise in commercial tandoors and professional kitchen equipment — combining traditional tandoor cooking
+            We specialise in commercial tandoors and professional kitchen equipment, combining traditional tandoor cooking
             with modern stainless-steel construction built for the demands of real service.
           </p>
           <ul className="about__facts">
@@ -182,7 +182,7 @@ export function EnquirySection() {
             <p className="enquiry__status" role="status" aria-live="polite">
               {status === 'sent' && 'Your email app should now open with your enquiry ready to send.'}
               {status === 'unconfigured' &&
-                'Online enquiries are not connected yet. Please contact Raj Tandoor directly — thank you.'}
+                'Online enquiries are not connected yet. Please contact Raj Tandoor directly. Thank you.'}
             </p>
           </div>
         </form>

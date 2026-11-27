@@ -100,7 +100,7 @@ export function CustomersSection() {
     <section className="cust" aria-labelledby="cust-heading">
       <div className="cust__header container">
         <h2 id="cust-heading" className="cust__h2">Trusted by Our Customers</h2>
-        <p className="cust__sub">From 5-star hotel chains to national retail networks — our equipment powers commercial kitchens across India.</p>
+        <p className="cust__sub">From 5-star hotel chains to national retail networks. Our equipment powers commercial kitchens across India.</p>
       </div>
       <div className="cust__marquee" aria-hidden="true">
         {categories.map((cat, i) => (

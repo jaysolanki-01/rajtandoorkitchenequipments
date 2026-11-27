@@ -163,7 +163,7 @@ export function AccountAddressesPage() {
                         <p className="acct-addr-card__name">{addr.name}</p>
                         <p className="acct-addr-card__lines">
                           {addr.line1}{addr.line2 ? `, ${addr.line2}` : ''}<br />
-                          {addr.city}, {addr.state} — {addr.pincode}<br />
+                          {addr.city}, {addr.state} - {addr.pincode}<br />
                           {addr.country}
                           {addr.phone && <><br />{addr.phone}</>}
                         </p>

@@ -180,7 +180,7 @@ export function AboutPage() {
   return (
     <>
       <title>{`About Us | ${seo.title}`}</title>
-      <meta name="description" content="Learn about Raj Tandoor & Kitchen Equipment — suppliers of stainless-steel tandoors and professional kitchen equipment for commercial kitchens." />
+      <meta name="description" content="Learn about Raj Tandoor & Kitchen Equipment, suppliers of stainless-steel tandoors and professional kitchen equipment for commercial kitchens." />
       <link rel="canonical" href={`${seo.siteUrl}/about`} />
 
       <main id="main" tabIndex={-1} className="ab-page">
@@ -268,7 +268,7 @@ export function AboutPage() {
               </p>
               <p className="ab-story__para">
                 Today our stainless-steel tandoors grace the kitchens of restaurants, hotels, dhabas,
-                and catering businesses across India — trusted for their consistent performance,
+                and catering businesses across India, trusted for their consistent performance,
                 hygienic construction, and low maintenance.
               </p>
               <div className="ab-story__highlights">
@@ -309,7 +309,7 @@ export function AboutPage() {
               <span className="ab-label">What We Offer</span>
               <h2 id="offer-h2" className="ab-h2 ab-h2--center">Products Built for Professionals</h2>
               <p className="ab-offer__intro">
-                Every product in our range is designed from the ground up for commercial use —
+                Every product in our range is designed from the ground up for commercial use,
                 not scaled-up home appliances, but purpose-built professional equipment.
               </p>
             </Reveal>
@@ -390,7 +390,7 @@ export function AboutPage() {
                 {
                   svg: <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="28" width="36" height="14" rx="3"/><rect x="14" y="18" width="20" height="12" rx="2"/><rect x="20" y="10" width="8" height="10" rx="1.5"/><line x1="12" y1="42" x2="12" y2="38"/><line x1="36" y1="42" x2="36" y2="38"/></svg>,
                   title: 'Commercial-Grade Build',
-                  desc: 'Every product is engineered for daily commercial kitchen use — not scaled-up domestic adaptations.',
+                  desc: 'Every product is engineered for daily commercial kitchen use, not scaled-up domestic adaptations.',
                   tag: 'Pro-grade',
                 },
                 {
@@ -408,7 +408,7 @@ export function AboutPage() {
                 {
                   svg: <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="24" width="12" height="16" rx="2"/><rect x="18" y="16" width="12" height="24" rx="2"/><rect x="28" y="8" width="12" height="32" rx="2"/><line x1="6" y1="40" x2="42" y2="40"/></svg>,
                   title: 'Multiple Size Options',
-                  desc: 'From countertop models to large floor tandoors — the right size for every kitchen and volume.',
+                  desc: 'From countertop models to large floor tandoors, the right size for every kitchen and volume.',
                   tag: 'Flexible',
                 },
                 {
@@ -506,7 +506,7 @@ export function AboutPage() {
                   Professional kitchens need equipment that performs every single service,
                   every single day. That's the standard we build to.
                 </p>
-                <span className="ab-promise__quote-attr">— Raj Tandoor &amp; Kitchen Equipment</span>
+                <span className="ab-promise__quote-attr">Raj Tandoor &amp; Kitchen Equipment</span>
               </div>
             </Reveal>
           </div>

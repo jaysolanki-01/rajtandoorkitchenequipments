@@ -20,7 +20,7 @@ const MESSAGES = [
   },
   {
     icon: '✨',
-    text: 'ISI certified tandoors — built for demanding commercial kitchens',
+    text: 'ISI certified tandoors, built for demanding commercial kitchens',
     cta: { label: 'View Products', href: '/shop' },
   },
 ];
