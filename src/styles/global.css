@@ -57,6 +57,11 @@ html.has-ann { --ann-h: 44px; }
 /* ── Reset / Base ──────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
   background: var(--rt-bg);
@@ -65,10 +70,13 @@ body {
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 img, video { max-width: 100%; display: block; }
-a { color: inherit; }
+a { color: inherit; -webkit-tap-highlight-color: transparent; }
+button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+a, [role="button"] { touch-action: manipulation; }
 
 :focus-visible {
   outline: 2px solid var(--rt-teal);
@@ -149,9 +157,11 @@ a { color: inherit; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
   padding: 0.75rem 1.75rem; border-radius: 999px;
+  min-height: 44px;
   font-family: var(--font-display); font-size: 0.9rem; font-weight: 600;
   text-decoration: none; cursor: pointer;
   border: 1.5px solid transparent;
+  touch-action: manipulation;
   transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.15s var(--ease);
 }
 .btn:active { transform: scale(0.97); }
@@ -415,13 +425,14 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.1);
   background: rgba(255,255,255,0.05);
   color: rgba(255,255,255,0.78);
   cursor: pointer;
+  touch-action: manipulation;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
   flex-shrink: 0;
 }
@@ -576,12 +587,13 @@ a { color: inherit; }
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  width: 42px; height: 42px;
+  width: 44px; height: 44px;
   padding: 0 11px;
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 999px;
   cursor: pointer;
+  touch-action: manipulation;
   transition: background 0.2s;
 }
 .sh__burger:hover { background: rgba(255,255,255,0.12); }
@@ -613,6 +625,8 @@ a { color: inherit; }
   transition: transform 0.38s cubic-bezier(0.22, 0.61, 0.36, 1),
               visibility 0s 0.38s;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   z-index: 99;
   display: flex;
   flex-direction: column;
@@ -723,7 +737,7 @@ a { color: inherit; }
 @media (max-width: 480px) {
   .sh__inner { gap: 0.4rem; }
   .sh__actions { gap: 0.1rem; }
-  .sh__icon-btn { width: 36px; height: 36px; }
+  .sh__icon-btn { width: 44px; height: 44px; }
   /* Keep logo even smaller on small phones */
   .sh__logo img { height: 44px !important; max-width: 155px !important; }
 }
@@ -1239,11 +1253,13 @@ a { color: inherit; }
 
 .pc__btn-add {
   width: 100%; padding: 0.72rem 1rem;
+  min-height: 44px;
   background: var(--rt-gold); color: #1a1308;
   font-size: 0.82rem; font-weight: 800; letter-spacing: 0.02em;
   border: none; border-radius: 10px; cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   text-decoration: none;
+  touch-action: manipulation;
   transition: background 0.18s ease, transform 0.14s ease;
 }
 .pc__btn-add:hover { background: var(--rt-gold-h); transform: scale(1.015); }
@@ -1251,7 +1267,8 @@ a { color: inherit; }
 .pc__btn-view {
   text-align: center; font-size: 0.75rem; font-weight: 500;
   color: rgba(255,255,255,0.58); text-decoration: none;
-  padding: 0.3rem 0; display: block;
+  padding: 0.5rem 0; min-height: 44px;
+  display: flex; align-items: center; justify-content: center;
   transition: color 0.15s ease;
 }
 .pc__btn-view:hover { color: #fff; }
