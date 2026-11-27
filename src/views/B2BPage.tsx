@@ -49,7 +49,7 @@ function CountUp({ to, suffix = '' }: { to: number; suffix?: string }) {
 
 const INDUSTRIES = [
   { icon: '🍽️', name: 'Restaurant Chains', count: '120+', desc: 'From single outlets to 50‑location chains needing consistent equipment across every site.' },
-  { icon: '🏨', name: 'Hotel Groups', count: '80+', desc: 'Five‑star banquet kitchens to boutique property setups — custom‑built for hospitality specs.' },
+  { icon: '🏨', name: 'Hotel Groups', count: '80+', desc: 'Five‑star banquet kitchens to boutique property setups, custom‑built for hospitality specs.' },
   { icon: '📦', name: 'Cloud Kitchens', count: '90+', desc: 'High‑volume delivery-first kitchens where reliability and throughput are everything.' },
   { icon: '🎪', name: 'Catering Services', count: '150+', desc: 'Portable and fixed installations for events, weddings, and corporate catering.' },
   { icon: '🏫', name: 'Institutions', count: '60+', desc: 'Schools, hospitals, and college canteens with demanding volume requirements.' },
@@ -57,7 +57,7 @@ const INDUSTRIES = [
 ];
 
 const PROCESS = [
-  { n: '01', label: 'Enquire', desc: 'Tell us your kitchen size, cuisine type, volume, and budget. No forms — just a call or WhatsApp.' },
+  { n: '01', label: 'Enquire', desc: 'Tell us your kitchen size, cuisine type, volume, and budget. No forms, just a call or WhatsApp.' },
   { n: '02', label: 'Get Quoted', desc: 'Receive a detailed B2B proposal with volume pricing within 24 hours.' },
   { n: '03', label: 'We Build', desc: 'Custom-fabricated to your exact specs. Standard lead time: 2–3 weeks.' },
   { n: '04', label: 'Installed', desc: 'Pan-India delivery with professional installation and staff training included.' },
@@ -128,7 +128,7 @@ export function B2BPage() {
                 </span>
               </h1>
               <p className="b2b-hero__sub">
-                Volume pricing, custom fabrication, dedicated account management — everything a growing food business needs to equip fast and scale confidently.
+                Volume pricing, custom fabrication, dedicated account management. Everything a growing food business needs to equip fast and scale confidently.
               </p>
               <div className="b2b-hero__ctas">
                 <a href={`https://wa.me/${'+919687861313'.replace(/\D/g, '')}?text=Hi%2C%20I%20want%20to%20enquire%20about%20B2B%20pricing`}
@@ -221,7 +221,7 @@ export function B2BPage() {
           <div className="container">
             <div className={`b2b-section__header${procReveal.vis ? ' b2b-vis' : ''}`}>
               <span className="b2b-eyebrow">How it works</span>
-              <h2 className="b2b-h2">From enquiry to installed — in four steps</h2>
+              <h2 className="b2b-h2">From enquiry to installed, in four steps</h2>
             </div>
             <div className={`b2b-process${procReveal.vis ? ' b2b-vis' : ''}`}>
               {PROCESS.map((step, i) => (

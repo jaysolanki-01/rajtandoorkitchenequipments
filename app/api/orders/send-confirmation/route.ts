@@ -170,7 +170,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         from: 'Raj Tandoor <orders@rajtandoor.in>',
         to: email,
-        subject: `Order Confirmed: ${orderNumber} — Raj Tandoor`,
+        subject: `Order Confirmed: ${orderNumber} - Raj Tandoor`,
         html,
       }),
     });

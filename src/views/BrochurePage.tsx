@@ -19,7 +19,7 @@ const BROCHURES: Brochure[] = [
     id: 'full-catalog',
     title: 'Full Product Catalog',
     subtitle: '2025 Edition',
-    desc: 'Our complete range of commercial tandoors, kitchen equipment, and accessories — specs, pricing guidance, and configuration options all in one document.',
+    desc: 'Our complete range of commercial tandoors, kitchen equipment, and accessories. Specs, pricing guidance, and configuration options all in one document.',
     pages: '48 pages',
     items: ['All 14 product categories', 'Technical specifications', 'Pricing guidance', 'Installation notes'],
     color: '#c3a268',
@@ -28,7 +28,7 @@ const BROCHURES: Brochure[] = [
     id: 'tandoor-range',
     title: 'Tandoor Equipment Range',
     subtitle: 'Specialist Brochure',
-    desc: 'Deep dive into our stainless steel, copper finish, and gas tandoors. Clay-lined to commercial gas — every model, every size, side by side.',
+    desc: 'Deep dive into our stainless steel, copper finish, and gas tandoors. Clay-lined to commercial gas, every model, every size, side by side.',
     pages: '20 pages',
     items: ['SS & copper tandoor range', 'Gas vs solid-fuel comparison', 'Size & capacity guide', 'Accessories & spares'],
     color: '#b45309',
@@ -37,7 +37,7 @@ const BROCHURES: Brochure[] = [
     id: 'kitchen-solutions',
     title: 'Commercial Kitchen Solutions',
     subtitle: 'Equipment Guide',
-    desc: 'Cooking ranges, burners, food prep machines, refrigeration, ventilation — everything needed to outfit a commercial kitchen from scratch.',
+    desc: 'Cooking ranges, burners, food prep machines, refrigeration, ventilation: everything needed to outfit a commercial kitchen from scratch.',
     pages: '32 pages',
     items: ['Cooking ranges & burners', 'Food prep & bakery', 'Refrigeration & cold storage', 'Ventilation & exhaust'],
     color: '#0369a1',
@@ -98,7 +98,7 @@ export function BrochurePage() {
               <span className="brochure-hero__tag">Free Download</span>
               <h1 className="brochure-hero__title">Product Catalogs & Brochures</h1>
               <p className="brochure-hero__sub">
-                Everything you need to plan your commercial kitchen — full specs, dimensions, and pricing guidance,
+                Everything you need to plan your commercial kitchen. Full specs, dimensions, and pricing guidance,
                 neatly packaged for sharing with your team or architect.
               </p>
               <div className="brochure-hero__actions">
@@ -166,12 +166,12 @@ export function BrochurePage() {
               <div className="brochure-form-copy">
                 <h2 className="brochure-form-title">Get It in Your Inbox</h2>
                 <p className="brochure-form-desc">
-                  Fill in your details and we'll email you the brochure of your choice — usually within one business day.
+                  Fill in your details and we'll email you the brochure of your choice, usually within one business day.
                 </p>
                 <ul className="brochure-form-perks" role="list">
                   <li>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
-                    No spam — just the brochure
+                    No spam, just the brochure
                   </li>
                   <li>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>

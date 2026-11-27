@@ -111,7 +111,7 @@ export function CategoryGrid() {
           <div className="ccat__head-left">
             <span className="ccat__eyebrow">Product Range</span>
             <h2 className="ccat__h2" id="ccat-heading">
-              Every piece your kitchen needs —<br />
+              Every piece your kitchen needs,<br />
               <em>under one roof</em>
             </h2>
           </div>

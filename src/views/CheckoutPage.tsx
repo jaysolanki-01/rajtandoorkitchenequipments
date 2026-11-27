@@ -215,7 +215,7 @@ function CoCouponSection({
         <div className="co-coupon__applied" role="status">
           <div className="co-coupon__applied-inner">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><strong>{coupon.appliedCode}</strong> applied — saving ₹{coupon.discount.toLocaleString('en-IN')}</span>
+            <span><strong>{coupon.appliedCode}</strong> applied, saving ₹{coupon.discount.toLocaleString('en-IN')}</span>
           </div>
           <button type="button" className="co-coupon__remove" onClick={onRemove} aria-label="Remove coupon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -284,7 +284,7 @@ function CoCouponSection({
           {offersOpen && (
             <div className="co-coupon__offers-body">
               <p className="co-coupon__disclaimer">
-                Illustrative examples only — actual eligibility and amounts are configured in your admin panel.
+                Illustrative examples only. Actual eligibility and amounts are configured in your admin panel.
               </p>
               <ul className="co-coupon__cards" role="list">
                 {DEMO_COUPONS.map(c => {

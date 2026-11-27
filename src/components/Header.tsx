@@ -24,7 +24,7 @@ export function Header() {
   return (
     <header className={`site-header${scrolled ? ' is-scrolled' : ''}${open ? ' is-open' : ''}`}>
       <div className="site-header__inner">
-        <a href="#top" className="site-header__logo" aria-label="Raj Tandoor and Kitchen Equipment — home">
+        <a href="#top" className="site-header__logo" aria-label="Raj Tandoor and Kitchen Equipment home">
           <BrandLockup />
         </a>
 

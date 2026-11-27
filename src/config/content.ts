@@ -117,7 +117,7 @@ export const chapters: ChapterContent[] = [
     navLabel: 'Details',
     eyebrow: 'Built from the details',
     heading: 'Every detail\nhas a purpose.',
-    body: 'From the front firebox opening to the stable supporting base — each design decision serves the demands of a working professional kitchen.',
+    body: 'From the front firebox opening to the stable supporting base, each design decision serves the demands of a working professional kitchen.',
     mobileBody: 'Every design detail built for a working professional kitchen.',
     features: [
       { id: 'firebox', label: 'Front Firebox Access' },
@@ -131,7 +131,7 @@ export const chapters: ChapterContent[] = [
     navLabel: 'Enquire',
     eyebrow: 'Raj Tandoor & Kitchen Equipment',
     heading: 'The right tandoor\nfor your kitchen.',
-    body: 'From single-kitchen restaurants to large catering operations — explore our tandoor collection and find the right equipment for the way you work.',
+    body: 'From single-kitchen restaurants to large catering operations, explore our tandoor collection and find the right equipment for the way you work.',
     mobileBody: 'Find the right tandoor for your restaurant, catering or hospitality operation.',
     ctas: [
       { label: 'View Our Tandoors', href: links.exploreTandoors, variant: 'primary' },

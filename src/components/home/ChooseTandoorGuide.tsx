@@ -20,7 +20,7 @@ const considerations = [
   {
     num: '04',
     title: 'Intended Cooking Application',
-    body: 'Different cooking applications — naan bread, tandoori chicken, kebabs, or mixed menus — may have different equipment requirements. Discuss these with the Raj Tandoor team.',
+    body: 'Different cooking applications (naan bread, tandoori chicken, kebabs, or mixed menus) may have different equipment requirements. Discuss these with the Raj Tandoor team.',
   },
   {
     num: '05',

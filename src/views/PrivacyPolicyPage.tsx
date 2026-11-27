@@ -5,7 +5,7 @@ export function PrivacyPolicyPage() {
   return (
     <>
       <title>{`Privacy Policy | ${seo.title}`}</title>
-      <meta name="description" content="Privacy policy for Raj Tandoor & Kitchen Equipment — how we collect, use, and protect your data." />
+      <meta name="description" content="Privacy policy for Raj Tandoor & Kitchen Equipment. How we collect, use, and protect your data." />
 
       <main id="main" tabIndex={-1} className="page-main">
         <div className="container policy-page">
