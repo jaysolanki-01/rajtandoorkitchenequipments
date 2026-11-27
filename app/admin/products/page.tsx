@@ -76,6 +76,11 @@ export default function AdminProductsPage() {
   const [urlInput, setUrlInput] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Quick inline update state
+  const [togglingStock, setTogglingStock] = useState<string | null>(null);
+  const [editingPrice, setEditingPrice] = useState<string | null>(null);
+  const [priceInput, setPriceInput] = useState('');
+
   useEffect(() => {
     fetchAdminProducts().then(setProducts).finally(() => setLoading(false));
   }, []);
@@ -193,6 +198,36 @@ export default function AdminProductsPage() {
     }
   }
 
+  async function toggleStock(p: AdminProduct) {
+    setTogglingStock(p.id);
+    try {
+      const newVal = !p.in_stock;
+      await updateProduct(p.id, { in_stock: newVal });
+      setProducts(prev => prev.map(x => x.id === p.id ? { ...x, in_stock: newVal } : x));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Update failed');
+    } finally {
+      setTogglingStock(null);
+    }
+  }
+
+  function startPriceEdit(p: AdminProduct) {
+    setEditingPrice(p.id);
+    setPriceInput(p.price != null ? String(p.price) : '');
+  }
+
+  async function savePriceEdit(p: AdminProduct) {
+    setEditingPrice(null);
+    const newPrice = priceInput.trim() === '' ? null : Number(priceInput);
+    if (newPrice === p.price) return;
+    try {
+      await updateProduct(p.id, { price: newPrice });
+      setProducts(prev => prev.map(x => x.id === p.id ? { ...x, price: newPrice } : x));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Price update failed');
+    }
+  }
+
   return (
     <div>
       <title>Products | Admin</title>
@@ -253,11 +288,41 @@ export default function AdminProductsPage() {
                     </div>
                   </td>
                   <td style={{ fontSize: 12, textTransform: 'capitalize' }}>{p.category_label || p.category.replace(/-/g, ' ')}</td>
-                  <td style={{ fontWeight: 600, fontSize: 13 }}>{fmt(p.price)}</td>
                   <td>
-                    <span className={`admin-badge ${p.in_stock ? 'badge-done' : 'badge-cancelled'}`}>
-                      {p.in_stock ? 'In Stock' : 'Out of Stock'}
-                    </span>
+                    {editingPrice === p.id ? (
+                      <input
+                        autoFocus
+                        type="number" min={0}
+                        value={priceInput}
+                        onChange={e => setPriceInput(e.target.value)}
+                        onBlur={() => savePriceEdit(p)}
+                        onKeyDown={e => { if (e.key === 'Enter') savePriceEdit(p); if (e.key === 'Escape') setEditingPrice(null); }}
+                        style={{ width: 110, padding: '4px 8px', borderRadius: 5, border: '1.5px solid var(--admin-accent)', background: 'var(--admin-bg)', color: 'var(--admin-fg)', fontSize: 13, fontWeight: 600 }}
+                        placeholder="Leave blank = on request"
+                      />
+                    ) : (
+                      <button
+                        title="Click to edit price"
+                        onClick={() => startPriceEdit(p)}
+                        style={{ background: 'none', border: '1px dashed transparent', borderRadius: 5, padding: '3px 6px', cursor: 'pointer', fontWeight: 600, fontSize: 13, color: 'var(--admin-fg)' }}
+                        onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--admin-border)')}
+                        onMouseLeave={e => (e.currentTarget.style.borderColor = 'transparent')}
+                      >
+                        {fmt(p.price)} ✎
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      title="Click to toggle stock"
+                      disabled={togglingStock === p.id}
+                      onClick={() => toggleStock(p)}
+                      style={{ background: 'none', border: 'none', padding: 0, cursor: togglingStock === p.id ? 'not-allowed' : 'pointer', opacity: togglingStock === p.id ? 0.6 : 1 }}
+                    >
+                      <span className={`admin-badge ${p.in_stock ? 'badge-done' : 'badge-cancelled'}`}>
+                        {togglingStock === p.id ? '…' : p.in_stock ? 'In Stock' : 'Out of Stock'}
+                      </span>
+                    </button>
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
