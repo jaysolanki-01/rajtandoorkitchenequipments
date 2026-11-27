@@ -1,32 +1,33 @@
 'use client';
+import { useState } from 'react';
 
-type Brand = { name: string; logo?: string };
+type Brand = { name: string; logo: string };
 
 const categories: { label: string; brands: Brand[] }[] = [
   {
     label: 'Retail',
     brands: [
-      { name: 'Easyday' },
-      { name: 'Reliance Fresh' },
-      { name: "Spencer's" },
-      { name: "Nature's Basket" },
-      { name: 'Aditya Birla Retail', logo: '/logos/aditya-birla.webp' },
-      { name: 'Foodworld' },
+      { name: 'Easyday',            logo: 'https://logo.clearbit.com/bhartiretail.com' },
+      { name: 'Reliance Fresh',     logo: 'https://logo.clearbit.com/reliancefresh.com' },
+      { name: "Spencer's",          logo: 'https://logo.clearbit.com/spencers.in' },
+      { name: "Nature's Basket",    logo: 'https://logo.clearbit.com/naturesbasket.co.in' },
+      { name: 'Aditya Birla Retail',logo: '/logos/aditya-birla.webp' },
+      { name: 'Foodworld',          logo: 'https://logo.clearbit.com/foodworld.in' },
     ],
   },
   {
     label: 'Hotels & Restaurants',
     brands: [
-      { name: 'Holiday Inn' },
-      { name: 'The Claridges' },
-      { name: 'Hilton' },
-      { name: 'ibis' },
-      { name: 'Ramada' },
-      { name: 'Mövenpick' },
-      { name: 'Courtyard by Marriott' },
-      { name: 'Honest' },
-      { name: 'MahaMahel' },
-      { name: 'Salwa Family Restaurant' },
+      { name: 'Holiday Inn',            logo: 'https://logo.clearbit.com/holidayinn.com' },
+      { name: 'The Claridges',          logo: 'https://logo.clearbit.com/claridges.in' },
+      { name: 'Hilton',                 logo: 'https://logo.clearbit.com/hilton.com' },
+      { name: 'ibis',                   logo: 'https://logo.clearbit.com/ibis.com' },
+      { name: 'Ramada',                 logo: 'https://logo.clearbit.com/ramada.com' },
+      { name: 'Mövenpick',              logo: 'https://logo.clearbit.com/movenpick.com' },
+      { name: 'Courtyard by Marriott',  logo: 'https://logo.clearbit.com/marriott.com' },
+      { name: 'Honest',                 logo: 'https://logo.clearbit.com/honest.com' },
+      { name: 'MahaMahel',              logo: 'https://logo.clearbit.com/mahamahel.com' },
+      { name: 'Salwa Family Restaurant',logo: 'https://logo.clearbit.com/salwarestaurant.com' },
     ],
   },
   {
@@ -34,33 +35,40 @@ const categories: { label: string; brands: Brand[] }[] = [
     brands: [
       { name: 'Baskin Robbins', logo: '/logos/baskin-robbins.webp' },
       { name: 'Arun Icecreams', logo: '/logos/arun-icecreams.png' },
-      { name: 'Amul', logo: '/logos/amul.webp' },
-      { name: "Dinshaw's" },
-      { name: 'Vadilal' },
-      { name: "Nirula's" },
-      { name: 'Häagen-Dazs' },
-      { name: 'Ranbaxy' },
+      { name: 'Amul',           logo: '/logos/amul.webp' },
+      { name: "Dinshaw's",      logo: 'https://logo.clearbit.com/dinshaws.com' },
+      { name: 'Vadilal',        logo: 'https://logo.clearbit.com/vadilal.com' },
+      { name: "Nirula's",       logo: 'https://logo.clearbit.com/nirulas.com' },
+      { name: 'Häagen-Dazs',    logo: 'https://logo.clearbit.com/haagen-dazs.com' },
+      { name: 'Ranbaxy',        logo: 'https://logo.clearbit.com/ranbaxy.com' },
     ],
   },
   {
     label: 'Corporate & Entertainment',
     brands: [
-      { name: 'Torrent' },
-      { name: 'Pepsi' },
-      { name: 'Cremica' },
-      { name: 'Infosys' },
-      { name: 'Bharat Petroleum' },
-      { name: 'Adlabs', logo: '/logos/adlabs.png' },
-      { name: 'PVR Cinemas' },
+      { name: 'Torrent',          logo: 'https://logo.clearbit.com/torrentpower.com' },
+      { name: 'Pepsi',            logo: 'https://logo.clearbit.com/pepsi.com' },
+      { name: 'Cremica',          logo: 'https://logo.clearbit.com/cremica.com' },
+      { name: 'Infosys',          logo: 'https://logo.clearbit.com/infosys.com' },
+      { name: 'Bharat Petroleum', logo: 'https://logo.clearbit.com/bharatpetroleum.in' },
+      { name: 'Adlabs',           logo: '/logos/adlabs.png' },
+      { name: 'PVR Cinemas',      logo: 'https://logo.clearbit.com/pvrcinemas.com' },
     ],
   },
 ];
 
 function BrandPill({ brand }: { brand: Brand }) {
+  const [failed, setFailed] = useState(false);
   return (
     <div className="cust__pill">
-      {brand.logo ? (
-        <img src={brand.logo} alt={brand.name} className="cust__logo" loading="lazy" />
+      {!failed ? (
+        <img
+          src={brand.logo}
+          alt={brand.name}
+          className="cust__logo"
+          loading="lazy"
+          onError={() => setFailed(true)}
+        />
       ) : (
         <span className="cust__name">{brand.name}</span>
       )}
