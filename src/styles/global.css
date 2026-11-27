@@ -7193,7 +7193,7 @@ table { max-width: 100%; }
   to   { transform: translateX(-25%); }
 }
 
-/* Pill — fixed height so logo and text pills are identical size */
+/* Pill — fixed size so logo and text pills are identical */
 .cust__pill {
   display: flex; align-items: center; justify-content: center;
   width: 160px; height: 56px;
@@ -7219,7 +7219,7 @@ table { max-width: 100%; }
 }
 .cust__pill:hover .cust__logo { opacity: 1; filter: grayscale(0); }
 
-/* Text name — same container, vertically centered */
+/* Text name — same container, vertically centred */
 .cust__name {
   font-size: 0.8rem; font-weight: 800;
   color: var(--rt-charcoal); letter-spacing: 0.02em;
