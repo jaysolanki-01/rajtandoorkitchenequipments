@@ -7137,6 +7137,88 @@ img { max-width: 100%; }
 table { max-width: 100%; }
 .policy-page table { overflow-x: auto; display: block; }
 
+/* ── Customers / Trusted-By Section ────────────────────────────── */
+.cust {
+  padding: clamp(3.5rem, 6vw, 5.5rem) 0;
+  background: var(--rt-bg2);
+  overflow: hidden;
+}
+.cust__header {
+  text-align: center;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+.cust__h2 {
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.2;
+  color: var(--rt-charcoal); margin-bottom: 0.75rem;
+}
+.cust__sub {
+  font-size: clamp(0.88rem, 1.4vw, 0.97rem); color: var(--rt-text2); line-height: 1.7;
+  max-width: 52ch; margin: 0 auto;
+}
+
+/* Marquee */
+.cust__marquee { display: flex; flex-direction: column; gap: 1rem; }
+
+.cust__row-wrap {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+}
+.cust__track {
+  display: flex; gap: 0.85rem;
+  width: max-content;
+  animation: cust-scroll 40s linear infinite;
+  will-change: transform;
+}
+.cust__track--reverse { animation-direction: reverse; }
+.cust__row-wrap:hover .cust__track { animation-play-state: paused; }
+
+@keyframes cust-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Pill */
+.cust__pill {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0.7rem 1.5rem;
+  background: var(--rt-bg); border: 1px solid var(--rt-border);
+  border-radius: 10px; white-space: nowrap; flex-shrink: 0;
+  cursor: default; user-select: none;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+.cust__pill:hover {
+  border-color: var(--rt-gold);
+  box-shadow: 0 6px 20px rgba(195,162,104,.18);
+  transform: translateY(-3px) scale(1.03);
+}
+
+/* Uniform logo box — every brand gets the same 80×32 slot */
+.cust__logo-box {
+  width: 80px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.cust__logo {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  opacity: 0.65; filter: grayscale(1);
+  transition: opacity 0.25s, filter 0.25s;
+}
+.cust__pill:hover .cust__logo { opacity: 1; filter: grayscale(0); }
+.cust__name {
+  font-size: 0.8rem; font-weight: 700; color: var(--rt-text2);
+  letter-spacing: 0.01em; text-align: center;
+  max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cust__name--hidden { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cust__track { animation: none; }
+  .cust__pill:hover { transform: none; }
+}
+
 /* ── WhatsApp Floating Action Button ───────────────────────────── */
 .wa-fab {
   position: fixed;
