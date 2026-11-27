@@ -145,7 +145,7 @@ export function TandoorHero() {
       <div className="hero__sticky">
         <div ref={stageRef} className="stage">
           <div className="stage__atmosphere" aria-hidden="true" />
-          <ProductFallback ref={fallbackRef} hidden={webgl && sceneReady} mode={webgl ? 'poster' : 'fallback'} />
+          <ProductFallback ref={fallbackRef} hidden={webgl} mode={webgl ? 'poster' : 'fallback'} />
           {webgl && loadScene && (
             <SceneBoundary onError={() => setWebglFailed(true)}>
               <Suspense fallback={null}>
