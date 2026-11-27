@@ -33,6 +33,7 @@ export default function AdminInventoryPage() {
 
   const inStockCount = items.filter(i => i.in_stock).length;
   const outCount = items.length - inStockCount;
+  const categoryCount = new Set(items.map(i => i.category)).size;
 
   return (
     <div>
@@ -50,6 +51,10 @@ export default function AdminInventoryPage() {
         <div className="admin-stat">
           <div className="admin-stat-label">Out of Stock</div>
           <div className="admin-stat-value" style={{ color: 'var(--admin-red)' }}>{loading ? '…' : outCount}</div>
+        </div>
+        <div className="admin-stat">
+          <div className="admin-stat-label">Total Categories</div>
+          <div className="admin-stat-value">{loading ? '…' : categoryCount}</div>
         </div>
       </div>
 
