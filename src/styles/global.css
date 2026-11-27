@@ -32,8 +32,8 @@
   --border:      rgba(255, 255, 255, 0.12);
 
   /* Typography */
-  --font-display: 'Mont', 'Segoe UI', Arial, sans-serif;
-  --font-body:    'Mont', 'Segoe UI', Arial, sans-serif;
+  --font-display: 'Lexend', 'Segoe UI', Arial, sans-serif;
+  --font-body:    'Lexend', 'Segoe UI', Arial, sans-serif;
 
   /* Layout */
   --gutter:    clamp(20px, 4vw, 64px);
@@ -116,13 +116,13 @@ a, [role="button"] { touch-action: manipulation; }
 
 /* ── Typography utilities ──────────────────────────────────────────────────── */
 .eyebrow {
-  font-family: 'Mont Blanc', 'Mont', sans-serif;
-  font-size: 0.82rem; font-weight: 400; font-style: italic;
+  font-family: 'Lexend', 'Segoe UI', sans-serif;
+  font-size: 0.82rem; font-weight: 300; font-style: italic;
   letter-spacing: 0.08em;
   color: var(--rt-gold); margin-bottom: 1rem;
 }
 .eyebrow-dark {
-  font-family: 'Mont Blanc', 'Mont', sans-serif;
+  font-family: 'Lexend', 'Segoe UI', sans-serif;
   font-size: 0.82rem; font-weight: 400; font-style: italic;
   letter-spacing: 0.08em;
   color: var(--rt-gold); margin-bottom: 1rem;
@@ -6541,7 +6541,7 @@ body.is-checkout .sf { display: none !important; }
   transform: translateY(0);
 }
 .ptov__tagline {
-  font-family: 'Mont', 'Segoe UI', Arial, sans-serif;
+  font-family: 'Lexend', 'Segoe UI', Arial, sans-serif;
   font-size: clamp(0.6rem, 1.2vw, 0.78rem);
   font-weight: 700;
   letter-spacing: 0.32em;
@@ -6630,7 +6630,7 @@ body.is-checkout .sf { display: none !important; }
   line-height: 1.55;
   color: rgba(240, 230, 210, 0.95);
   margin: 0 0 10px;
-  font-family: 'Mont', 'Segoe UI', sans-serif;
+  font-family: 'Lexend', 'Segoe UI', sans-serif;
 }
 .raj-bubble__footer {
   display: flex;
@@ -6641,7 +6641,7 @@ body.is-checkout .sf { display: none !important; }
   font-size: 0.7rem;
   color: rgba(195, 162, 104, 0.7);
   flex: 1;
-  font-family: 'Mont', sans-serif;
+  font-family: 'Lexend', sans-serif;
 }
 .raj-bubble__next {
   font-size: 0.74rem;
@@ -6653,7 +6653,7 @@ body.is-checkout .sf { display: none !important; }
   padding: 3px 10px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
-  font-family: 'Mont', sans-serif;
+  font-family: 'Lexend', sans-serif;
   letter-spacing: 0.03em;
 }
 .raj-bubble__next:hover {
