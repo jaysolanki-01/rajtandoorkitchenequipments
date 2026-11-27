@@ -97,14 +97,6 @@ export default function AdminDashboard() {
     (stats?.ordersByStatus['confirmed'] ?? 0) +
     (stats?.quotesByStatus['pending'] ?? 0);
 
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 220, color: 'var(--admin-fg-muted)', fontSize: 14 }}>
-        Loading dashboard…
-      </div>
-    );
-  }
-
   return (
     <div>
       <title>Dashboard | Admin</title>
