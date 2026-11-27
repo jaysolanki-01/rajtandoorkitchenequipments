@@ -2,150 +2,232 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { AdminAuthProvider, useAdminAuth } from '../../src/store/AdminAuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const NAV = [
-  { href: '/admin',              label: 'Dashboard',  icon: '◈' },
-  { href: '/admin/orders',       label: 'Orders',     icon: '◫' },
-  { href: '/admin/quotes',       label: 'Quotes',     icon: '◳' },
-  { href: '/admin/products',     label: 'Products',   icon: '◉' },
-  { href: '/admin/categories',   label: 'Categories', icon: '⊞' },
-  { href: '/admin/inventory',    label: 'Inventory',  icon: '◎' },
-  { href: '/admin/customers',    label: 'Customers',  icon: '◷' },
-  { href: '/admin/settings',     label: 'Settings',   icon: '⚙' },
+  { href: '/admin',            label: 'Dashboard' },
+  { href: '/admin/orders',     label: 'Orders' },
+  { href: '/admin/quotes',     label: 'Quotes' },
+  { href: '/admin/products',   label: 'Products' },
+  { href: '/admin/categories', label: 'Categories' },
+  { href: '/admin/inventory',  label: 'Inventory' },
+  { href: '/admin/customers',  label: 'Customers' },
+  { href: '/admin/settings',   label: 'Settings' },
 ];
 
 function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { isAdmin, isLoading, logout, user } = useAdminAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAdmin) router.replace('/admin/login');
   }, [isAdmin, isLoading, router]);
 
-  // Let the login page render without the admin shell
-  if (pathname === '/admin/login') return <>{children}</>;
+  useEffect(() => { setMenuOpen(false); }, [pathname]);
 
+  if (pathname === '/admin/login') return <>{children}</>;
   if (isLoading || !isAdmin) return null;
 
+  const isSuperAdmin = user?.role === 'super_admin';
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--admin-bg, #f5f4f1)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--adm-bg)' }}>
       <style>{`
+        /* ── Tokens ── */
         :root {
-          --admin-bg: #f5f4f1;
-          --admin-sidebar: #1c1b18;
-          --admin-sidebar-fg: #c8c5bc;
-          --admin-sidebar-active: #e8c76a;
-          --admin-card: #ffffff;
-          --admin-border: #e8e6e0;
-          --admin-fg: #1c1b18;
-          --admin-fg-muted: #7a7870;
-          --admin-accent: #b05a28;
-          --admin-green: #1a6b45;
-          --admin-yellow: #92680f;
-          --admin-red: #9f1239;
-          --admin-blue: #1d4ed8;
+          --adm-bg:          #f3f2ef;
+          --adm-nav:         #111110;
+          --adm-nav-border:  rgba(255,255,255,0.08);
+          --adm-nav-fg:      rgba(255,255,255,0.55);
+          --adm-nav-hover:   rgba(255,255,255,0.9);
+          --adm-nav-active:  #ffffff;
+          --adm-gold:        #c3a268;
+          --adm-gold-dim:    rgba(195,162,104,0.2);
+          --admin-card:      #ffffff;
+          --admin-border:    #e5e3de;
+          --admin-fg:        #111110;
+          --admin-fg-muted:  #7a7870;
+          --admin-bg:        #f3f2ef;
+          --admin-accent:    #b05a28;
+          --admin-green:     #1a6b45;
+          --admin-yellow:    #92680f;
+          --admin-red:       #9f1239;
+          --admin-blue:      #1d4ed8;
         }
         @media (prefers-color-scheme: dark) {
           :root:not([data-theme="light"]) {
-            --admin-bg: #0f0e0c;
-            --admin-sidebar: #0a0908;
-            --admin-sidebar-fg: #9a9890;
-            --admin-sidebar-active: #e8c76a;
-            --admin-card: #1a1917;
+            --adm-bg:       #0c0b09;
+            --adm-nav:      #080807;
+            --admin-card:   #1a1917;
             --admin-border: #2a2926;
-            --admin-fg: #f0ede6;
-            --admin-fg-muted: #7a7870;
+            --admin-fg:     #f0ede6;
+            --admin-bg:     #0c0b09;
           }
         }
         :root[data-theme="dark"] {
-          --admin-bg: #0f0e0c;
-          --admin-sidebar: #0a0908;
-          --admin-sidebar-fg: #9a9890;
-          --admin-sidebar-active: #e8c76a;
-          --admin-card: #1a1917;
+          --adm-bg:       #0c0b09;
+          --adm-nav:      #080807;
+          --admin-card:   #1a1917;
           --admin-border: #2a2926;
-          --admin-fg: #f0ede6;
-          --admin-fg-muted: #7a7870;
+          --admin-fg:     #f0ede6;
+          --admin-bg:     #0c0b09;
         }
-        .admin-sidebar {
-          width: 220px; flex-shrink: 0; background: var(--admin-sidebar);
-          display: flex; flex-direction: column;
-          position: sticky; top: 0; height: 100vh; overflow-y: auto;
+
+        /* ── Top navbar ── */
+        .adm-nav {
+          background: var(--adm-nav);
+          border-bottom: 1px solid var(--adm-nav-border);
+          position: sticky; top: 0; z-index: 200;
         }
-        .admin-logo {
-          padding: 24px 20px 20px;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
+        .adm-nav__row {
+          max-width: 1440px; margin: 0 auto;
+          padding: 0 28px;
+          height: 56px;
+          display: flex; align-items: center; gap: 0;
         }
-        .admin-logo-title {
+
+        /* Logo */
+        .adm-nav__brand {
+          display: flex; flex-direction: column; justify-content: center;
+          padding-right: 28px;
+          border-right: 1px solid var(--adm-nav-border);
+          margin-right: 4px; flex-shrink: 0; text-decoration: none;
+        }
+        .adm-nav__brand-name {
           font-size: 13px; font-weight: 700; color: #fff;
-          letter-spacing: 0.06em; text-transform: uppercase;
+          letter-spacing: 0.03em; line-height: 1;
         }
-        .admin-logo-sub { font-size: 10px; color: var(--admin-sidebar-fg); margin-top: 2px; }
-        .admin-nav { padding: 16px 10px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
-        .admin-nav-link {
-          display: flex; align-items: center; gap: 10px;
-          padding: 9px 12px; border-radius: 6px;
-          font-size: 13px; font-weight: 500; color: var(--admin-sidebar-fg);
-          text-decoration: none; transition: background 0.15s, color 0.15s;
+        .adm-nav__brand-sub {
+          font-size: 9px; color: rgba(255,255,255,0.35);
+          letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px;
         }
-        .admin-nav-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
-        .admin-nav-link.active { background: rgba(232,199,106,0.15); color: var(--admin-sidebar-active); }
-        .admin-nav-icon { font-size: 15px; width: 18px; text-align: center; }
-        .admin-logout {
-          padding: 16px 10px;
-          border-top: 1px solid rgba(255,255,255,0.08);
+
+        /* Nav links */
+        .adm-nav__links {
+          display: flex; align-items: stretch; flex: 1; height: 56px;
+          overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
         }
-        .admin-logout-btn {
-          width: 100%; text-align: left; background: none; border: none; cursor: pointer;
-          display: flex; align-items: center; gap: 10px;
-          padding: 9px 12px; border-radius: 6px;
-          font-size: 13px; color: var(--admin-sidebar-fg);
-          transition: background 0.15s, color 0.15s;
+        .adm-nav__links::-webkit-scrollbar { display: none; }
+        .adm-nav__link {
+          display: flex; align-items: center; padding: 0 15px;
+          font-size: 13px; font-weight: 500;
+          color: var(--adm-nav-fg); text-decoration: none;
+          white-space: nowrap; border-bottom: 2px solid transparent;
+          transition: color 0.14s, border-color 0.14s;
+          flex-shrink: 0;
         }
-        .admin-logout-btn:hover { background: rgba(255,255,255,0.07); color: #fff; }
-        .admin-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-        .admin-topbar {
-          background: var(--admin-card); border-bottom: 1px solid var(--admin-border);
-          padding: 14px 28px; display: flex; align-items: center;
-          justify-content: space-between; position: sticky; top: 0; z-index: 5;
+        .adm-nav__link:hover { color: var(--adm-nav-hover); }
+        .adm-nav__link.is-active {
+          color: var(--adm-nav-active);
+          border-bottom-color: var(--adm-gold);
         }
-        .admin-topbar-title { font-size: 15px; font-weight: 600; color: var(--admin-fg); }
-        .admin-topbar-badge {
-          font-size: 11px; background: var(--admin-accent); color: #fff;
-          padding: 2px 8px; border-radius: 100px; font-weight: 600;
+
+        /* Actions */
+        .adm-nav__actions {
+          display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+          padding-left: 20px; border-left: 1px solid var(--adm-nav-border);
+          margin-left: 4px;
         }
-        .admin-content { padding: 28px; flex: 1; }
+        .adm-nav__role {
+          font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+          padding: 3px 10px; border-radius: 999px;
+          background: var(--adm-gold-dim); color: var(--adm-gold);
+          white-space: nowrap;
+        }
+        .adm-nav__role--super { background: rgba(29,78,216,0.2); color: #93c5fd; }
+        .adm-nav__signout {
+          font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.4);
+          background: none; border: none; cursor: pointer;
+          padding: 6px 10px; border-radius: 6px;
+          transition: color 0.14s, background 0.14s;
+          white-space: nowrap;
+        }
+        .adm-nav__signout:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+        /* Mobile menu toggle */
+        .adm-nav__toggle {
+          display: none; align-items: center; justify-content: center;
+          width: 36px; height: 36px; border-radius: 8px; border: none;
+          background: rgba(255,255,255,0.08); color: #fff; cursor: pointer;
+          flex-shrink: 0; margin-left: 10px; font-size: 16px; line-height: 1;
+        }
+
+        /* Mobile drawer */
+        .adm-nav__drawer {
+          display: none;
+          background: var(--adm-nav); border-top: 1px solid var(--adm-nav-border);
+          padding: 8px 16px 16px;
+          flex-direction: column; gap: 2px;
+        }
+        .adm-nav__drawer.is-open { display: flex; }
+        .adm-nav__drawer-link {
+          display: block; padding: 10px 12px; border-radius: 8px;
+          font-size: 14px; font-weight: 500; color: var(--adm-nav-fg);
+          text-decoration: none; transition: background 0.12s, color 0.12s;
+        }
+        .adm-nav__drawer-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
+        .adm-nav__drawer-link.is-active {
+          background: var(--adm-gold-dim); color: var(--adm-gold); font-weight: 600;
+        }
+        .adm-nav__drawer-signout {
+          margin-top: 8px; padding: 10px 12px; border-radius: 8px; border: none;
+          background: none; color: rgba(255,255,255,0.4); font-size: 14px;
+          font-weight: 500; cursor: pointer; text-align: left;
+          transition: background 0.12s, color 0.12s; width: 100%;
+        }
+        .adm-nav__drawer-signout:hover { background: rgba(255,255,255,0.07); color: #fff; }
+
+        /* ── Page content ── */
+        .adm-content {
+          max-width: 1440px; margin: 0 auto;
+          padding: 32px 28px 72px;
+        }
+
+        /* ── Shared admin components ── */
         .admin-card {
           background: var(--admin-card); border: 1px solid var(--admin-border);
-          border-radius: 10px; overflow: hidden;
+          border-radius: 12px; overflow: hidden;
         }
-        .admin-stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+        .admin-stat-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+          gap: 14px; margin-bottom: 28px;
+        }
         .admin-stat {
           background: var(--admin-card); border: 1px solid var(--admin-border);
-          border-radius: 10px; padding: 20px 22px;
+          border-radius: 12px; padding: 20px 22px;
         }
-        .admin-stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--admin-fg-muted); margin-bottom: 8px; }
-        .admin-stat-value { font-size: 28px; font-weight: 700; color: var(--admin-fg); font-variant-numeric: tabular-nums; line-height: 1; }
+        .admin-stat-label {
+          font-size: 11px; font-weight: 600; text-transform: uppercase;
+          letter-spacing: 0.08em; color: var(--admin-fg-muted); margin-bottom: 8px;
+        }
+        .admin-stat-value {
+          font-size: 28px; font-weight: 700; color: var(--admin-fg);
+          font-variant-numeric: tabular-nums; line-height: 1;
+        }
         .admin-stat-sub { font-size: 12px; color: var(--admin-fg-muted); margin-top: 5px; }
         .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
         .admin-table th {
           padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600;
           text-transform: uppercase; letter-spacing: 0.07em; color: var(--admin-fg-muted);
-          background: var(--admin-bg); border-bottom: 1px solid var(--admin-border);
+          background: var(--adm-bg); border-bottom: 1px solid var(--admin-border);
         }
         .admin-table td {
           padding: 12px 16px; border-bottom: 1px solid var(--admin-border);
           color: var(--admin-fg); vertical-align: middle;
         }
         .admin-table tr:last-child td { border-bottom: none; }
-        .admin-table tr:hover td { background: var(--admin-bg); }
-        .admin-mono { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--admin-fg-muted); }
+        .admin-table tr:hover td { background: #faf9f7; }
+        .admin-mono {
+          font-family: ui-monospace, monospace; font-size: 11.5px;
+          color: var(--admin-fg-muted);
+        }
         .admin-badge {
           display: inline-flex; align-items: center;
-          padding: 2px 9px; border-radius: 100px; font-size: 11px; font-weight: 600;
-          white-space: nowrap;
+          padding: 2px 9px; border-radius: 100px;
+          font-size: 11px; font-weight: 600; white-space: nowrap;
         }
         .badge-pending    { background: #fef9c3; color: #854d0e; }
         .badge-confirmed  { background: #dbeafe; color: #1d4ed8; }
@@ -155,18 +237,19 @@ function AdminShell({ children }: { children: React.ReactNode }) {
         .badge-cancelled  { background: #fee2e2; color: #991b1b; }
         .badge-shipped    { background: #e8f5e9; color: #2e7d32; }
         .admin-select {
-          font-size: 12px; padding: 4px 8px; border-radius: 5px;
-          border: 1px solid var(--admin-border); background: var(--admin-bg);
+          font-size: 12px; padding: 6px 10px; border-radius: 7px;
+          border: 1px solid var(--admin-border); background: var(--admin-card);
           color: var(--admin-fg); cursor: pointer;
         }
         .admin-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
         .admin-filter-btn {
-          padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 500;
+          padding: 6px 14px; border-radius: 7px; font-size: 12px; font-weight: 500;
           border: 1px solid var(--admin-border); background: var(--admin-card);
-          color: var(--admin-fg-muted); cursor: pointer; transition: all 0.15s; text-transform: capitalize;
+          color: var(--admin-fg-muted); cursor: pointer; transition: all 0.14s;
+          text-transform: capitalize;
         }
         .admin-filter-btn:hover, .admin-filter-btn.active {
-          border-color: var(--admin-accent); color: var(--admin-accent); background: var(--admin-card);
+          border-color: var(--admin-accent); color: var(--admin-accent);
         }
         .admin-filter-btn.active { font-weight: 600; }
         .admin-section-header {
@@ -174,57 +257,94 @@ function AdminShell({ children }: { children: React.ReactNode }) {
           display: flex; align-items: center; justify-content: space-between;
         }
         .admin-section-title { font-size: 14px; font-weight: 600; color: var(--admin-fg); }
-        .admin-quote-card {
-          padding: 18px 20px; border-bottom: 1px solid var(--admin-border);
-        }
+        .admin-quote-card { padding: 16px 20px; border-bottom: 1px solid var(--admin-border); }
         .admin-quote-card:last-child { border-bottom: none; }
         .admin-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+          .adm-nav__links { display: none; }
+          .adm-nav__actions { display: none; }
+          .adm-nav__toggle { display: flex; }
+        }
         @media (max-width: 900px) {
-          .admin-sidebar { display: none; }
           .admin-grid-2 { grid-template-columns: 1fr; }
           .admin-stat-grid { grid-template-columns: 1fr 1fr; }
-          .admin-content { padding: 16px; }
-          .admin-topbar { padding: 12px 16px; }
+          .adm-content { padding: 20px 16px 48px; }
+          .adm-nav__row { padding: 0 16px; }
+        }
+        @media (max-width: 480px) {
+          .admin-stat-grid { grid-template-columns: 1fr 1fr; }
         }
       `}</style>
 
-      {/* Sidebar */}
-      <aside className="admin-sidebar">
-        <div className="admin-logo">
-          <div className="admin-logo-title">Raj Tandoor</div>
-          <div className="admin-logo-sub">Admin Panel</div>
+      {/* ── Top navbar ── */}
+      <header className="adm-nav">
+        <div className="adm-nav__row">
+
+          {/* Brand */}
+          <Link href="/admin" className="adm-nav__brand">
+            <span className="adm-nav__brand-name">Raj Tandoor</span>
+            <span className="adm-nav__brand-sub">Admin</span>
+          </Link>
+
+          {/* Desktop nav links */}
+          <nav className="adm-nav__links" aria-label="Admin navigation">
+            {NAV.map(({ href, label }) => {
+              const isActive = href === '/admin'
+                ? pathname === '/admin'
+                : pathname.startsWith(href);
+              return (
+                <Link key={href} href={href} className={`adm-nav__link${isActive ? ' is-active' : ''}`}>
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Desktop actions */}
+          <div className="adm-nav__actions">
+            <span className={`adm-nav__role${isSuperAdmin ? ' adm-nav__role--super' : ''}`}>
+              {isSuperAdmin ? 'Super Admin' : 'Admin'}
+            </span>
+            <button className="adm-nav__signout" onClick={() => { logout(); router.replace('/'); }}>
+              Sign out
+            </button>
+          </div>
+
+          {/* Mobile toggle */}
+          <button
+            className="adm-nav__toggle"
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(o => !o)}
+          >
+            {menuOpen ? '✕' : '☰'}
+          </button>
         </div>
-        <nav className="admin-nav">
-          {NAV.map(({ href, label, icon }) => {
-            const active = href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
+
+        {/* Mobile drawer */}
+        <nav className={`adm-nav__drawer${menuOpen ? ' is-open' : ''}`} aria-label="Mobile admin navigation">
+          {NAV.map(({ href, label }) => {
+            const isActive = href === '/admin'
+              ? pathname === '/admin'
+              : pathname.startsWith(href);
             return (
-              <Link key={href} href={href} className={`admin-nav-link${active ? ' active' : ''}`}>
-                <span className="admin-nav-icon">{icon}</span>
+              <Link key={href} href={href} className={`adm-nav__drawer-link${isActive ? ' is-active' : ''}`}>
                 {label}
               </Link>
             );
           })}
-        </nav>
-        <div className="admin-logout">
-          <button className="admin-logout-btn" onClick={() => { logout(); router.replace('/'); }}>
-            <span className="admin-nav-icon">↩</span>
-            Sign Out
+          <button className="adm-nav__drawer-signout" onClick={() => { logout(); router.replace('/'); }}>
+            Sign out
           </button>
-        </div>
-      </aside>
+        </nav>
+      </header>
 
-      {/* Main */}
-      <div className="admin-main">
-        <header className="admin-topbar">
-          <span className="admin-topbar-title">
-            {NAV.find(n => n.href === '/admin' ? pathname === '/admin' : pathname.startsWith(n.href))?.label ?? 'Admin'}
-          </span>
-          <span className="admin-topbar-badge" style={user?.role === 'super_admin' ? { background: 'var(--admin-blue)' } : undefined}>
-            {user?.role === 'super_admin' ? 'Super Admin' : 'Admin'}
-          </span>
-        </header>
-        <main className="admin-content">{children}</main>
-      </div>
+      {/* ── Page content ── */}
+      <main className="adm-content">
+        {children}
+      </main>
     </div>
   );
 }
