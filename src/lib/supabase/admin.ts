@@ -339,6 +339,13 @@ export async function fetchAdminInventory(): Promise<AdminInventoryItem[]> {
   return data as AdminInventoryItem[];
 }
 
+export async function fetchUsedCategories(): Promise<string[]> {
+  const sb = getClient();
+  const { data, error } = await sb.from('products').select('category');
+  if (error || !data) return [];
+  return [...new Set(data.map((r: { category: string }) => r.category))].sort();
+}
+
 export async function updateInventoryStock(id: string, in_stock: boolean): Promise<void> {
   const sb = getClient();
   const { error } = await sb.from('products').update({ in_stock }).eq('id', id);
