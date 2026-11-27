@@ -42,21 +42,35 @@ export type AdminStats = {
   pendingOrders: number;
   totalQuotes: number;
   pendingQuotes: number;
+  ordersByStatus: Record<string, number>;
+  quotesByStatus: Record<string, number>;
 };
 
 export async function fetchAdminStats(): Promise<AdminStats> {
   const sb = getClient();
-  const [ordersRes, quotesRes, pendingOrdersRes, pendingQuotesRes] = await Promise.all([
-    sb.from('orders').select('id', { count: 'exact', head: true }),
-    sb.from('quotes').select('id', { count: 'exact', head: true }),
-    sb.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    sb.from('quotes').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+  const [ordersRes, quotesRes] = await Promise.all([
+    sb.from('orders').select('status'),
+    sb.from('quotes').select('status'),
   ]);
+  const orders = (ordersRes.data ?? []) as { status: string }[];
+  const quotes = (quotesRes.data ?? []) as { status: string }[];
+
+  const countBy = (rows: { status: string }[]) =>
+    rows.reduce<Record<string, number>>((acc, r) => {
+      acc[r.status] = (acc[r.status] ?? 0) + 1;
+      return acc;
+    }, {});
+
+  const ordersByStatus = countBy(orders);
+  const quotesByStatus = countBy(quotes);
+
   return {
-    totalOrders: ordersRes.count ?? 0,
-    pendingOrders: pendingOrdersRes.count ?? 0,
-    totalQuotes: quotesRes.count ?? 0,
-    pendingQuotes: pendingQuotesRes.count ?? 0,
+    totalOrders: orders.length,
+    pendingOrders: ordersByStatus['pending'] ?? 0,
+    totalQuotes: quotes.length,
+    pendingQuotes: quotesByStatus['pending'] ?? 0,
+    ordersByStatus,
+    quotesByStatus,
   };
 }
 

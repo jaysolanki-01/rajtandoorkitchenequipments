@@ -15,6 +15,19 @@ function fmtDate(s: string) {
   return new Date(s).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+const ORDER_STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'] as const;
+const QUOTE_STATUSES = ['pending', 'contacted', 'quoted', 'done', 'cancelled'] as const;
+
+function StatCard({ label, value, sub, color }: { label: string; value: number | string; sub?: string; color?: string }) {
+  return (
+    <div className="admin-stat">
+      <div className="admin-stat-label">{label}</div>
+      <div className="admin-stat-value" style={color ? { color } : {}}>{value}</div>
+      {sub && <div className="admin-stat-sub">{sub}</div>}
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [orders, setOrders] = useState<AdminOrder[]>([]);
@@ -35,21 +48,59 @@ export default function AdminDashboard() {
 
   if (loading) return <p style={{ color: 'var(--admin-fg-muted)', fontSize: 14 }}>Loading…</p>;
 
+  const statusColor: Record<string, string> = {
+    pending: 'var(--admin-accent)',
+    confirmed: '#0369a1',
+    processing: '#7c3aed',
+    shipped: '#0891b2',
+    delivered: 'var(--admin-green)',
+    cancelled: 'var(--admin-red)',
+    contacted: '#0369a1',
+    quoted: '#7c3aed',
+    done: 'var(--admin-green)',
+  };
+
   return (
     <div>
       <title>Dashboard | Admin</title>
 
-      {/* Stats */}
-      <div className="admin-stat-grid">
-        <div className="admin-stat">
-          <div className="admin-stat-label">Total Orders</div>
-          <div className="admin-stat-value">{stats?.totalOrders ?? 0}</div>
-          <div className="admin-stat-sub">{stats?.pendingOrders ?? 0} pending</div>
+      {/* Totals */}
+      <div className="admin-stat-grid" style={{ marginBottom: 24 }}>
+        <StatCard label="Total Orders" value={stats?.totalOrders ?? 0} sub={`${stats?.pendingOrders ?? 0} pending`} />
+        <StatCard label="Quote Requests" value={stats?.totalQuotes ?? 0} sub={`${stats?.pendingQuotes ?? 0} pending`} />
+      </div>
+
+      {/* Orders by status */}
+      <div style={{ marginBottom: 8 }}>
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--admin-fg-muted)', marginBottom: 10 }}>
+          Orders by Status
+        </p>
+        <div className="admin-stat-grid">
+          {ORDER_STATUSES.map(s => (
+            <StatCard
+              key={s}
+              label={s.charAt(0).toUpperCase() + s.slice(1)}
+              value={stats?.ordersByStatus[s] ?? 0}
+              color={statusColor[s]}
+            />
+          ))}
         </div>
-        <div className="admin-stat">
-          <div className="admin-stat-label">Quote Requests</div>
-          <div className="admin-stat-value">{stats?.totalQuotes ?? 0}</div>
-          <div className="admin-stat-sub">{stats?.pendingQuotes ?? 0} pending</div>
+      </div>
+
+      {/* Quotes by status */}
+      <div style={{ marginBottom: 24 }}>
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--admin-fg-muted)', marginBottom: 10 }}>
+          Quotes by Status
+        </p>
+        <div className="admin-stat-grid">
+          {QUOTE_STATUSES.map(s => (
+            <StatCard
+              key={s}
+              label={s.charAt(0).toUpperCase() + s.slice(1)}
+              value={stats?.quotesByStatus[s] ?? 0}
+              color={statusColor[s]}
+            />
+          ))}
         </div>
       </div>
 
