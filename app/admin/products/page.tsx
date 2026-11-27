@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
+import Link from 'next/link';
 import {
   fetchAdminProducts, createProduct, updateProduct, deleteProduct, uploadProductImage,
   fmtProductId, type AdminProduct,
@@ -21,7 +22,7 @@ function fmt(n: number | null) {
   return n != null ? `₹${n.toLocaleString('en-IN')}` : '—';
 }
 
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+function Modal({ title, onClose, viewUrl, children }: { title: string; onClose: () => void; viewUrl?: string; children: React.ReactNode }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000,
@@ -32,8 +33,15 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
         width: '100%', maxWidth: 680, padding: '28px 32px',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--admin-fg)', margin: 0 }}>{title}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--admin-fg-muted)', lineHeight: 1 }}>✕</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--admin-fg)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</h2>
+            {viewUrl && (
+              <Link href={viewUrl} target="_blank" style={{ fontSize: 12, color: 'var(--admin-accent)', textDecoration: 'none', border: '1px solid var(--admin-border)', padding: '3px 10px', borderRadius: 5, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                View live ↗
+              </Link>
+            )}
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--admin-fg-muted)', lineHeight: 1, flexShrink: 0, marginLeft: 12 }}>✕</button>
         </div>
         {children}
       </div>
@@ -253,6 +261,13 @@ export default function AdminProductsPage() {
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                      <Link
+                        href={`/shop/${p.slug}`}
+                        target="_blank"
+                        style={{ padding: '5px 12px', border: '1px solid var(--admin-border)', borderRadius: 5, background: 'transparent', color: 'var(--admin-accent)', fontSize: 12, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                      >
+                        View ↗
+                      </Link>
                       <button
                         onClick={() => openEdit(p)}
                         style={{ padding: '5px 12px', border: '1px solid var(--admin-border)', borderRadius: 5, background: 'transparent', color: 'var(--admin-fg)', fontSize: 12, cursor: 'pointer' }}
@@ -276,7 +291,7 @@ export default function AdminProductsPage() {
       </div>
 
       {editing && (
-        <Modal title={isNew ? 'New Product' : `Edit: ${editing.name || '—'}`} onClose={closeModal}>
+        <Modal title={isNew ? 'New Product' : `Edit: ${editing.name || '—'}`} onClose={closeModal} viewUrl={!isNew && editing.slug ? `/shop/${editing.slug}` : undefined}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
             <FieldRow label="Product Name *">
               <input style={inp} value={editing.name ?? ''} onChange={e => { set('name', e.target.value); if (isNew) set('slug', slugify(e.target.value)); }} placeholder="e.g. Clay Tandoor 24 inch" />

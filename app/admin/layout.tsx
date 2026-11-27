@@ -90,11 +90,15 @@ function AdminShell({ children }: { children: React.ReactNode }) {
 
         /* Logo */
         .adm-nav__brand {
-          display: flex; flex-direction: column; justify-content: center;
+          display: flex; align-items: center; gap: 10px;
           padding-right: 28px;
           border-right: 1px solid var(--adm-nav-border);
           margin-right: 4px; flex-shrink: 0; text-decoration: none;
         }
+        .adm-nav__brand-logo {
+          width: 32px; height: 32px; object-fit: contain; display: block; flex-shrink: 0;
+        }
+        .adm-nav__brand-text { display: flex; flex-direction: column; }
         .adm-nav__brand-name {
           font-size: 13px; font-weight: 700; color: #fff;
           letter-spacing: 0.03em; line-height: 1;
@@ -284,8 +288,11 @@ function AdminShell({ children }: { children: React.ReactNode }) {
 
           {/* Brand */}
           <Link href="/admin" className="adm-nav__brand">
-            <span className="adm-nav__brand-name">Raj Tandoor</span>
-            <span className="adm-nav__brand-sub">Admin</span>
+            <img src="/images/raj-tandoor-logo.webp" alt="Raj Tandoor logo" className="adm-nav__brand-logo" />
+            <span className="adm-nav__brand-text">
+              <span className="adm-nav__brand-name">Raj Tandoor</span>
+              <span className="adm-nav__brand-sub">Admin Panel</span>
+            </span>
           </Link>
 
           {/* Desktop nav links */}
