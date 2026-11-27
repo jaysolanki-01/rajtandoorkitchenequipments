@@ -1,6 +1,14 @@
+import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
+
+function serviceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+}
 
 const CANCELLABLE = ['pending', 'confirmed'];
 
@@ -54,6 +62,18 @@ export async function POST(req: NextRequest) {
 
   if (updateErr) {
     return Response.json({ error: updateErr.message }, { status: 500 });
+  }
+
+  // Restore inventory: mark ordered products back in stock (best-effort)
+  const productIds = (order.items as { id?: string }[] ?? [])
+    .map(i => i.id)
+    .filter((id): id is string => typeof id === 'string' && id.length > 0);
+  if (productIds.length > 0) {
+    serviceClient()
+      .from('products')
+      .update({ in_stock: true })
+      .in('id', productIds)
+      .catch(() => { /* best-effort */ });
   }
 
   // Send cancellation email (best-effort — don't block the response)

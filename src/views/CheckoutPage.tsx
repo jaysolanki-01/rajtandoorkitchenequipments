@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { seo } from '../config/site';
 import { useCart, type CartItem } from '../store/CartContext';
 import { useAuth } from '../store/AuthContext';
-import { insertQuote, insertOrder } from '../lib/supabase/db';
+import { insertQuote } from '../lib/supabase/db';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -533,27 +533,35 @@ export function CheckoutPage() {
 
       let orderRef: string;
       if (isLoggedIn) {
-        const result = await insertOrder({
-          customer_name: info.name,
-          email: info.email.trim().toLowerCase(),
-          phone: info.phone.trim(),
-          address: payload.deliveryAddress as Record<string, unknown>,
-          items: items.map(i => ({
-            id: i.product.id,
-            name: i.product.name,
-            slug: i.product.slug ?? null,
-            image: i.product.image ?? null,
-            qty: i.quantity,
-            price: i.product.price,
-          })),
-          subtotal: subtotal ?? 0,
-          shipping: shippingCharge,
-          total: finalTotal ?? 0,
-          payment_method: payMethod,
-          user_id: user?.id,
-          notes: deliveryNotes || undefined,
-          ...(coupon.appliedCode ? { coupon_code: coupon.appliedCode, coupon_discount: couponDiscount } : {}),
+        const orderRes = await fetch('/api/orders/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customer_name: info.name,
+            email: info.email.trim().toLowerCase(),
+            phone: info.phone.trim(),
+            address: payload.deliveryAddress as Record<string, unknown>,
+            items: items.map(i => ({
+              id: i.product.id,
+              name: i.product.name,
+              slug: i.product.slug ?? null,
+              image: i.product.image ?? null,
+              qty: i.quantity,
+              price: i.product.price,
+            })),
+            subtotal: subtotal ?? 0,
+            shipping: shippingCharge,
+            total: finalTotal ?? 0,
+            payment_method: payMethod,
+            notes: deliveryNotes || undefined,
+            ...(coupon.appliedCode ? { coupon_code: coupon.appliedCode, coupon_discount: couponDiscount } : {}),
+          }),
         });
+        if (!orderRes.ok) {
+          const err = await orderRes.json().catch(() => ({}));
+          throw new Error((err as { error?: string }).error ?? 'Order submission failed.');
+        }
+        const result = await orderRes.json() as { orderNumber: string };
         orderRef = result.orderNumber;
 
         // Send confirmation email (best-effort — doesn't block the order)
