@@ -7182,37 +7182,24 @@ table { max-width: 100%; }
 /* Pill */
 .cust__pill {
   display: flex; align-items: center; justify-content: center;
-  padding: 0.7rem 1.5rem;
-  background: var(--rt-bg); border: 1px solid var(--rt-border);
-  border-radius: 10px; white-space: nowrap; flex-shrink: 0;
+  padding: 0.65rem 1.6rem;
+  background: var(--rt-bg); border: 1.5px solid var(--rt-border);
+  border-radius: 999px; white-space: nowrap; flex-shrink: 0;
   cursor: default; user-select: none;
-  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s, background 0.25s;
 }
 .cust__pill:hover {
   border-color: var(--rt-gold);
-  box-shadow: 0 6px 20px rgba(195,162,104,.18);
-  transform: translateY(-3px) scale(1.03);
+  background: #fffdf7;
+  box-shadow: 0 6px 22px rgba(195,162,104,.2);
+  transform: translateY(-3px) scale(1.04);
 }
-
-/* Uniform logo box — every brand gets the same 80×32 slot */
-.cust__logo-box {
-  width: 80px; height: 32px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.cust__logo {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  opacity: 0.65; filter: grayscale(1);
-  transition: opacity 0.25s, filter 0.25s;
-}
-.cust__pill:hover .cust__logo { opacity: 1; filter: grayscale(0); }
 .cust__name {
-  font-size: 0.8rem; font-weight: 700; color: var(--rt-text2);
-  letter-spacing: 0.01em; text-align: center;
-  max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 0.83rem; font-weight: 700;
+  color: var(--rt-charcoal); letter-spacing: 0.02em;
+  transition: color 0.25s;
 }
-.cust__name--hidden { display: none; }
+.cust__pill:hover .cust__name { color: #9a7230; }
 
 @media (prefers-reduced-motion: reduce) {
   .cust__track { animation: none; }
