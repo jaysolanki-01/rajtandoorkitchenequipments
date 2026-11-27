@@ -45,7 +45,7 @@ export function ShopPage() {
     }
 
     return list;
-  }, [catFilter, sort]);
+  }, [catFilter, sort, products]);
 
   const activeCategory = categories.find((c) => c.slug === catFilter);
 
