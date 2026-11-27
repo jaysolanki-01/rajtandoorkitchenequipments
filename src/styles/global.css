@@ -57,10 +57,6 @@ html.has-ann { --ann-h: 44px; }
 /* ── Reset / Base ──────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
-html {
-  overflow-x: clip;
-}
-
 body {
   margin: 0;
   background: var(--rt-bg);
