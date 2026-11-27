@@ -1276,18 +1276,119 @@ a, [role="button"] { touch-action: manipulation; }
 }
 
 @media (max-width: 768px) { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
+
+/* ── Mobile product card — horizontal list layout ── */
 @media (max-width: 480px) {
-  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.65rem; }
-  .pc { border-radius: 14px; }
-  .pc__cat { font-size: 0.52rem; }
-  .pc__name { font-size: 0.82rem; }
-  .pc__price-val { font-size: 1rem; }
-  .pc__btn-add { font-size: 0.75rem; padding: 0.62rem; }
+  .product-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Card becomes a flex row */
+  .pc {
+    aspect-ratio: unset;
+    height: 148px;
+    display: flex;
+    flex-direction: row;
+    border-radius: 16px;
+    transform: none !important; /* disable lift on touch */
+  }
+  .pc:hover { transform: none; }
+
+  /* Left: image panel (fixed width) */
+  .pc__img-wrap {
+    position: relative;
+    inset: auto;
+    width: 130px;
+    height: 148px;
+    flex-shrink: 0;
+    border-radius: 0;
+    z-index: 1;
+  }
+  .pc__img-link { width: 130px; height: 148px; display: block; }
+  .pc__img { border-radius: 0; }
+
+  /* Discount badge: top-left of image */
+  .pc__discount-badge {
+    top: 0.55rem;
+    left: 0.55rem;
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  /* Wishlist: top-right of image */
+  .pc__wishlist {
+    top: 0.5rem;
+    right: auto;
+    left: auto;
+    /* reposition to sit at top-right corner of image */
+    position: absolute;
+    left: 92px; /* image width – button width */
+    z-index: 5;
+  }
+  .wishlist-btn { width: 28px; height: 28px; }
+
+  /* Right: info panel */
+  .pc__body {
+    position: relative;
+    inset: auto;
+    flex: 1;
+    padding: 0.85rem 0.9rem 0.75rem;
+    background: #1e1a14;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 0 16px 16px 0;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* Category chip — always visible on mobile */
+  .pc__cat {
+    opacity: 1;
+    transform: none;
+    font-size: 0.55rem;
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  /* Name — 2 lines max */
+  .pc__name {
+    font-size: 0.88rem;
+    line-height: 1.25;
+    margin: 0 0 0.25rem;
+    -webkit-line-clamp: 2;
+  }
+
+  /* Price */
+  .pc__price {
+    margin-bottom: 0;
+    gap: 0.3rem;
+  }
+  .pc:hover .pc__price { margin-bottom: 0; }
+  .pc__price-orig { font-size: 0.65rem; }
+  .pc__price-val { font-size: 0.95rem; }
+
+  /* Actions — always visible */
+  .pc__actions {
+    max-height: 48px;
+    opacity: 1;
+    gap: 0;
+  }
+  .pc:hover .pc__actions { max-height: 48px; }
+
+  .pc__btn-add {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.74rem;
+    min-height: 36px;
+    border-radius: 8px;
+    font-weight: 700;
+  }
   .pc__btn-add svg { display: none; }
-  .pc__btn-view { font-size: 0.7rem; }
-  .pc__wishlist { top: 0.6rem; right: 0.6rem; }
-  .wishlist-btn { width: 30px; height: 30px; }
-  .pc__discount-badge { font-size: 0.58rem; padding: 0.18rem 0.42rem; }
+  .pc__btn-view { display: none; }
 }
 
 /* Wishlist button */
