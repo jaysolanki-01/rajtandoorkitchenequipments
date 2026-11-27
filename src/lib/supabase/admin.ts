@@ -42,6 +42,7 @@ export type AdminStats = {
   pendingOrders: number;
   totalQuotes: number;
   pendingQuotes: number;
+  totalRevenue: number;
   ordersByStatus: Record<string, number>;
   quotesByStatus: Record<string, number>;
 };
@@ -49,10 +50,10 @@ export type AdminStats = {
 export async function fetchAdminStats(): Promise<AdminStats> {
   const sb = getClient();
   const [ordersRes, quotesRes] = await Promise.all([
-    sb.from('orders').select('status'),
+    sb.from('orders').select('status, total'),
     sb.from('quotes').select('status'),
   ]);
-  const orders = (ordersRes.data ?? []) as { status: string }[];
+  const orders = (ordersRes.data ?? []) as { status: string; total: number }[];
   const quotes = (quotesRes.data ?? []) as { status: string }[];
 
   const countBy = (rows: { status: string }[]) =>
@@ -63,12 +64,14 @@ export async function fetchAdminStats(): Promise<AdminStats> {
 
   const ordersByStatus = countBy(orders);
   const quotesByStatus = countBy(quotes);
+  const totalRevenue = orders.reduce((sum, o) => sum + (o.total ?? 0), 0);
 
   return {
     totalOrders: orders.length,
     pendingOrders: ordersByStatus['pending'] ?? 0,
     totalQuotes: quotes.length,
     pendingQuotes: quotesByStatus['pending'] ?? 0,
+    totalRevenue,
     ordersByStatus,
     quotesByStatus,
   };
