@@ -3,17 +3,14 @@ import { useState } from 'react';
 
 type Brand = { name: string; logo?: string };
 
-const WP = (file: string) =>
-  `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}`;
-
 const categories: { label: string; brands: Brand[] }[] = [
   {
     label: 'Retail',
     brands: [
       { name: 'Easyday',             logo: '/logos/easyday.webp' },
-      { name: 'Reliance Fresh' },
-      { name: "Spencer's" },
-      { name: "Nature's Basket" },
+      { name: 'Reliance Fresh',      logo: '/logos/reliance-fresh.png' },
+      { name: "Spencer's",           logo: '/logos/spencers.png' },
+      { name: "Nature's Basket",     logo: '/logos/natures-basket.webp' },
       { name: 'Aditya Birla Retail', logo: '/logos/aditya-birla.webp' },
       { name: 'Foodworld',           logo: '/logos/foodworld.png' },
     ],
@@ -22,15 +19,15 @@ const categories: { label: string; brands: Brand[] }[] = [
     label: 'Hotels & Restaurants',
     brands: [
       { name: 'Holiday Inn',           logo: '/logos/holiday-inn.webp' },
-      { name: 'The Claridges' },
+      { name: 'The Claridges',         logo: '/logos/claridges.webp' },
       { name: 'Hilton',                logo: '/logos/hilton.webp' },
-      { name: 'ibis',                  logo: WP('Ibis_hotels_logo.svg') },
-      { name: 'Ramada',                logo: WP('Ramada_Logo.svg') },
-      { name: 'Mövenpick',             logo: WP('Movenpick_Hotels_Resorts.svg') },
+      { name: 'ibis',                  logo: '/logos/ibis.webp' },
+      { name: 'Ramada',                logo: '/logos/ramada.webp' },
+      { name: 'Mövenpick',             logo: '/logos/movenpick.webp' },
       { name: 'Courtyard by Marriott', logo: '/logos/courtyard-marriott.webp' },
       { name: 'Honest',                logo: '/logos/honest.png' },
-      { name: 'MahaMahel' },
-      { name: 'Salwa Family Restaurant' },
+      { name: 'MahaMahel',             logo: '/logos/mahamahal.jpg' },
+      { name: 'Salwa Family Restaurant', logo: '/logos/salwa.png' },
     ],
   },
   {
@@ -40,22 +37,22 @@ const categories: { label: string; brands: Brand[] }[] = [
       { name: 'Arun Icecreams', logo: '/logos/arun-icecreams.png' },
       { name: 'Amul',           logo: '/logos/amul.webp' },
       { name: "Dinshaw's",      logo: '/logos/dinshaws.png' },
-      { name: 'Vadilal' },
-      { name: "Nirula's" },
+      { name: 'Vadilal',        logo: '/logos/vadilal.png' },
+      { name: "Nirula's",       logo: '/logos/nirulas.png' },
       { name: 'Häagen-Dazs',    logo: '/logos/haagen-dazs.webp' },
-      { name: 'Ranbaxy' },
+      { name: 'Ranbaxy',        logo: '/logos/ranbaxy.webp' },
     ],
   },
   {
     label: 'Corporate & Entertainment',
     brands: [
-      { name: 'Torrent' },
-      { name: 'Pepsi',            logo: WP('Pepsi_logo_2014.svg') },
+      { name: 'Torrent',          logo: '/logos/torrent.png' },
+      { name: 'Pepsi',            logo: '/logos/pepsi.webp' },
       { name: 'Cremica',          logo: '/logos/cremica.webp' },
-      { name: 'Infosys',          logo: WP('Infosys_logo.svg') },
+      { name: 'Infosys',          logo: '/logos/infosys.webp' },
       { name: 'Bharat Petroleum', logo: '/logos/bharat-petroleum.png' },
       { name: 'Adlabs',           logo: '/logos/adlabs.png' },
-      { name: 'PVR Cinemas',      logo: WP('PVR_Cinemas_logo.svg') },
+      { name: 'PVR Cinemas',      logo: '/logos/pvr-cinemas.png' },
     ],
   },
 ];
