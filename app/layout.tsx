@@ -24,6 +24,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
         {/* Set has-ann class before first paint to prevent layout shift from fixed header */}
         <script dangerouslySetInnerHTML={{ __html: `(function(){try{if(sessionStorage.getItem('ann-dismissed')!=='1')document.documentElement.classList.add('has-ann');}catch(e){}})();` }} />
       </head>
