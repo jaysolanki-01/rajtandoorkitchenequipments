@@ -605,7 +605,7 @@ a, [role="button"] { touch-action: manipulation; }
 .sh__overlay {
   position: fixed; inset: 0;
   background: rgba(0,0,0,0.65);
-  z-index: 98;
+  z-index: 300;
   opacity: 0; pointer-events: none;
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
@@ -627,7 +627,7 @@ a, [role="button"] { touch-action: manipulation; }
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  z-index: 99;
+  z-index: 310;
   display: flex;
   flex-direction: column;
   visibility: hidden;
