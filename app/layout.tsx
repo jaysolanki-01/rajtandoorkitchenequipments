@@ -10,6 +10,7 @@ import { SiteFooter } from '../src/components/layout/SiteFooter';
 import { WhatsAppFAB } from '../src/components/WhatsAppFAB';
 import { SearchOverlay } from '../src/components/search/SearchOverlay';
 import { CookieConsent } from '../src/components/CookieConsent';
+import { ScrollToTop } from '../src/components/ScrollToTop';
 
 export const metadata: Metadata = {
   title: seo.title,
@@ -32,6 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <Providers>
+          <ScrollToTop />
           {!isAdmin && <a className="skip-link" href="#main">Skip to main content</a>}
           {!isAdmin && <AnnouncementBar />}
           {!isAdmin && <SiteHeader />}
