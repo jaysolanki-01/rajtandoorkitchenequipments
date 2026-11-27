@@ -112,7 +112,11 @@ export default function AdminDashboard() {
         <KpiCard
           label="Total Revenue"
           value={fmt(stats?.totalRevenue ?? 0)}
-          sub={`from ${stats?.totalOrders ?? 0} orders`}
+          sub={
+            stats?.cancelledOrders
+              ? `excl. ${stats.cancelledOrders} cancelled (${fmt(stats.cancelledRevenue)})`
+              : `from ${stats?.totalOrders ?? 0} orders`
+          }
           accentColor="var(--admin-green)"
         />
         <KpiCard

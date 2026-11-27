@@ -43,6 +43,8 @@ export type AdminStats = {
   totalQuotes: number;
   pendingQuotes: number;
   totalRevenue: number;
+  cancelledOrders: number;
+  cancelledRevenue: number;
   ordersByStatus: Record<string, number>;
   quotesByStatus: Record<string, number>;
 };
@@ -64,7 +66,13 @@ export async function fetchAdminStats(): Promise<AdminStats> {
 
   const ordersByStatus = countBy(orders);
   const quotesByStatus = countBy(quotes);
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.total ?? 0), 0);
+  const cancelledOrders = ordersByStatus['cancelled'] ?? 0;
+  const cancelledRevenue = orders
+    .filter(o => o.status === 'cancelled')
+    .reduce((sum, o) => sum + (o.total ?? 0), 0);
+  const totalRevenue = orders
+    .filter(o => o.status !== 'cancelled')
+    .reduce((sum, o) => sum + (o.total ?? 0), 0);
 
   return {
     totalOrders: orders.length,
@@ -72,6 +80,8 @@ export async function fetchAdminStats(): Promise<AdminStats> {
     totalQuotes: quotes.length,
     pendingQuotes: quotesByStatus['pending'] ?? 0,
     totalRevenue,
+    cancelledOrders,
+    cancelledRevenue,
     ordersByStatus,
     quotesByStatus,
   };
@@ -341,16 +351,22 @@ export type AdminInventoryItem = {
   slug: string;
   name: string;
   category: string;
+  category_label: string;
+  short_description: string;
   price: number | null;
+  price_label: string | null;
   in_stock: boolean;
   is_demo: boolean;
+  tags: string[] | null;
+  warranty: string | null;
 };
 
 export async function fetchAdminInventory(): Promise<AdminInventoryItem[]> {
   const sb = getClient();
   const { data, error } = await sb
     .from('products')
-    .select('id, slug, name, category, price, in_stock, is_demo')
+    .select('id, slug, name, category, category_label, short_description, price, price_label, in_stock, is_demo, tags, warranty')
+    .order('category')
     .order('name');
   if (error || !data) return [];
   return data as AdminInventoryItem[];
