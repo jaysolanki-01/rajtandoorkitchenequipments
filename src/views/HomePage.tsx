@@ -57,9 +57,9 @@ export function HomePage() {
 
       <main id="main" tabIndex={-1}>
         <div id="raj-s0"><TandoorHero />{reduced && <StoryStatic />}</div>
+        <div id="raj-s2c"><CustomersSection /></div>
         <div id="raj-s1"><TrustSection /></div>
         <div id="raj-s2b"><CategoryShowcase /></div>
-        <div id="raj-s2c"><CustomersSection /></div>
         <div id="raj-s3"><FeaturedProducts /></div>
         <div id="raj-s4"><BestSellersSection /></div>
         <div id="raj-s5"><CommercialSection /></div>
