@@ -9,7 +9,7 @@ function toProduct(p: SupabaseProduct): Product {
     id: p.id,
     slug: p.slug,
     name: p.name,
-    category: p.category as Product['category'],
+    category: p.category,
     categoryLabel: p.category_label,
     shortDescription: p.short_description,
     description: p.description,

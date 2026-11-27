@@ -15,7 +15,7 @@ export interface Product {
   id: string;
   slug: string;
   name: string;
-  category: 'tandoors' | 'kitchen-equipment' | 'accessories';
+  category: string;
   categoryLabel: string;
   shortDescription: string;
   description: string;
