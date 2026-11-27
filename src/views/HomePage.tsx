@@ -10,6 +10,7 @@ import { ChooseTandoorGuide } from '../components/home/ChooseTandoorGuide';
 import { FAQAccordion } from '../components/home/FAQAccordion';
 import { ContactSection } from '../components/home/ContactSection';
 import { MapSection } from '../components/home/MapSection';
+import { CustomersSection } from '../components/home/CustomersSection';
 import dynamic from 'next/dynamic';
 const TandoorHero = dynamic(
   () => import('../components/TandoorHero').then(m => ({ default: m.TandoorHero })),
@@ -61,6 +62,7 @@ export function HomePage() {
         <div id="raj-s3"><FeaturedProducts /></div>
         <div id="raj-s4"><BestSellersSection /></div>
         <div id="raj-s5"><CommercialSection /></div>
+        <div id="raj-s5b"><CustomersSection /></div>
         <div id="raj-s6"><BusinessTypeSection /></div>
         <div id="raj-s7"><ChooseTandoorGuide /></div>
         <div id="raj-s8"><FAQAccordion /></div>
