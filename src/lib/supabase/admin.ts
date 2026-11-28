@@ -233,7 +233,10 @@ export type AdminCustomer = {
 export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
   const sb = getClient();
   const [ordersRes, cusRes] = await Promise.all([
-    sb.from('orders').select('email, customer_name, phone, total, created_at').order('created_at', { ascending: false }),
+    sb.from('orders')
+      .select('email, customer_name, phone, total, created_at, status')
+      .neq('status', 'cancelled')
+      .order('created_at', { ascending: false }),
     sb.from('customers').select('email, customer_number'),
   ]);
   if (ordersRes.error || !ordersRes.data) return [];

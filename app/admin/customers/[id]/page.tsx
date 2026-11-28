@@ -39,7 +39,7 @@ export default function AdminCustomerDetailPage() {
     }).finally(() => setLoading(false));
   }, [email]);
 
-  const totalSpent = orders.reduce((s, o) => s + (o.total ?? 0), 0);
+  const totalSpent = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + (o.total ?? 0), 0);
   const customerName = orders[0]?.customer_name ?? '—';
   const phone = orders[0]?.phone ?? '';
 
@@ -110,9 +110,9 @@ export default function AdminCustomerDetailPage() {
         <div className="admin-stat">
           <div className="admin-stat-label">Avg. Order Value</div>
           <div className="admin-stat-value" style={{ fontSize: 22 }}>
-            {orders.length ? fmt(Math.round(totalSpent / orders.length)) : '—'}
+            {(() => { const n = orders.filter(o => o.status !== 'cancelled').length; return n ? fmt(Math.round(totalSpent / n)) : '—'; })()}
           </div>
-          <div className="admin-stat-sub">per order</div>
+          <div className="admin-stat-sub">excl. cancelled</div>
         </div>
         <div className="admin-stat">
           <div className="admin-stat-label">Last Order</div>
