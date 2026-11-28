@@ -112,6 +112,14 @@ export function ProductDetailPage() {
     });
   }, [product?.slug]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (!product || product.images.length <= 1 || zoomed) return;
+    const timer = setInterval(() => {
+      setActiveImg((i) => (i + 1) % product.images.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [product, zoomed]);
+
   if (!product && loading) {
     return (
       <main id="main" className="page-main" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -245,6 +253,7 @@ export function ProductDetailPage() {
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setZoomed(true); }}
                 >
                   <img
+                    key={activeImg}
                     src={product.images[activeImg] ?? product.image}
                     alt={product.name}
                     className="pdp3__main-img"
