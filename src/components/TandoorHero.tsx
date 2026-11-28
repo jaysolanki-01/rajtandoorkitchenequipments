@@ -192,11 +192,7 @@ export function TandoorHero() {
                 ))}
               </ol>
             </nav>
-            <div className={`scroll-cue${active > 0 ? ' is-hidden' : ''}`} aria-hidden="true">
-              <span className="scroll-cue__line" />
-              Scroll to explore
-            </div>
-            <a className="skip-story" href={links.exploreTandoors}>
+<a className="skip-story" href={links.exploreTandoors}>
               Skip the product story
             </a>
           </>
