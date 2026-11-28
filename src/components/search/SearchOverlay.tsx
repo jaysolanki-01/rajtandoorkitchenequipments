@@ -152,6 +152,11 @@ export function SearchOverlay() {
                       className={`so__result${focused === i ? ' so__result--focused' : ''}`}
                       onClick={() => handleResultClick(p.name)}
                     >
+                      <div className="so__result-img-wrap">
+                        {p.image
+                          ? <img src={p.image} alt="" className="so__result-img" loading="lazy" width={52} height={52} />
+                          : <span className="so__result-img-placeholder" />}
+                      </div>
                       <div className="so__result-info">
                         <span className="so__result-cat">{p.category_label}</span>
                         <span className="so__result-name">

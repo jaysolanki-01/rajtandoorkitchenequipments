@@ -1753,6 +1753,13 @@ a, [role="button"] { touch-action: manipulation; }
 }
 .so__result:last-child { border-bottom: none; }
 .so__result:hover, .so__result--focused { background: var(--rt-bg2); }
+.so__result-img-wrap {
+  width: 52px; height: 52px; flex-shrink: 0; border-radius: 8px;
+  background: var(--rt-bg2); border: 1px solid var(--rt-border);
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.so__result-img { width: 100%; height: 100%; object-fit: contain; }
+.so__result-img-placeholder { width: 100%; height: 100%; background: var(--rt-bg2); }
 .so__result-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
 .so__result-cat { font-size: 0.65rem; color: #9b8f85; }
 .so__result-name { font-size: 0.9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
