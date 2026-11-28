@@ -308,6 +308,17 @@ export function ProductDetailPage() {
               <div className="pdp3__info-top">
                 <span className="pdp3__cat">{product.categoryLabel}</span>
                 {product.badge && <span className="pdp3__info-badge">{product.badge}</span>}
+                <button
+                  type="button"
+                  className={`pdp3__wl-corner${inWishlist ? ' pdp3__wl-corner--saved' : ''}`}
+                  onClick={() => toggle(product.id)}
+                  aria-pressed={inWishlist}
+                  aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill={inWishlist ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
               </div>
 
               <h1 className="pdp3__name">{product.name}</h1>
@@ -321,29 +332,37 @@ export function ProductDetailPage() {
 
               <div className="pdp3__stock-row">
                 {product.inStock ? (
-                  <>
+                  <div className="pdp3__stock-band">
                     <span className="pdp3__stock pdp3__stock--in">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span className="pdp3__stock-dot" aria-hidden="true" />
                       In Stock
                     </span>
                     <span className="pdp3__delivery-pill">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                      Dispatches within 3–5 business days
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                      Ships in 3–5 business days
                     </span>
-                  </>
+                  </div>
                 ) : (
                   <span className="pdp3__stock pdp3__stock--out">Out of Stock. Contact Us</span>
                 )}
               </div>
 
-              <div className="pdp3__price-row">
-                {product.price !== null ? (
-                  <>
-                    <span className="pdp3__price-sale">₹{product.price.toLocaleString('en-IN')}</span>
-                    <span className="pdp3__price-gst">Incl. GST</span>
-                  </>
-                ) : (
-                  <span className="pdp3__price-enquiry">{product.priceLabel ?? 'Price on enquiry'}</span>
+              <div className="pdp3__price-block">
+                <div className="pdp3__price-row">
+                  {product.price !== null ? (
+                    <>
+                      <span className="pdp3__price-sale">₹{product.price.toLocaleString('en-IN')}</span>
+                      <span className="pdp3__price-gst">Incl. GST</span>
+                    </>
+                  ) : (
+                    <span className="pdp3__price-enquiry">{product.priceLabel ?? 'Price on enquiry'}</span>
+                  )}
+                </div>
+                {product.price !== null && (
+                  <p className="pdp3__price-note">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    No hidden charges
+                  </p>
                 )}
               </div>
 
@@ -392,6 +411,7 @@ export function ProductDetailPage() {
                 <div className="pdp3__purchase">
                   {product.price !== null ? (
                     <>
+                      <p className="pdp3__qty-label">Quantity</p>
                       <div className="pdp3__qty-row">
                         <div className="pdp3__qty" role="group" aria-label="Quantity">
                           <button type="button" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>−</button>
@@ -407,27 +427,20 @@ export function ProductDetailPage() {
                         >
                           {added ? (
                             <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Added</>
-                          ) : product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                          ) : product.inStock ? (
+                            <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Add to Cart</>
+                          ) : 'Out of Stock'}
                         </button>
                       </div>
 
                       <button type="button" className="pdp3__buy-btn" onClick={handleBuyNow} disabled={!product.inStock}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                         Buy Now
                       </button>
 
-                      <div className="pdp3__actions-row">
-                        <button
-                          type="button"
-                          className={`pdp3__action-btn${inWishlist ? ' pdp3__action-btn--active' : ''}`}
-                          onClick={() => toggle(product.id)}
-                          aria-pressed={inWishlist}
-                        >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill={inWishlist ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                          </svg>
-                          {inWishlist ? 'Saved' : 'Wishlist'}
-                        </button>
+                      <div className="pdp3__or-line">or</div>
 
+                      <div className="pdp3__actions-row">
                         <Link href="/contact?type=quote" className="pdp3__action-btn">
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                           Get Quote
@@ -450,17 +463,6 @@ export function ProductDetailPage() {
                         Request a Quote
                       </Link>
                       <div className="pdp3__actions-row">
-                        <button
-                          type="button"
-                          className={`pdp3__action-btn${inWishlist ? ' pdp3__action-btn--active' : ''}`}
-                          onClick={() => toggle(product.id)}
-                          aria-pressed={inWishlist}
-                        >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill={inWishlist ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                          </svg>
-                          {inWishlist ? 'Saved' : 'Wishlist'}
-                        </button>
                         <Link href="/contact" className="pdp3__action-btn">
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                           Ask a Question
@@ -471,19 +473,27 @@ export function ProductDetailPage() {
 
                   <div className="pdp3__trust-bar">
                     <div className="pdp3__trust-item">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      <div className="pdp3__trust-icon" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      </div>
                       <div><strong>Quality Material</strong><span>SS 304 stainless steel body</span></div>
                     </div>
                     <div className="pdp3__trust-item">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                      <div className="pdp3__trust-icon" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                      </div>
                       <div><strong>Pan-India Delivery</strong><span>Contact us for timelines</span></div>
                     </div>
                     <div className="pdp3__trust-item">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      <div className="pdp3__trust-icon" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      </div>
                       <div><strong>After-Sales Support</strong><span>Contact us anytime</span></div>
                     </div>
                     <div className="pdp3__trust-item">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <div className="pdp3__trust-icon" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      </div>
                       <div><strong>Secure Checkout</strong><span>UPI · Card · Net Banking</span></div>
                     </div>
                   </div>
