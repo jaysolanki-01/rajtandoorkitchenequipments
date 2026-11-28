@@ -521,49 +521,55 @@ export function ProductDetailPage() {
 
             <div className="pdp3__tab-content">
 
-              {/* Overview — editorial layout: description + numbered highlights */}
+              {/* Overview — description + scannable feature strips */}
               {activeTab === 'overview' && (
                 <div id="pdp3-tab-overview" role="tabpanel" className="pdp3__tab-panel pdp3__tab-overview">
-                  <div className="pdp3__ov-wrap">
-                    {/* Left: description with accent bar */}
-                    <div className="pdp3__ov-desc">
-                      <div className="pdp3__ov-accent" aria-hidden="true" />
-                      <div className="pdp3__ov-text">
-                        {product.description.split('\n\n').map((para, i) =>
-                          para.trim().startsWith('-') ? (
-                            <ul key={i}>
-                              {para.split('\n').filter((l) => l.startsWith('-')).map((l, j) => (
-                                <li key={j}>{l.replace(/^-\s*/, '')}</li>
-                              ))}
-                            </ul>
-                          ) : para.trim() ? (
-                            <p key={i}>{para.trim()}</p>
-                          ) : null
-                        )}
-                      </div>
+                  {/* Description with accent bar */}
+                  <div className="pdp3__ov-desc">
+                    <div className="pdp3__ov-accent" aria-hidden="true" />
+                    <div className="pdp3__ov-text">
+                      {product.description.split('\n\n').map((para, i) =>
+                        para.trim().startsWith('-') ? (
+                          <ul key={i}>
+                            {para.split('\n').filter((l) => l.startsWith('-')).map((l, j) => (
+                              <li key={j}>{l.replace(/^-\s*/, '')}</li>
+                            ))}
+                          </ul>
+                        ) : para.trim() ? (
+                          <p key={i}>{para.trim()}</p>
+                        ) : null
+                      )}
                     </div>
-
-                    {/* Right: numbered highlight snapshot */}
-                    {product.features.length > 0 && (
-                      <div className="pdp3__ov-snapshot">
-                        <p className="pdp3__ov-eyebrow">Key Highlights</p>
-                        <div className="pdp3__ov-cards">
-                          {product.features.slice(0, 4).map((f, i) => (
-                            <div key={i} className="pdp3__ov-card">
-                              <span className="pdp3__ov-num">{String(i + 1).padStart(2, '0')}</span>
-                              <span className="pdp3__ov-feat">{f}</span>
-                            </div>
-                          ))}
-                        </div>
-                        {product.features.length > 4 && (
-                          <button type="button" className="pdp3__ov-viewall" onClick={() => setActiveTab('features')}>
-                            View all {product.features.length} features
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                          </button>
-                        )}
-                      </div>
-                    )}
                   </div>
+
+                  {/* Feature strips */}
+                  {product.features.length > 0 && (
+                    <div className="pdp3__ov-strips">
+                      <p className="pdp3__ov-eyebrow">Key Highlights</p>
+                      <ul className="pdp3__ov-strip-list">
+                        {product.features.slice(0, 6).map((f, i) => {
+                          const colonIdx = f.indexOf(':');
+                          const title = colonIdx > -1 ? f.slice(0, colonIdx).trim() : null;
+                          const desc = colonIdx > -1 ? f.slice(colonIdx + 1).trim() : f;
+                          return (
+                            <li key={i} className="pdp3__ov-strip">
+                              <div className="pdp3__ov-strip-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</div>
+                              <div className="pdp3__ov-strip-body">
+                                {title && <strong>{title}</strong>}
+                                <p>{desc}</p>
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                      {product.features.length > 6 && (
+                        <button type="button" className="pdp3__ov-viewall" onClick={() => setActiveTab('features')}>
+                          View all {product.features.length} features
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
