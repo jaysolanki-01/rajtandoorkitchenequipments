@@ -1915,7 +1915,7 @@ a, [role="button"] { touch-action: manipulation; }
 .page-h1-count { font-weight: 400; font-size: 0.65em; color: var(--rt-text2); }
 .page-intro { margin-top: 0.75rem; font-size: 1.05rem; color: var(--rt-text2); max-width: 64ch; line-height: 1.7; }
 
-.breadcrumb { padding: 1.25rem 0 0.25rem; }
+.breadcrumb { padding-top: 1.25rem; padding-bottom: 0.25rem; }
 .breadcrumb ol {
   list-style: none; padding: 0; margin: 0;
   display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem;
@@ -8511,4 +8511,156 @@ table { max-width: 100%; }
 @media (max-width: 420px) {
   .tmn__grid { grid-template-columns: 1fr; height: 400px; }
   .tmn-col-wrap:nth-child(2) { display: none; }
+}
+
+/* ── Shop Filter Bar ────────────────────────────────────────────────────────── */
+.shop-fb {
+  background: var(--rt-charcoal);
+  border-bottom: 1px solid rgba(195,162,104,0.18);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.28);
+  position: sticky;
+  top: calc(var(--header-h) + var(--ann-h, 0px));
+  z-index: 10;
+}
+.shop-fb__inner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+.shop-fb__chips {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 1;
+  scroll-snap-type: x mandatory;
+}
+.shop-fb__chips::-webkit-scrollbar { display: none; }
+
+/* Category chip */
+.shop-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: border-color 0.18s, color 0.18s, background 0.18s, transform 0.15s;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+.shop-chip:hover {
+  border-color: rgba(195,162,104,0.5);
+  color: #fff;
+  background: rgba(195,162,104,0.1);
+  transform: translateY(-1px);
+}
+.shop-chip--active {
+  background: var(--rt-gold);
+  border-color: var(--rt-gold);
+  color: #0a0702;
+  font-weight: 700;
+}
+.shop-chip--active:hover {
+  background: var(--rt-gold-h);
+  border-color: var(--rt-gold-h);
+  color: #0a0702;
+  transform: translateY(-1px);
+}
+.shop-chip--empty { opacity: 0.45; }
+.shop-chip__icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.shop-chip__icon svg {
+  width: 13px;
+  height: 13px;
+}
+.shop-chip__count {
+  background: rgba(255,255,255,0.14);
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  min-width: 17px;
+  text-align: center;
+  line-height: 1.4;
+}
+.shop-chip--active .shop-chip__count {
+  background: rgba(0,0,0,0.18);
+  color: #0a0702;
+}
+
+/* Sort pills */
+.shop-fb__sort {
+  display: flex;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  padding-left: 1.1rem;
+}
+.shop-sort-pill {
+  padding: 0.38rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.74rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.18s, color 0.18s, background 0.18s;
+}
+.shop-sort-pill:hover {
+  border-color: rgba(195,162,104,0.4);
+  color: rgba(255,255,255,0.9);
+}
+.shop-sort-pill--active {
+  background: rgba(195,162,104,0.18);
+  border-color: rgba(195,162,104,0.55);
+  color: var(--rt-gold);
+  font-weight: 700;
+}
+
+/* Shop heading row */
+.shop-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.shop-result-count {
+  font-size: 0.8rem;
+  color: var(--rt-text2);
+  background: var(--rt-bg2);
+  border: 1px solid var(--rt-border);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+/* Mobile: collapse sort to icon-only hints, chips scroll */
+@media (max-width: 768px) {
+  .shop-fb__inner { gap: 0.75rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .shop-fb__sort { padding-left: 0.75rem; gap: 0.25rem; }
+  .shop-sort-pill { padding: 0.35rem 0.5rem; font-size: 0.7rem; }
+  .shop-chip { padding: 0.38rem 0.6rem; font-size: 0.74rem; }
+  .shop-heading { flex-direction: column; align-items: flex-start; gap: 0.4rem; margin-top: 1rem; }
+}
+@media (max-width: 480px) {
+  .shop-fb__sort { display: none; }
 }
