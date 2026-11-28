@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       .from('products')
       .update({ in_stock: false })
       .in('id', productIds)
-      .catch(() => { /* don't block the order */ });
+      .then(null, () => { /* don't block the order */ });
   }
 
   return Response.json({ orderNumber });

@@ -142,12 +142,6 @@ function EditModal({ item, onClose, onSave }: {
   );
 }
 
-function fmt(n: number) {
-  return `₹${n.toLocaleString('en-IN')}`;
-}
-
-type SortKey = 'name' | 'price' | 'category';
-
 export default function AdminInventoryPage() {
   const [items, setItems] = useState<AdminInventoryItem[]>([]);
   const [loading, setLoading] = useState(true);

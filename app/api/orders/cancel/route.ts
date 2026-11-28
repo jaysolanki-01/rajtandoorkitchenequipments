@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       .from('products')
       .update({ in_stock: true })
       .in('id', productIds)
-      .catch(() => { /* best-effort */ });
+      .then(null, () => { /* best-effort */ });
   }
 
   // Send cancellation email (best-effort — don't block the response)
