@@ -1688,7 +1688,7 @@ a, [role="button"] { touch-action: manipulation; }
 }
 .so__panel {
   position: relative; width: calc(100% - 2rem); max-width: 620px;
-  background: var(--rt-bg); border-radius: 0 0 14px 14px;
+  background: var(--rt-bg); border-radius: 0;
   box-shadow: 0 20px 56px rgba(0,0,0,.16), 0 0 0 1px var(--rt-border);
   max-height: 82vh; display: flex; flex-direction: column;
   animation: so-panel-in 0.18s ease both;
@@ -1777,7 +1777,7 @@ a, [role="button"] { touch-action: manipulation; }
 
 /* Mobile */
 @media (max-width: 600px) {
-  .so__panel { width: 100%; border-radius: 0 0 12px 12px; max-height: 88vh; }
+  .so__panel { width: 100%; border-radius: 0; max-height: 88vh; }
   .so__footer { padding: 0.65rem 1rem; }
 }
 
