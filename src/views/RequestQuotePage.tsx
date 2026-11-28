@@ -3,7 +3,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { seo } from '../config/site';
-import { insertQuote } from '../lib/supabase/db';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -31,18 +30,24 @@ export function RequestQuotePage() {
     }
     setStatus('submitting');
     try {
-      const result = await insertQuote({
-        customer_name: form.name,
-        email: form.email,
-        phone: form.phone,
-        business_name: form.businessName,
-        product_interest: form.productInterest,
-        quantity: form.quantity,
-        requirements: form.requirements,
-        delivery_location: form.deliveryLocation,
-        source: 'quote-form',
+      const res = await fetch('/api/quotes/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: form.name,
+          email: form.email,
+          phone: form.phone,
+          business_name: form.businessName,
+          product_interest: form.productInterest,
+          quantity: form.quantity,
+          requirements: form.requirements,
+          delivery_location: form.deliveryLocation,
+          source: 'quote-form',
+        }),
       });
-      setReference(result.reference);
+      const json = await res.json() as { reference?: string; error?: string };
+      if (!res.ok || json.error) throw new Error(json.error ?? 'Submission failed.');
+      setReference(json.reference ?? '');
       setStatus('success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Submission failed. Please try again.');
