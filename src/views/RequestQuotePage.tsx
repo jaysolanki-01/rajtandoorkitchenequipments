@@ -71,11 +71,36 @@ export function RequestQuotePage() {
           </div>
 
           {status === 'success' ? (
-            <div className="form-status form-status--success" style={{ padding: '2rem', textAlign: 'center' }}>
-              <strong>Quote request received.</strong>
-              {reference && <p>Your reference number is <strong>{reference}</strong>. Keep this for your records.</p>}
-              <p>The Raj Tandoor team will respond to your enquiry shortly.</p>
-              <Link href="/shop" className="btn btn--gold" style={{ marginTop: '1.25rem' }}>Continue Browsing</Link>
+            <div className="rq-success">
+              <div className="rq-success__icon" aria-hidden="true">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                  <circle cx="20" cy="20" r="20" fill="#2d7a4f"/>
+                  <path d="M12 20.5l6 6 10-12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h2 className="rq-success__title">Enquiry received.</h2>
+              <p className="rq-success__sub">The Raj Tandoor team will be in touch with you shortly.</p>
+              {reference && (
+                <div className="rq-success__ref">
+                  <span className="rq-success__ref-label">Your reference number</span>
+                  <span className="rq-success__ref-value">{reference}</span>
+                  <span className="rq-success__ref-hint">A confirmation email is on its way to you.</span>
+                </div>
+              )}
+              <div className="rq-success__actions">
+                <button
+                  className="btn btn--outline"
+                  onClick={() => {
+                    setStatus('idle');
+                    setReference('');
+                    setError('');
+                    setForm({ name: '', email: '', phone: '', businessName: '', productInterest: '', quantity: '', requirements: '', deliveryLocation: '' });
+                  }}
+                >
+                  Request Another Quote
+                </button>
+                <Link href="/shop" className="btn btn--gold">Browse Products</Link>
+              </div>
             </div>
           ) : (
             <form className="contact-form" onSubmit={handleSubmit} noValidate aria-label="Quote request form">

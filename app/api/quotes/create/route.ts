@@ -32,5 +32,20 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: error?.message ?? 'Failed to submit quote.' }, { status: 500 });
   }
 
-  return Response.json({ reference: (data as { reference: string }).reference });
+  const reference = (data as { reference: string }).reference;
+
+  // Fire-and-forget confirmation email — never block the response
+  fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rajtandoorkitchenequipments.vercel.app'}/api/email/quote-confirmation`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      customerName: body.customer_name,
+      email: body.email,
+      reference,
+      productInterest: body.product_interest,
+      requirements: body.requirements,
+    }),
+  }).catch(() => { /* non-critical */ });
+
+  return Response.json({ reference });
 }
