@@ -2198,8 +2198,8 @@ a, [role="button"] { touch-action: manipulation; }
 .pdp3__or-line::before, .pdp3__or-line::after { content: ''; flex: 1; height: 1px; background: var(--rt-border); }
 
 /* Secondary action buttons row */
-.pdp3__actions-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.pdp3__action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 0.4rem 0.85rem; font-size: 0.82rem; font-weight: 600; color: var(--rt-charcoal); border: 1.5px solid var(--rt-border); border-radius: 9999px; background: transparent; cursor: pointer; text-decoration: none; transition: border-color 0.2s, color 0.2s, background 0.2s; white-space: nowrap; }
+.pdp3__actions-row { display: flex; gap: 0.5rem; }
+.pdp3__action-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0.4rem 0.85rem; font-size: 0.82rem; font-weight: 600; color: var(--rt-charcoal); border: 1.5px solid var(--rt-border); border-radius: 9999px; background: transparent; cursor: pointer; text-decoration: none; transition: border-color 0.2s, color 0.2s, background 0.2s; white-space: nowrap; }
 .pdp3__action-btn:hover { border-color: var(--rt-gold); color: var(--rt-gold); }
 .pdp3__action-btn--active { border-color: #dc2626; color: #dc2626; }
 .pdp3__action-btn--active:hover { background: rgba(220,38,38,0.05); }
