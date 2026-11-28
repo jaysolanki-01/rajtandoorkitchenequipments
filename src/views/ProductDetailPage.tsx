@@ -524,9 +524,10 @@ export function ProductDetailPage() {
               {/* Overview — description + scannable feature strips */}
               {activeTab === 'overview' && (
                 <div id="pdp3-tab-overview" role="tabpanel" className="pdp3__tab-panel pdp3__tab-overview">
-                  {/* Description with accent bar */}
+                  {/* Description */}
                   <div className="pdp3__ov-desc">
-                    <div className="pdp3__ov-accent" aria-hidden="true" />
+                    <p className="pdp3__ov-eyebrow">About this Product</p>
+                    <h3 className="pdp3__ov-heading">{product.name}</h3>
                     <div className="pdp3__ov-text">
                       {product.description.split('\n\n').map((para, i) =>
                         para.trim().startsWith('-') ? (
