@@ -577,24 +577,23 @@ export function ProductDetailPage() {
               {/* Key Features — card grid */}
               {activeTab === 'features' && (
                 <div id="pdp3-tab-features" role="tabpanel" className="pdp3__tab-panel">
-                  <div className="pdp3__feat-grid">
+                  <ul className="pdp3__feat-list">
                     {product.features.map((f, i) => {
                       const colonIdx = f.indexOf(':');
                       const title = colonIdx > -1 ? f.slice(0, colonIdx).trim() : null;
                       const desc = colonIdx > -1 ? f.slice(colonIdx + 1).trim() : f;
                       return (
-                        <div key={i} className="pdp3__feat-item" data-num={String(i + 1).padStart(2, '0')}>
-                          <div className="pdp3__feat-item-top">
-                            <div className="pdp3__feat-num-badge" aria-hidden="true">
-                              {String(i + 1).padStart(2, '0')}
-                            </div>
-                            {title && <p className="pdp3__feat-title">{title}</p>}
+                        <li key={i} className="pdp3__feat-row">
+                          <div className="pdp3__feat-row-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</div>
+                          <div className="pdp3__feat-row-divider" aria-hidden="true" />
+                          <div className="pdp3__feat-row-body">
+                            {title && <strong>{title}</strong>}
+                            <p>{desc}</p>
                           </div>
-                          <p className={title ? 'pdp3__feat-desc' : 'pdp3__feat-text'}>{desc}</p>
-                        </div>
+                        </li>
                       );
                     })}
-                  </div>
+                  </ul>
                 </div>
               )}
 
