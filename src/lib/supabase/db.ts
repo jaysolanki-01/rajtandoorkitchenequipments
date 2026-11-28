@@ -81,13 +81,20 @@ export async function fetchProducts(): Promise<SupabaseProduct[]> {
 
 export async function insertQuote(payload: QuoteInsert): Promise<{ reference: string }> {
   const sb = getClient();
-  const { data, error } = await sb
-    .from('quotes')
-    .insert(payload)
-    .select('reference')
-    .single();
+  // Call a SECURITY DEFINER function so the insert bypasses RLS with the anon key.
+  const { data, error } = await sb.rpc('create_quote', {
+    p_customer_name:    payload.customer_name,
+    p_email:            payload.email,
+    p_phone:            payload.phone            ?? null,
+    p_business_name:    payload.business_name    ?? null,
+    p_product_interest: payload.product_interest ?? null,
+    p_quantity:         payload.quantity         ?? null,
+    p_requirements:     payload.requirements     ?? null,
+    p_delivery_location:payload.delivery_location ?? null,
+    p_source:           payload.source           ?? 'website',
+  });
   if (error) throw new Error(error.message);
-  return { reference: data.reference };
+  return { reference: data as string };
 }
 
 export async function insertOrder(payload: OrderInsert): Promise<{ orderNumber: string }> {
