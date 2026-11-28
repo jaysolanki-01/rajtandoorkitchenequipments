@@ -8,12 +8,12 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { products, type Product } from '../config/products';
+import { fetchProducts, type SupabaseProduct } from '../lib/supabase/db';
 
 interface SearchContextValue {
   isOpen: boolean;
   query: string;
-  results: Product[];
+  results: SupabaseProduct[];
   open: () => void;
   close: () => void;
   toggle: () => void;
@@ -22,25 +22,29 @@ interface SearchContextValue {
 
 const SearchContext = createContext<SearchContextValue | null>(null);
 
-function search(q: string): Product[] {
+function searchProducts(catalog: SupabaseProduct[], q: string): SupabaseProduct[] {
   const term = q.trim().toLowerCase();
   if (!term) return [];
-  return products.filter((p) => {
-    return (
-      p.name.toLowerCase().includes(term) ||
-      p.categoryLabel.toLowerCase().includes(term) ||
-      p.shortDescription.toLowerCase().includes(term) ||
-      p.features.some((f) => f.toLowerCase().includes(term)) ||
-      p.specs.some((s) => s.label.toLowerCase().includes(term) || s.value.toLowerCase().includes(term))
-    );
-  });
+  return catalog.filter((p) =>
+    p.name.toLowerCase().includes(term) ||
+    p.category_label.toLowerCase().includes(term) ||
+    p.short_description.toLowerCase().includes(term) ||
+    p.features.some((f) => f.toLowerCase().includes(term)) ||
+    p.specs.some((s) => s.label.toLowerCase().includes(term) || s.value.toLowerCase().includes(term))
+  );
 }
 
 export function SearchProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [catalog, setCatalog] = useState<SupabaseProduct[]>([]);
 
-  const results = useMemo(() => search(query), [query]);
+  // Load live products from Supabase once
+  useEffect(() => {
+    fetchProducts().then(setCatalog).catch(() => {});
+  }, []);
+
+  const results = useMemo(() => searchProducts(catalog, query), [catalog, query]);
 
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => {
@@ -52,9 +56,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   // Close on Escape
   useEffect(() => {
     if (!isOpen) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
-    };
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [isOpen, close]);
@@ -62,9 +64,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   // Lock body scroll when open
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
   return (

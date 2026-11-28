@@ -153,7 +153,7 @@ export function SearchOverlay() {
                       onClick={() => handleResultClick(p.name)}
                     >
                       <div className="so__result-info">
-                        <span className="so__result-cat">{p.categoryLabel}</span>
+                        <span className="so__result-cat">{p.category_label}</span>
                         <span className="so__result-name">
                           <Highlight text={p.name} query={query} />
                         </span>
