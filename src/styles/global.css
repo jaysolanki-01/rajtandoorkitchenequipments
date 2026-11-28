@@ -2220,7 +2220,7 @@ a, [role="button"] { touch-action: manipulation; }
 .pdp3__tabs-wrap { margin-top: 2.5rem; border-top: 1px solid var(--rt-border); }
 .pdp3__tab-nav { display: flex; overflow-x: auto; scrollbar-width: none; border-bottom: 2px solid var(--rt-border); }
 .pdp3__tab-nav::-webkit-scrollbar { display: none; }
-.pdp3__tab-btn { flex: 1 0 auto; padding: 0.85rem 0.6rem; font-size: 0.84rem; font-weight: 600; color: var(--rt-charcoal); background: transparent; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; white-space: nowrap; text-align: center; transition: color 0.2s, border-color 0.2s; }
+.pdp3__tab-btn { flex: 1 0 auto; padding: 0.85rem 0.6rem; font-size: 0.84rem; font-weight: 600; color: var(--rt-charcoal); background: transparent; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; white-space: nowrap; text-align: center; transition: color 0.2s, border-color 0.2s; min-width: 0; }
 .pdp3__tab-btn:hover { color: var(--rt-charcoal); opacity: 0.7; }
 .pdp3__tab-btn--active { color: var(--rt-gold); border-bottom-color: var(--rt-gold); }
 
@@ -7190,13 +7190,52 @@ body.is-checkout .sf { display: none !important; }
 body { overflow-x: hidden; }
 .page-main { overflow-x: hidden; }
 
-/* ── PDP (product detail) extra-small tweaks ── */
+/* ── PDP — mobile (≤860px): single column already, fine-tune spacing ── */
+@media (max-width: 860px) {
+  .pdp3 { gap: 1.25rem; padding: 1.25rem 0; }
+  .pdp3__info { gap: 0.65rem; }
+  .pdp3__name { font-size: clamp(1.25rem, 5vw, 1.7rem); }
+}
+
+/* ── PDP — small phones (≤480px) ── */
 @media (max-width: 480px) {
+  /* Tab nav: revert to natural-width scrolling on small screens */
+  .pdp3__tab-nav { display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pdp3__tab-btn { flex: 0 0 auto; padding: 0.65rem 0.7rem; font-size: 0.74rem; text-align: left; }
+
+  /* Trust bar: single column */
   .pdp3__trust-bar { grid-template-columns: 1fr; }
-  .pdp3__sticky-bar-title { max-width: 140px; }
-  .pdp3__tab-btn { padding: 0.7rem 0.75rem; font-size: 0.78rem; }
+  .pdp3__trust-item:nth-child(1), .pdp3__trust-item:nth-child(2) { border-bottom: 1px solid var(--rt-border); }
+  .pdp3__trust-item:nth-child(odd) { border-right: none; }
+  .pdp3__trust-item:nth-child(2) { border-bottom: 1px solid var(--rt-border); }
+
+  /* Sticky bar */
+  .pdp3__sticky-bar-title { max-width: 130px; }
+
+  /* Stock band: stack vertically on very small */
+  .pdp3__stock-band { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+
+  /* Price */
+  .pdp3__price-sale { font-size: 1.75rem; }
+
+  /* Overview description card padding */
+  .pdp3__ov-desc { padding: 1.1rem; }
+
+  /* Feature strips: smaller padding */
+  .pdp3__ov-strip { padding: 0.85rem 1rem; }
+  .pdp3__ov-strip-num { width: 24px; height: 24px; font-size: 0.62rem; }
+
+  /* Key Features editorial rows: smaller number */
+  .pdp3__feat-row { gap: 1rem; padding: 1.1rem 0; }
+  .pdp3__feat-row-num { font-size: 1.75rem; min-width: 40px; }
+
+  /* Specs table */
   .pdp3__specs-table th,
   .pdp3__specs-table td { padding: 0.6rem 0.65rem; font-size: 0.82rem; }
+
+  /* Action buttons row: allow wrapping on very small */
+  .pdp3__actions-row { gap: 0.4rem; }
+  .pdp3__action-btn { font-size: 0.76rem; padding: 0.4rem 0.6rem; }
 }
 
 /* ── Contact page extra-small ── */
