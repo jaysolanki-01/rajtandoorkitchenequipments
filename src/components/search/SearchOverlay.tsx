@@ -2,11 +2,9 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearch } from '../../store/SearchContext';
-import { CATEGORIES } from '../../config/categories';
 
 const RECENT_KEY = 'rt-recent-searches';
 const MAX_RECENT = 5;
-
 const QUICK_SEARCHES = ['Tandoor', 'Gas Tandoor', 'Commercial', 'Clay Tandoor', 'Accessories', 'Restaurant'];
 
 function getRecent(): string[] {
@@ -20,6 +18,19 @@ function saveRecent(term: string) {
 function removeRecent(term: string) {
   const list = getRecent().filter((r) => r !== term);
   try { localStorage.setItem(RECENT_KEY, JSON.stringify(list)); } catch {}
+}
+
+function Highlight({ text, query }: { text: string; query: string }) {
+  if (!query.trim()) return <>{text}</>;
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <mark className="so__hl">{text.slice(idx, idx + query.length)}</mark>
+      {text.slice(idx + query.length)}
+    </>
+  );
 }
 
 export function SearchOverlay() {
@@ -74,34 +85,27 @@ export function SearchOverlay() {
       <div className="so__backdrop" onClick={close} aria-hidden="true" />
 
       <div className="so__panel">
-
-        {/* ── Search Input ── */}
+        {/* ── Header ── */}
         <div className="so__header">
-          <div className="so__input-wrap">
-            <label htmlFor="so-input" className="sr-only">Search products</label>
-            <input
-              id="so-input"
-              ref={inputRef}
-              type="search"
-              className="so__input"
-              placeholder="What are you looking for?"
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); setFocused(-1); }}
-              autoComplete="off"
-              spellCheck={false}
-              aria-autocomplete="list"
-              aria-controls="so-results"
-            />
-            {hasQuery && (
-              <button type="button" className="so__clear" aria-label="Clear search"
-                onClick={() => { setQuery(''); inputRef.current?.focus(); }}>
-                ×
-              </button>
-            )}
-          </div>
-          <button type="button" className="so__close-btn" onClick={close} aria-label="Close search">
-            Esc
-          </button>
+          <button type="button" className="so__back-btn" onClick={close} aria-label="Close search">←</button>
+          <label htmlFor="so-input" className="sr-only">Search products</label>
+          <input
+            id="so-input"
+            ref={inputRef}
+            type="search"
+            className="so__input"
+            placeholder="What are you looking for?"
+            value={query}
+            onChange={(e) => { setQuery(e.target.value); setFocused(-1); }}
+            autoComplete="off"
+            spellCheck={false}
+            aria-autocomplete="list"
+            aria-controls="so-results"
+          />
+          {hasQuery && (
+            <button type="button" className="so__clear" aria-label="Clear search"
+              onClick={() => { setQuery(''); inputRef.current?.focus(); }}>×</button>
+          )}
         </div>
 
         {/* ── Body ── */}
@@ -132,22 +136,9 @@ export function SearchOverlay() {
                   ))}
                 </div>
               </div>
-
-              <div className="so__section">
-                <div className="so__section-head">Browse by category</div>
-                <div className="so__categories">
-                  {CATEGORIES.map((cat) => (
-                    <Link key={cat.slug} href={`/shop?category=${cat.slug}`} className="so__cat-card" onClick={close}>
-                      <span className="so__cat-label">{cat.name}</span>
-                      <span className="so__cat-arrow">→</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
             </>
           )}
 
-          {/* Results */}
           {hasQuery && results.length > 0 && (
             <div className="so__section">
               <div className="so__section-head">
@@ -161,20 +152,15 @@ export function SearchOverlay() {
                       className={`so__result${focused === i ? ' so__result--focused' : ''}`}
                       onClick={() => handleResultClick(p.name)}
                     >
-                      <div className="so__result-img-wrap">
-                        <img src={p.image} alt="" className="so__result-img" loading="lazy" width={64} height={64} />
-                      </div>
                       <div className="so__result-info">
                         <span className="so__result-cat">{p.categoryLabel}</span>
-                        <span className="so__result-name">{p.name}</span>
-                        <span className="so__result-desc">{p.shortDescription}</span>
-                      </div>
-                      <div className="so__result-right">
-                        <span className="so__result-price">
-                          {p.price ? `₹${p.price.toLocaleString('en-IN')}` : 'Request Quote'}
+                        <span className="so__result-name">
+                          <Highlight text={p.name} query={query} />
                         </span>
-                        <span className="so__result-arrow">→</span>
                       </div>
+                      <span className="so__result-price">
+                        {p.price ? `₹${p.price.toLocaleString('en-IN')}` : 'Request Quote'}
+                      </span>
                     </Link>
                   </li>
                 ))}
@@ -182,11 +168,10 @@ export function SearchOverlay() {
             </div>
           )}
 
-          {/* No results */}
           {hasQuery && results.length === 0 && (
             <div className="so__empty">
               <p className="so__empty-title">No results for &ldquo;{query}&rdquo;</p>
-              <p className="so__empty-sub">Try a different spelling, or browse a category below.</p>
+              <p className="so__empty-sub">Try a different word or browse all products.</p>
               <div className="so__chips so__chips--center">
                 {QUICK_SEARCHES.slice(0, 4).map((s) => (
                   <button key={s} type="button" className="so__chip" onClick={() => handleSelect(s)}>{s}</button>
@@ -200,11 +185,8 @@ export function SearchOverlay() {
         {/* ── Footer ── */}
         <div className="so__footer">
           <Link href="/shop" className="so__browse-all" onClick={close}>
-            Browse all products
+            Browse all products →
           </Link>
-          <span className="so__kbd-hint">
-            <kbd>↑↓</kbd> navigate &nbsp;<kbd>↵</kbd> select &nbsp;<kbd>Esc</kbd> close
-          </span>
         </div>
       </div>
     </div>
