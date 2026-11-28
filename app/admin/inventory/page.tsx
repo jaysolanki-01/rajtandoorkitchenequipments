@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useMemo } from 'react';
-import { fetchAdminInventory, updateInventoryStock, updateProduct, type AdminInventoryItem } from '../../../src/lib/supabase/admin';
+import { fetchAdminInventory, updateInventoryStock, updateStockQuantity, updateProduct, type AdminInventoryItem } from '../../../src/lib/supabase/admin';
 
 function fmt(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
@@ -18,6 +18,7 @@ type EditDraft = {
   is_demo: boolean;
   warranty: string;
   tags: string;
+  stock_quantity: string;
 };
 
 function EditModal({ item, onClose, onSave }: {
@@ -35,6 +36,7 @@ function EditModal({ item, onClose, onSave }: {
     is_demo: item.is_demo,
     warranty: item.warranty ?? '',
     tags: (item.tags ?? []).join(', '),
+    stock_quantity: item.stock_quantity != null ? String(item.stock_quantity) : '',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -47,15 +49,20 @@ function EditModal({ item, onClose, onSave }: {
       if (draft.price.trim() && (isNaN(priceNum!) || priceNum! < 0)) {
         throw new Error('Invalid price value.');
       }
+      const qtyRaw = draft.stock_quantity.trim();
+      const qtyNum = qtyRaw !== '' ? parseInt(qtyRaw, 10) : null;
+      if (qtyRaw !== '' && (isNaN(qtyNum!) || qtyNum! < 0)) throw new Error('Invalid quantity.');
+      const autoInStock = qtyNum !== null ? qtyNum > 0 : draft.in_stock;
       const payload = {
         name: draft.name.trim(),
         short_description: draft.short_description.trim(),
         price: priceNum,
         price_label: draft.price_label.trim() || null,
-        in_stock: draft.in_stock,
+        in_stock: autoInStock,
         is_demo: draft.is_demo,
         warranty: draft.warranty.trim() || null,
         tags: draft.tags ? draft.tags.split(',').map(t => t.trim()).filter(Boolean) : null,
+        stock_quantity: qtyNum,
       };
       await updateProduct(item.id, payload);
       onSave({ ...item, ...payload });
@@ -112,7 +119,22 @@ function EditModal({ item, onClose, onSave }: {
             </div>
           </div>
 
-          {field('Warranty', <input style={inputStyle} value={draft.warranty} onChange={e => setDraft(d => ({ ...d, warranty: e.target.value }))} placeholder="e.g. 1 year" />)}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+            <div>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--admin-fg-muted)', marginBottom: 5 }}>Stock Quantity</label>
+              <input
+                style={inputStyle} type="number" min="0"
+                value={draft.stock_quantity}
+                onChange={e => setDraft(d => ({ ...d, stock_quantity: e.target.value }))}
+                placeholder="Leave blank = untracked"
+              />
+              <p style={{ fontSize: 10, color: 'var(--admin-fg-muted)', marginTop: 4 }}>0 = out of stock · &gt;0 = available · blank = not tracked</p>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--admin-fg-muted)', marginBottom: 5 }}>Warranty</label>
+              <input style={inputStyle} value={draft.warranty} onChange={e => setDraft(d => ({ ...d, warranty: e.target.value }))} placeholder="e.g. 1 year" />
+            </div>
+          </div>
           {field('Tags (comma-separated)', <input style={inputStyle} value={draft.tags} onChange={e => setDraft(d => ({ ...d, tags: e.target.value }))} placeholder="e.g. commercial, gas, stainless steel" />)}
 
           <div style={{ display: 'flex', gap: 24, marginBottom: 20 }}>
@@ -147,6 +169,8 @@ export default function AdminInventoryPage() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [editing, setEditing] = useState<AdminInventoryItem | null>(null);
+  const [qtyEditing, setQtyEditing] = useState<Record<string, string>>({});
+  const [qtySaving, setQtySaving] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'in_stock' | 'out_of_stock' | 'demo' | 'live'>('all');
   const [sort, setSort] = useState<SortKey>('category');
@@ -207,6 +231,25 @@ export default function AdminInventoryPage() {
       alert(err instanceof Error ? err.message : 'Update failed');
     } finally {
       setUpdating(null);
+    }
+  }
+
+  async function saveQty(id: string, raw: string) {
+    const qty = raw.trim() === '' ? null : parseInt(raw.trim(), 10);
+    if (raw.trim() !== '' && (isNaN(qty as number) || (qty as number) < 0)) return;
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    if (qty === item.stock_quantity) return; // no change
+    setQtySaving(id);
+    try {
+      await updateStockQuantity(id, qty);
+      const newInStock = qty === null ? item.in_stock : qty > 0;
+      setItems(prev => prev.map(i => i.id === id ? { ...i, stock_quantity: qty, in_stock: newInStock } : i));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update quantity');
+    } finally {
+      setQtySaving(null);
+      setQtyEditing(prev => { const n = { ...prev }; delete n[id]; return n; });
     }
   }
 
@@ -388,6 +431,7 @@ export default function AdminInventoryPage() {
                         <th>Tags / Warranty</th>
                         <th style={{ textAlign: 'center' }}>Visibility</th>
                         <th style={{ textAlign: 'center' }}>Stock</th>
+                        <th style={{ textAlign: 'center' }}>Qty</th>
                         <th style={{ textAlign: 'center' }}>Stock Toggle</th>
                         <th style={{ textAlign: 'center' }}>Edit</th>
                       </tr>
@@ -442,6 +486,23 @@ export default function AdminInventoryPage() {
                               {i.in_stock ? 'In Stock' : 'Out of Stock'}
                             </span>
                           </td>
+                          <td style={{ textAlign: 'center', minWidth: 72 }}>
+                            <input
+                              type="number" min="0"
+                              value={qtyEditing[i.id] ?? (i.stock_quantity != null ? String(i.stock_quantity) : '')}
+                              placeholder="—"
+                              disabled={qtySaving === i.id}
+                              onChange={e => setQtyEditing(prev => ({ ...prev, [i.id]: e.target.value }))}
+                              onBlur={() => { if (qtyEditing[i.id] !== undefined) saveQty(i.id, qtyEditing[i.id]); }}
+                              onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+                              style={{
+                                width: 60, padding: '4px 6px', borderRadius: 5, textAlign: 'center',
+                                border: '1px solid var(--admin-border)', background: 'var(--admin-bg)',
+                                color: 'var(--admin-fg)', fontSize: 12,
+                                opacity: qtySaving === i.id ? 0.5 : 1,
+                              }}
+                            />
+                          </td>
                           <td style={{ textAlign: 'center' }}>
                             <button
                               disabled={updating === i.id}
@@ -490,6 +551,7 @@ export default function AdminInventoryPage() {
                 <th>Tags / Warranty</th>
                 <th style={{ textAlign: 'center' }}>Visibility</th>
                 <th style={{ textAlign: 'center' }}>Stock</th>
+                <th style={{ textAlign: 'center' }}>Qty</th>
                 <th style={{ textAlign: 'center' }}>Stock Toggle</th>
                 <th style={{ textAlign: 'center' }}>Edit</th>
               </tr>
@@ -544,6 +606,23 @@ export default function AdminInventoryPage() {
                     <span className={`admin-badge ${i.in_stock ? 'badge-done' : 'badge-cancelled'}`}>
                       {i.in_stock ? 'In Stock' : 'Out of Stock'}
                     </span>
+                  </td>
+                  <td style={{ textAlign: 'center', minWidth: 72 }}>
+                    <input
+                      type="number" min="0"
+                      value={qtyEditing[i.id] ?? (i.stock_quantity != null ? String(i.stock_quantity) : '')}
+                      placeholder="—"
+                      disabled={qtySaving === i.id}
+                      onChange={e => setQtyEditing(prev => ({ ...prev, [i.id]: e.target.value }))}
+                      onBlur={() => { if (qtyEditing[i.id] !== undefined) saveQty(i.id, qtyEditing[i.id]); }}
+                      onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+                      style={{
+                        width: 60, padding: '4px 6px', borderRadius: 5, textAlign: 'center',
+                        border: '1px solid var(--admin-border)', background: 'var(--admin-bg)',
+                        color: 'var(--admin-fg)', fontSize: 12,
+                        opacity: qtySaving === i.id ? 0.5 : 1,
+                      }}
+                    />
                   </td>
                   <td style={{ textAlign: 'center' }}>
                     <button

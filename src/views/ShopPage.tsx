@@ -160,54 +160,48 @@ export function ShopPage() {
           </ol>
         </nav>
 
-        {/* ── Creative Filter Bar ── */}
-        <div className="shop-fb" role="search" aria-label="Filter products">
-          <div className="shop-fb__inner container">
-
-            {/* Category chips */}
-            <div className="shop-fb__chips" role="group" aria-label="Filter by category">
-              <Link
-                href="/shop"
-                className={`shop-chip${!catFilter ? ' shop-chip--active' : ''}`}
-                aria-pressed={!catFilter}
-              >
-                <span className="shop-chip__icon">{CATEGORY_ICONS.all}</span>
-                <span className="shop-chip__label">All</span>
-                <span className="shop-chip__count">{products.length}</span>
-              </Link>
-
-              {categories.map((c) => {
-                const count = countBySlug[c.slug] ?? 0;
-                const active = catFilter === c.slug;
-                return (
-                  <Link
-                    key={c.slug}
-                    href={`/shop?category=${c.slug}`}
-                    className={`shop-chip${active ? ' shop-chip--active' : ''}${count === 0 ? ' shop-chip--empty' : ''}`}
-                    aria-pressed={active}
-                  >
-                    <span className="shop-chip__icon">{CATEGORY_ICONS[c.slug]}</span>
-                    <span className="shop-chip__label">{c.label}</span>
-                    {count > 0 && <span className="shop-chip__count">{count}</span>}
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* Sort pills */}
-            <div className="shop-fb__sort" role="group" aria-label="Sort products">
-              {SORT_OPTIONS.map((o) => (
-                <button
-                  key={o.value}
-                  type="button"
-                  className={`shop-sort-pill${sort === o.value ? ' shop-sort-pill--active' : ''}`}
-                  onClick={() => setSort(o.value)}
-                  aria-pressed={sort === o.value}
+        {/* ── Filter Section v2: card strip ── */}
+        <div className="sf2" role="search" aria-label="Filter products">
+          {/* Category card track */}
+          <div className="sf2__track" role="group" aria-label="Filter by category">
+            <Link href="/shop" className={`sf2-card${!catFilter ? ' sf2-card--active' : ''}`} aria-pressed={!catFilter}>
+              <span className="sf2-card__icon">{CATEGORY_ICONS.all}</span>
+              <span className="sf2-card__name">All</span>
+              {products.length > 0 && <span className="sf2-card__count">{products.length}</span>}
+            </Link>
+            {categories.map((c) => {
+              const count = countBySlug[c.slug] ?? 0;
+              const active = catFilter === c.slug;
+              return (
+                <Link
+                  key={c.slug}
+                  href={`/shop?category=${c.slug}`}
+                  className={`sf2-card${active ? ' sf2-card--active' : ''}${count === 0 ? ' sf2-card--empty' : ''}`}
+                  aria-pressed={active}
                 >
-                  {o.label}
-                </button>
-              ))}
-            </div>
+                  <span className="sf2-card__icon">{CATEGORY_ICONS[c.slug]}</span>
+                  <span className="sf2-card__name">{c.label}</span>
+                  {count > 0 && <span className="sf2-card__count">{count}</span>}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Sort row */}
+          <div className="sf2__sort-row container" role="group" aria-label="Sort products">
+            <span className="sf2__sort-label">Sort by</span>
+            {SORT_OPTIONS.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                className={`sf2-sort${sort === o.value ? ' sf2-sort--active' : ''}`}
+                onClick={() => setSort(o.value)}
+                aria-pressed={sort === o.value}
+              >
+                {o.label}
+              </button>
+            ))}
+            <span className="sf2__count-badge">{filtered.length} product{filtered.length !== 1 ? 's' : ''}</span>
           </div>
         </div>
 
@@ -222,7 +216,6 @@ export function ShopPage() {
                   : 'Browse our range of commercial tandoors and kitchen equipment for restaurants, hotels, and catering businesses.'}
               </p>
             </div>
-            <span className="shop-result-count">{filtered.length} product{filtered.length !== 1 ? 's' : ''}</span>
           </div>
 
           {filtered.length === 0 ? (

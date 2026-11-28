@@ -233,7 +233,10 @@ export type AdminCustomer = {
 export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
   const sb = getClient();
   const [ordersRes, cusRes] = await Promise.all([
-    sb.from('orders').select('email, customer_name, phone, total, created_at').order('created_at', { ascending: false }),
+    sb.from('orders')
+      .select('email, customer_name, phone, total, created_at, status')
+      .neq('status', 'cancelled')
+      .order('created_at', { ascending: false }),
     sb.from('customers').select('email, customer_number'),
   ]);
   if (ordersRes.error || !ordersRes.data) return [];
@@ -359,13 +362,14 @@ export type AdminInventoryItem = {
   is_demo: boolean;
   tags: string[] | null;
   warranty: string | null;
+  stock_quantity: number | null;
 };
 
 export async function fetchAdminInventory(): Promise<AdminInventoryItem[]> {
   const sb = getClient();
   const { data, error } = await sb
     .from('products')
-    .select('id, slug, name, category, category_label, short_description, price, price_label, in_stock, is_demo, tags, warranty')
+    .select('id, slug, name, category, category_label, short_description, price, price_label, in_stock, is_demo, tags, warranty, stock_quantity')
     .order('category')
     .order('name');
   if (error || !data) return [];
@@ -382,5 +386,13 @@ export async function fetchUsedCategories(): Promise<string[]> {
 export async function updateInventoryStock(id: string, in_stock: boolean): Promise<void> {
   const sb = getClient();
   const { error } = await sb.from('products').update({ in_stock }).eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function updateStockQuantity(id: string, stock_quantity: number | null): Promise<void> {
+  const sb = getClient();
+  // Also flip in_stock automatically: 0 → out of stock, >0 → in stock, null → unchanged
+  const extra = stock_quantity === null ? {} : { in_stock: stock_quantity > 0 };
+  const { error } = await sb.from('products').update({ stock_quantity, ...extra }).eq('id', id);
   if (error) throw new Error(error.message);
 }

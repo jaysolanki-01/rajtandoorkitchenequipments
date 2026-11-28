@@ -40,7 +40,7 @@ export default function AdminCustomersPage() {
           <div className="admin-stat-value" style={{ fontSize: 22 }}>
             {loading ? '…' : `₹${totalRevenue.toLocaleString('en-IN')}`}
           </div>
-          <div className="admin-stat-sub">from all orders</div>
+          <div className="admin-stat-sub">excl. cancelled orders</div>
         </div>
       </div>
 
